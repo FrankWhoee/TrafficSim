@@ -1,4 +1,4 @@
 public static class Constants{
-  public static double CAR_RADIUS = 0.5;
-  
+  public static float CAR_RADIUS = 16;
+  public static int MAX_HEALTH = 256;
 }

@@ -1,36 +1,42 @@
 public class Position{
-  private double xPos;
-  private double yPos;
+  private float xPos;
+  private float yPos;
   
-  public Position(final double xPos, final double yPos){
+  public Position(final float xPos, final float yPos){
     this.xPos = xPos;
     this.yPos = yPos;
   }
   
-  public double getXPos(){
+  public float getXPos(){
     return xPos;
   }
   
-  public double getYPos(){
+  public float getYPos(){
     return yPos;
   }
   
-  public double getDistanceTo(final Position target) {
+  public float getDistanceTo(final Position target) {
         final double dx = xPos - target.getXPos();
         final double dy = yPos - target.getYPos();
-        return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+        return (float)Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
     }
     
-     public int orientTowardsInDeg(final Position target) {
-        return Util.angleRadToDegClipped(orientTowardsInRad(target));
-    }
+  public int orientTowardsInDeg(final Position target) {
+    return Util.angleRadToDegClipped(orientTowardsInRad(target));
+  }
     
-     public double orientTowardsInRad(final Position target) {
-        final double dx = target.getXPos() - xPos;
-        final double dy = target.getYPos() - yPos;
+  public float orientTowardsInRad(final Position target) {
+    final double dx = target.getXPos() - xPos;
+    final double dy = target.getYPos() - yPos;
 
-        return Math.atan2(dy, dx) + 2 * Math.PI;
-    }
-
-  
+    return (float)(Math.atan2(dy, dx) + 2 * Math.PI);
+   }
+   
+   public void move(float angleRad, float thrust){
+     float velX = (float)(Math.cos(angleRad) * thrust);
+     float velY = (float)(Math.sin(angleRad) * thrust);
+     
+     xPos += velX;
+     yPos += velY;
+   }
 }
