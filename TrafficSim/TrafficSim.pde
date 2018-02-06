@@ -2,6 +2,8 @@ import java.util.*;
 
 ArrayList<Car> Cars = new ArrayList<Car>();
 private static int nextCarId = 0;
+private int screenWidth = 1280;
+private int screenHeight = 720;
 
 void generateCars(int amount, float screenWidth, float screenHeight){
       for(int i =0; i < amount; i++){
@@ -19,8 +21,8 @@ Car createNewCar(float screenWidth, float screenHeight){
 
 
 void setup() {
-  size(640, 360);
-   generateCars(10,640,360);
+  size(1280, 720);
+   generateCars(10,1280,720);
 }
 
 void draw() {
@@ -29,12 +31,50 @@ void draw() {
   renderCars();
 }
 
+public ArrayList<Car> getSortedCars(Car car){
+        ArrayList<Car> sortedCars = new ArrayList<Car>();
+        Car removed;
+        sortedCars = new ArrayList<Car>();
+        for(Car cars: Cars){
+          if(cars != car){
+            sortedCars.add(cars);
+          }
+            
+        }
+        int index;
+        for(int k = 0; k < sortedCars.size() - 1; k++){
+            index = k;
+            for(int i = k + 1; i < sortedCars.size(); i++){
+                if(sortedCars.get(index).getDistanceTo(car) > sortedCars.get(i).getDistanceTo(car)){
+                    index = i;
+                }else if(sortedCars.get(index).getDistanceTo(car) == sortedCars.get(i).getDistanceTo(car)){
+                    if(sortedCars.get(index).getHealth() > sortedCars.get(i).getHealth()){
+                      index = i;
+                    }
+                }
+            }
+            removed = sortedCars.get(k);
+            sortedCars.set(k, sortedCars.get(index));
+            sortedCars.set(index, removed);
+        }
+      return sortedCars;  
+}
+
 void runCars(){
   //TODO: Add sentience to cars.
   for(int i = 0; i < Cars.size(); i++){
-    float randomAngleRad = (float)(Math.random() * Math.PI * 2);
-    float randomThrust = (float)Math.random() * 5;
-     Cars.get(i).move(randomAngleRad, randomThrust);
+    ArrayList<Car> sortedCars = getSortedCars(Cars.get(i));
+    
+    if(sortedCars.get(0).getDistanceTo(Cars.get(i)) > 5){
+      float angleRad = Cars.get(i).orientTowardsInRad(sortedCars.get(0));
+      float thrust = 5;
+      Cars.get(i).move(angleRad, thrust);
+    }else{
+      float angleRad = Cars.get(i).orientTowardsInRad(sortedCars.get(1)) + 180;
+      float thrust = 5;
+      Cars.get(i).move(angleRad, thrust);
+    }
+    
   }
   
 }
