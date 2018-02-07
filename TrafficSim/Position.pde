@@ -33,10 +33,40 @@ public class Position{
    }
    
    public void move(float angleRad, float thrust){
-     float velX = (float)(Math.cos(angleRad) * thrust);
-     float velY = (float)(Math.sin(angleRad) * thrust);
+     float velX;
+     float velY;
+     final float xPos = this.xPos;
+     final float yPos = this.yPos;
+     Position newPosition = new Position(xPos,yPos);
+     float radian = (float)(Math.PI * 2);
      
-     xPos += velX;
-     yPos += velY;
+     for(float i = 0; i < radian; i += radian/360){
+       
+       velX = (float)(Math.cos(angleRad - i) * thrust);
+       velY = (float)(Math.sin(angleRad - i) * thrust);
+       newPosition = new Position(xPos + velX, yPos + velY);
+       if(newPosition.getXPos() > 0 && newPosition.getXPos() < displayWidth && newPosition.getYPos() > 0 && newPosition.getYPos() < displayHeight){
+         this.xPos = newPosition.getXPos();
+         this.yPos = newPosition.getYPos();
+         break;
+       }else{
+         
+       }
+       
+       velX = (float)(Math.cos(angleRad + i) * thrust);
+       velY = (float)(Math.sin(angleRad + i) * thrust);
+       newPosition = new Position(xPos + velX, yPos + velY);
+       if(newPosition.getXPos() > 0 && newPosition.getXPos() < displayWidth && newPosition.getYPos() > 0 && newPosition.getYPos() < displayHeight){
+         this.xPos = newPosition.getXPos();
+         this.yPos = newPosition.getYPos();
+         break;
+       }else{
+         
+       }
+     }
+     
+     
    }
+   
+   
 }

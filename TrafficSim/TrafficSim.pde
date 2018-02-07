@@ -1,14 +1,16 @@
 import java.util.*;
 
 ArrayList<Car> Cars = new ArrayList<Car>();
+ArrayList<Road> Roads = new ArrayList<Road>();
 private static int nextCarId = 0;
-private int screenWidth = 1280;
-private int screenHeight = 720;
+public int displayWidth = 1280;
+public int displayHeight = 720;
 
 void generateCars(int amount, float screenWidth, float screenHeight){
       for(int i =0; i < amount; i++){
         Car newCar = createNewCar(screenWidth,screenHeight);
         Cars.add(newCar);
+        nextCarId++;
       }
 }
 
@@ -21,14 +23,14 @@ Car createNewCar(float screenWidth, float screenHeight){
 
 
 void setup() {
-  size(1280, 720);
-   generateCars(10,1280,720);
+  size(displayWidth, displayHeight);
+   generateCars(100,1280,720);
 }
 
 void draw() {
   background(0);
   runCars();
-  renderCars();
+  render();
 }
 
 public ArrayList<Car> getSortedCars(Car car){
@@ -62,29 +64,26 @@ public ArrayList<Car> getSortedCars(Car car){
 
 void runCars(){
   //TODO: Add sentience to cars.
-  for(int i = 0; i < Cars.size(); i++){
-    ArrayList<Car> sortedCars = getSortedCars(Cars.get(i));
-    
-    if(sortedCars.get(0).getDistanceTo(Cars.get(i)) > 5){
-      float angleRad = Cars.get(i).orientTowardsInRad(sortedCars.get(0));
-      float thrust = 5;
-      Cars.get(i).move(angleRad, thrust);
-    }else{
-      float angleRad = Cars.get(i).orientTowardsInRad(sortedCars.get(1)) + 180;
-      float thrust = 5;
-      Cars.get(i).move(angleRad, thrust);
-    }
-    
+  for(int i = 1; i < Cars.size() - 1; i++){
+    //ArrayList<Car> sortedCars = getSortedCars(Cars.get(i));
   }
   
 }
 
-void renderCars(){
+void render(){
   fill(255);
   noStroke();
+  
+  
+  for(Road road: Roads){
+    rect(road.getXPos(),road.getYPos(), road.getWidth(), road.getHeight());
+  }
+  
+  
   for(Car car : Cars){
     ellipse(car.getXPos(), car.getYPos(), Constants.CAR_RADIUS, Constants.CAR_RADIUS);
   }
+  
   
 }
   
