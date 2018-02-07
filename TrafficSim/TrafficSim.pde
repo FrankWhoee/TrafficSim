@@ -1,7 +1,7 @@
 import java.util.*;
 
-ArrayList<Car> Cars = new ArrayList<Car>();
-ArrayList<Road> Roads = new ArrayList<Road>();
+public ArrayList<Car> Cars = new ArrayList<Car>();
+public static ArrayList<Road> Roads = new ArrayList<Road>();
 private static int nextCarId = 0;
 private static int nextRoadId = 0;
 public int displayWidth = 1280;
@@ -11,24 +11,40 @@ public int centerY = displayHeight/2;
 
 Road roadH = new Road(0,0, centerY - 20, displayWidth, 40);
 Road roadV = new Road(1,centerX - 20,0, 40, displayHeight);
-
+Road roadV2 = new Road(1,500,0, 40, displayHeight);
 
 
 
 void generateCars(int amount, float screenWidth, float screenHeight){
       for(Road road: Roads){
-        for(int i = 0; i < amount/2; i++){
+        for(int i = 0; i < amount/Roads.size(); i++){
           
           if(road.getWidth() > road.getHeight()){
-            Car newCar = createNewCar(road.getWidth(), road.getYPos() + road.getHeight()/2);
-            Cars.add(newCar);
-            nextCarId++;
-            System.out.println(newCar.getId() + " spawned. Type: Car");
+            if(Math.random() > 0.5){
+              Car newCar = createNewCar(road.getWidth(), road.getYPos() + road.getHeight()/2);
+              Cars.add(newCar);
+              nextCarId++;
+              System.out.println(newCar.getId() + " spawned. Type: Car");
+            }else{
+              Car newCar = createNewCar(road.getXPos(), road.getYPos() + road.getHeight()/2);
+              Cars.add(newCar);
+              nextCarId++;
+              System.out.println(newCar.getId() + " spawned. Type: Car");
+            }
+            
           }else{
-            Car newCar = createNewCar(road.getXPos() + road.getWidth()/2, road.getHeight());
-            Cars.add(newCar);
-            nextCarId++;
-            System.out.println(newCar.getId() + " spawned. Type: Car");
+            if(Math.random() > 0.5){
+              Car newCar = createNewCar(road.getXPos() + road.getWidth()/2, road.getHeight());
+              Cars.add(newCar);
+              nextCarId++;
+              System.out.println(newCar.getId() + " spawned. Type: Car");
+            }else{
+              Car newCar = createNewCar(road.getXPos() + road.getWidth()/2, road.getYPos());
+              Cars.add(newCar);
+              nextCarId++;
+              System.out.println(newCar.getId() + " spawned. Type: Car");              
+            }
+            
           }
         }
       }
@@ -48,6 +64,7 @@ void setup() {
    System.out.println("roadH width:  " + roadV.getHeight());
    Roads.add(roadH);
    Roads.add(roadV);
+   Roads.add(roadV2);
    generateCars(100,1280,720);
 }
 
@@ -91,7 +108,7 @@ void runCars(){
   for(int i = 1; i < Cars.size() - 1; i++){
     //ArrayList<Car> sortedCars = getSortedCars(Cars.get(i));
     float angleRad = Cars.get(i).orientTowardsInRad(new Position(centerX, centerY));
-    Cars.get(i).move(angleRad, Cars.get(i).getId() % 7);
+    Cars.get(i).move(angleRad, 1);
   }
   
 }

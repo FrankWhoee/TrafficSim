@@ -46,9 +46,12 @@ public class Position{
        velY = (float)(Math.sin(angleRad - i) * thrust);
        newPosition = new Position(xPos + velX, yPos + velY);
        if(newPosition.getXPos() > 0 && newPosition.getXPos() < displayWidth && newPosition.getYPos() > 0 && newPosition.getYPos() < displayHeight){
-         this.xPos = newPosition.getXPos();
-         this.yPos = newPosition.getYPos();
-         break;
+         if(courseOnRoad(angleRad - i, thrust)){
+           this.xPos = newPosition.getXPos();
+           this.yPos = newPosition.getYPos();
+           break;
+         }
+         
        }else{
          
        }
@@ -57,9 +60,12 @@ public class Position{
        velY = (float)(Math.sin(angleRad + i) * thrust);
        newPosition = new Position(xPos + velX, yPos + velY);
        if(newPosition.getXPos() > 0 && newPosition.getXPos() < displayWidth && newPosition.getYPos() > 0 && newPosition.getYPos() < displayHeight){
-         this.xPos = newPosition.getXPos();
-         this.yPos = newPosition.getYPos();
-         break;
+         if(courseOnRoad(angleRad + i, thrust)){
+           this.xPos = newPosition.getXPos();
+           this.yPos = newPosition.getYPos();
+           break;           
+         }
+
        }else{
          
        }
@@ -68,5 +74,41 @@ public class Position{
      
    }
    
+   public boolean courseOnRoad(float angleRad, float thrust){
+     float velx;
+     float vely;
+     float t;
+     for(t = 0; t < thrust; t += 0.1){
+       float velX = (float)(Math.cos(angleRad) * t);
+       float velY = (float)(Math.sin(angleRad) * t);
+       float newX = xPos + velX;
+       float newY = yPos + velY;
+       
+       if(!isIntersectingRoad(newX, newY)){
+          return false;
+       }
+       
+     }
+     return true;
+   }
+   
+   public boolean isIntersectingRoad(float xPos, float yPos){
+     for(Road road: TrafficSim.Roads){
+       float closestX = Math.max(road.getXPos(), Math.min(xPos, road.getXPos() + road.getWidth()));
+       float closestY = Math.max(road.getYPos(), Math.min(yPos, road.getYPos() + road.getHeight()));
+       
+       float dx = xPos - closestX;
+       float dy = yPos - closestY;
+       if((dx * dx + dy * dy) < (Constants.CAR_RADIUS * Constants.CAR_RADIUS)){
+         
+         return true;
+
+       }
+     }
+     System.out.println("Offroad detected");
+     return false;
+     
+     
+   }
    
 }
