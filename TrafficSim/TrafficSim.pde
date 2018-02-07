@@ -108,7 +108,7 @@ void runCars(){
   for(int i = 1; i < Cars.size() - 1; i++){
     //ArrayList<Car> sortedCars = getSortedCars(Cars.get(i));
     float angleRad = Cars.get(i).orientTowardsInRad(new Position(centerX, centerY));
-    Cars.get(i).move(angleRad, 1);
+    Cars.get(i).move(angleRad, 5);
   }
   
 }

@@ -83,29 +83,26 @@ public class Position{
        float velY = (float)(Math.sin(angleRad) * t);
        float newX = xPos + velX;
        float newY = yPos + velY;
-       
        if(!isIntersectingRoad(newX, newY)){
           return false;
        }
-       
      }
      return true;
    }
    
    public boolean isIntersectingRoad(float xPos, float yPos){
      for(Road road: TrafficSim.Roads){
-       float closestX = Math.max(road.getXPos(), Math.min(xPos, road.getXPos() + road.getWidth()));
-       float closestY = Math.max(road.getYPos(), Math.min(yPos, road.getYPos() + road.getHeight()));
+       float roadX = road.getXPos();
+       float roadY = road.getYPos();
+       float closestX = Math.max(roadX, Math.min(xPos, roadX + road.getWidth()));
+       float closestY = Math.max(roadY, Math.min(yPos, roadY + road.getWidth()));
        
        float dx = xPos - closestX;
        float dy = yPos - closestY;
-       if((dx * dx + dy * dy) < (Constants.CAR_RADIUS * Constants.CAR_RADIUS)){
-         
+       if(((dx * dx) + (dy * dy)) < 0.01){
          return true;
-
        }
      }
-     System.out.println("Offroad detected");
      return false;
      
      
