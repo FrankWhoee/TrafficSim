@@ -40,7 +40,7 @@ public class Position{
      Position newPosition = new Position(xPos,yPos);
      float radian = (float)(Math.PI * 2);
      
-     for(float i = 0; i < radian; i += radian/360){
+     for(float i = 0; i < radian; i += radian/10){
        
        velX = (float)(Math.cos(angleRad - i) * thrust);
        velY = (float)(Math.sin(angleRad - i) * thrust);
@@ -51,8 +51,6 @@ public class Position{
            this.yPos = newPosition.getYPos();
            break;
          }
-         
-       }else{
          
        }
        
@@ -66,8 +64,6 @@ public class Position{
            break;           
          }
 
-       }else{
-         
        }
      }
      
@@ -78,34 +74,53 @@ public class Position{
      float velx;
      float vely;
      float t;
-     for(t = 0; t < thrust; t += 0.1){
+     for(t = 0; t < thrust + 5; t += 0.1){
        float velX = (float)(Math.cos(angleRad) * t);
        float velY = (float)(Math.sin(angleRad) * t);
        float newX = xPos + velX;
        float newY = yPos + velY;
+       
        if(!isIntersectingRoad(newX, newY)){
           return false;
        }
+       
      }
      return true;
    }
    
    public boolean isIntersectingRoad(float xPos, float yPos){
      for(Road road: TrafficSim.Roads){
-       float roadX = road.getXPos();
-       float roadY = road.getYPos();
-       float closestX = Math.max(roadX, Math.min(xPos, roadX + road.getWidth()));
-       float closestY = Math.max(roadY, Math.min(yPos, roadY + road.getWidth()));
-       
-       float dx = xPos - closestX;
-       float dy = yPos - closestY;
-       if(((dx * dx) + (dy * dy)) < 0.01){
+        //int chosenCar = 7;
+        float carX = xPos;
+        float carY = yPos;
+      
+        float roadX = road.getXPos();
+        float roadY = road.getYPos();
+        float roadWidth = road.getWidth();
+        float roadHeight = road.getHeight();
+       if(roadWidth > roadHeight){
+         roadHeight -= 16;
+       }else{
+         roadWidth -= 16;
+       }
+        float closestX = Math.max(roadX, Math.min(carX, roadX + roadWidth));
+        float closestY = Math.max(roadY, Math.min(carY, roadY + roadHeight));
+        float dx = carX - closestX;
+        float dy = carY - closestY;
+        
+        //float dx2 =  closestX - carX;
+        //float dy2 =  closestY - carY;
+        
+       if((((dx * dx) + (dy * dy)) < 64)){
+         if(this instanceof Car){
+           Car car = (Car)this;
+           car.collidingWithRoads = true;
+          }
          return true;
        }
-     }
-     return false;
-     
-     
+    }
+    return false;
    }
+   
    
 }
