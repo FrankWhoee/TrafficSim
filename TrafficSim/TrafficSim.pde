@@ -78,7 +78,7 @@ void draw() {
   
   render();
   runCars();
-  //renderLine();
+  renderLine();
   
   turn++;
 }
@@ -118,7 +118,7 @@ void runCars(){
   for(int i = 0; i < Cars.size(); i++){
     Car car = Cars.get(i);
     if(car.getXPos() > centerX - 10 && car.getXPos() < centerX + 10 && car.getYPos() > centerY - 10 && car.getYPos() < centerY + 10){
-      Cars.remove(i);
+      //Cars.remove(i);
     }
   }
   
@@ -163,25 +163,34 @@ void render(){
 }
 
 void renderLine(){
-  int chosenRoad = 2;
-  int chosenCar = 6;
-  float carX = Cars.get(chosenCar).getXPos() + 16;
-  float carY = Cars.get(chosenCar).getYPos() + 16;
-
-  float roadX = Roads.get(chosenRoad).getXPos();
-  float roadY = Roads.get(chosenRoad).getYPos();
-  float roadWidth = Roads.get(chosenRoad).getWidth();
-  float roadHeight = Roads.get(chosenRoad).getHeight();
-  
-  float closestX = Math.max(roadX, Math.min(carX, roadX + roadWidth));
-  float closestY = Math.max(roadY, Math.min(carY, roadY + roadHeight));
-  float dx = carX - closestX;
-  float dy = carY - closestY;
-  if(((dx * dx) + (dy * dy)) < 64){
-    stroke(255,0,0);
-  }else{
-    stroke(0,255,0);
-  } 
-  line(Cars.get(chosenCar).getXPos(),Cars.get(chosenCar).getYPos(),closestX, closestY);
+  for(int k = 0; k < Cars.size(); k++){
+  int chosenCar = k;
+  for(int i =0; i < Roads.size(); i ++){
+    int chosenRoad = i;
+        float carX = Cars.get(chosenCar).getXPos();
+        float carY = Cars.get(chosenCar).getYPos();
+      
+        float roadX = Roads.get(chosenRoad).getXPos();
+        float roadY = Roads.get(chosenRoad).getYPos();
+        float roadWidth = Roads.get(chosenRoad).getWidth();
+        float roadHeight = Roads.get(chosenRoad).getHeight();
+        float offset = 0;
+       if(roadWidth > roadHeight){
+         roadHeight -= offset;
+       }else{
+         roadWidth -= offset;
+       }
+        float closestX = Math.max(roadX, Math.min(carX, roadX + roadWidth));
+        float closestY = Math.max(roadY, Math.min(carY, roadY + roadHeight));
+        float dx = carX - closestX;
+        float dy = carY - closestY;
+    if(((dx * dx) + (dy * dy)) < 64){
+      stroke(255,0,0);
+    }else{
+      stroke(0,255,0);
+    } 
+    line(Cars.get(chosenCar).getXPos(),Cars.get(chosenCar).getYPos(),closestX, closestY);
+    }
+  }
  }
   

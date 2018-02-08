@@ -40,8 +40,8 @@ public class Position{
      Position newPosition = new Position(xPos,yPos);
      float radian = (float)(Math.PI * 2);
      
-     /*
-     for(float i = 0; i < radian; i += radian/4){
+     
+     for(float i = 0; i < radian; i += radian/36){
        
        velX = (float)(Math.cos(angleRad - i) * thrust);
        velY = (float)(Math.sin(angleRad - i) * thrust);
@@ -67,7 +67,7 @@ public class Position{
 
        }
      }
-     */
+     /*
      
      
      
@@ -85,6 +85,7 @@ public class Position{
          }
          
        }
+       
      }
      
      for(float i = 0; i < radian; i += radian/360){
@@ -102,14 +103,14 @@ public class Position{
          }
        }
      }
-     
+     */
    }
    
    public boolean courseOnRoad(float angleRad, float thrust){
      float velx;
      float vely;
      float t;
-     for(t = 0; t < thrust + 15; t += 0.1){
+     for(t = 0; t < thrust + 20; t += 0.1){
        float velX = (float)(Math.cos(angleRad) * t);
        float velY = (float)(Math.sin(angleRad) * t);
        float newX = xPos + velX;
@@ -134,10 +135,11 @@ public class Position{
         float roadY = road.getYPos();
         float roadWidth = road.getWidth();
         float roadHeight = road.getHeight();
+        float offset = 32;
        if(roadWidth > roadHeight){
-         roadHeight -= 16;
+         roadHeight -= offset;
        }else{
-         roadWidth -= 16;
+         roadWidth -= offset;
        }
         float closestX = Math.max(roadX, Math.min(carX, roadX + roadWidth));
         float closestY = Math.max(roadY, Math.min(carY, roadY + roadHeight));
