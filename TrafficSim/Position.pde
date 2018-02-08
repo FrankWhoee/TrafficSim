@@ -68,10 +68,6 @@ public class Position{
        }
      }
      /*
-     
-     
-     
-     
      for(float i = (angleRad - (angleRad % (radian/8))); i < 50; i += radian/8){
        velX = (float)(Math.cos(i) * thrust);
        velY = (float)(Math.sin(i) * thrust);
@@ -138,8 +134,10 @@ public class Position{
         float offset = 32;
        if(roadWidth > roadHeight){
          roadHeight -= offset;
+         roadY += 16;
        }else{
          roadWidth -= offset;
+         roadX += 16;
        }
         float closestX = Math.max(roadX, Math.min(carX, roadX + roadWidth));
         float closestY = Math.max(roadY, Math.min(carY, roadY + roadHeight));
