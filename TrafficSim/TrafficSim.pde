@@ -8,16 +8,18 @@ public int displayWidth = 1280;
 public int displayHeight = 720;
 public int centerX = displayWidth/2;
 public int centerY = displayHeight/2;
+public int turn = 0;
+
 
 Road roadH = new Road(0,0, centerY - 20, displayWidth, 100);
 Road roadV = new Road(1,centerX - 20,0, 100, displayHeight);
 Road roadV2 = new Road(1,500,0, 100, displayHeight);
+Road roadV3 = new Road(1,100,0, 100, displayHeight);
 
 
-
-void generateCars(int amount, float screenWidth, float screenHeight){
+void generateCars(int amount){
       for(Road road: Roads){
-        for(int i = 0; i < amount/Roads.size(); i++){
+        for(int i = 0; i < Math.min(amount/Roads.size(), 1); i++){
           
           if(road.getWidth() > road.getHeight()){
             if(nextCarId % amount/Roads.size() == 1){
@@ -65,14 +67,20 @@ void setup() {
    Roads.add(roadH);
    Roads.add(roadV);
    Roads.add(roadV2);
-   generateCars(20,1280,720);
+   Roads.add(roadV3);
+   
+    generateCars(5);
+  
 }
 
 void draw() {
   background(0);
-  runCars();
+  
   render();
-  renderLine();
+  runCars();
+  //renderLine();
+  
+  turn++;
 }
 
 public ArrayList<Car> getSortedCars(Car car){
@@ -106,10 +114,22 @@ public ArrayList<Car> getSortedCars(Car car){
 
 void runCars(){
   //TODO: Add sentience to cars.
-  for(int i = 1; i < Cars.size() - 1; i++){
+  
+  for(int i = 0; i < Cars.size(); i++){
+    Car car = Cars.get(i);
+    if(car.getXPos() > centerX - 10 && car.getXPos() < centerX + 10 && car.getYPos() > centerY - 10 && car.getYPos() < centerY + 10){
+      Cars.remove(i);
+    }
+  }
+  
+  for(Car car: Cars){
     //ArrayList<Car> sortedCars = getSortedCars(Cars.get(i));
-    float angleRad = Cars.get(i).orientTowardsInRad(new Position(centerX, centerY));
-    Cars.get(i).move(angleRad, 1);
+    
+    
+    
+    float angleRad = car.orientTowardsInRad(new Position(centerX, centerY));
+    car.move(angleRad, 1);
+    //System.out.println(car.getId() + " completed calculations. Next Position: x: " + car.getXPos() + " y: " + car.getYPos());
   }
   
 }
@@ -131,8 +151,12 @@ void render(){
     }else{
       fill(255);
     }
-    
     ellipse(car.getXPos(), car.getYPos(), Constants.CAR_RADIUS, Constants.CAR_RADIUS);
+    textSize(10);
+    //String coordinates = "x: " + (int)car.getXPos() + " y: " + (int)car.getYPos();
+    //String id = ("id: " + car.getId());
+    //text(coordinates, car.getXPos() + 15, car.getYPos() + 15);
+    //text(id, car.getXPos() + 15, car.getYPos() + 25);
   }
   
   
@@ -151,8 +175,6 @@ void renderLine(){
   
   float closestX = Math.max(roadX, Math.min(carX, roadX + roadWidth));
   float closestY = Math.max(roadY, Math.min(carY, roadY + roadHeight));
-  //System.out.println("closestY: " + closestY + " car y: " + carY);
-  //System.out.println("roadY: " + roadY + " roadHeight: " + roadHeight);
   float dx = carX - closestX;
   float dy = carY - closestY;
   if(((dx * dx) + (dy * dy)) < 64){

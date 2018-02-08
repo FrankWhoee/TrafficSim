@@ -40,7 +40,8 @@ public class Position{
      Position newPosition = new Position(xPos,yPos);
      float radian = (float)(Math.PI * 2);
      
-     for(float i = 0; i < radian; i += radian/10){
+     /*
+     for(float i = 0; i < radian; i += radian/4){
        
        velX = (float)(Math.cos(angleRad - i) * thrust);
        velY = (float)(Math.sin(angleRad - i) * thrust);
@@ -66,7 +67,41 @@ public class Position{
 
        }
      }
+     */
      
+     
+     
+     
+     for(float i = (angleRad - (angleRad % (radian/8))); i < 50; i += radian/8){
+       velX = (float)(Math.cos(i) * thrust);
+       velY = (float)(Math.sin(i) * thrust);
+       newPosition = new Position(xPos + velX, yPos + velY);
+       if(newPosition.getXPos() > 0 && newPosition.getXPos() < displayWidth && newPosition.getYPos() > 0 && newPosition.getYPos() < displayHeight){
+         if(courseOnRoad(angleRad, thrust)){
+           this.xPos = newPosition.getXPos();
+           this.yPos = newPosition.getYPos();
+           return;
+           
+         }
+         
+       }
+     }
+     
+     for(float i = 0; i < radian; i += radian/360){
+       velX = (float)(Math.cos(i) * thrust);
+       velY = (float)(Math.sin(i) * thrust);
+       newPosition = new Position(xPos + velX, yPos + velY);
+       if(newPosition.getXPos() > 0 && newPosition.getXPos() < displayWidth && newPosition.getYPos() > 0 && newPosition.getYPos() < displayHeight){
+         Car car = (Car)this;
+         System.out.println(car.getId() + " passed border test");
+         if(courseOnRoad(angleRad, thrust)){
+           System.out.println(car.getId() + "passed line test");
+           this.xPos = newPosition.getXPos();
+           this.yPos = newPosition.getYPos();
+           return;
+         }
+       }
+     }
      
    }
    
@@ -74,12 +109,13 @@ public class Position{
      float velx;
      float vely;
      float t;
-     for(t = 0; t < thrust + 5; t += 0.1){
+     for(t = 0; t < thrust + 15; t += 0.1){
        float velX = (float)(Math.cos(angleRad) * t);
        float velY = (float)(Math.sin(angleRad) * t);
        float newX = xPos + velX;
        float newY = yPos + velY;
-       
+       //stroke(255,0,0);
+       //line(xPos,yPos,newX,newY);
        if(!isIntersectingRoad(newX, newY)){
           return false;
        }
@@ -107,10 +143,6 @@ public class Position{
         float closestY = Math.max(roadY, Math.min(carY, roadY + roadHeight));
         float dx = carX - closestX;
         float dy = carY - closestY;
-        
-        //float dx2 =  closestX - carX;
-        //float dy2 =  closestY - carY;
-        
        if((((dx * dx) + (dy * dy)) < 64)){
          if(this instanceof Car){
            Car car = (Car)this;
