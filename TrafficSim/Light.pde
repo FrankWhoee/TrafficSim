@@ -10,6 +10,7 @@ public class Light extends Position{
   public Light(int id, Road road){
     super(0,0);
     this.road = road;
+    this.id = id;
     if(road.getWidth() > road.getHeight()){
       width = 20;
       height = road.getHeight();
@@ -29,22 +30,26 @@ public class Light extends Position{
       if(road.getWidth() < road.getHeight()){
         viableXPos.add(road.getXPos());
         viableXPos.add(road.getXPos() + road.getWidth() - width);
+        System.out.println("light " + this.id + ": " + road.getXPos() + " added new X viable position.");
+        System.out.println("light " + this.id + ": " + (road.getXPos() + road.getWidth() - width) + " added new X viable position.");
       }
     }
     
     for(Light light: TrafficSim.Lights){
       if(viableXPos.contains(light.getXPos()) && light.getYPos() == road.getYPos()){
         viableXPos.remove(light.getXPos());
-        System.out.println(light.getXPos() + " removed. For " + road.getYPos());
+        System.out.println("light " + this.id + ": " + light.getXPos() + " removed X viable position, light id " + light.id + " already there");
       }
     }
+    
     if(viableXPos.size() > 0){
-      System.out.println(viableXPos.get(0));
+      System.out.println("Position set.");
       return viableXPos.get(0);
     }else{
       System.out.println("No viable x positions");
       return -1;
     }
+    
   }
     
   public float getSpotY(){

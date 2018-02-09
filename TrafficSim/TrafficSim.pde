@@ -8,6 +8,7 @@ public static ArrayList<Light> Lights = new ArrayList<Light>();
 
 private static int nextCarId = 0;
 private static int nextRoadId = 0;
+private static int nextLightId = 0;
 
 public int displayWidth = 1280;
 public int displayHeight = 720;
@@ -84,9 +85,11 @@ void setup() {
    Roads.add(roadH3);
    generateCars(25);
    for(Road road: Roads){
-     for(int i = 0; i < 20; i++){
-       Light newLight = new Light(0,road);
+     for(int i = 0; i < 6; i++){
+       nextLightId++;
+       Light newLight = new Light(nextLightId,road);
        Lights.add(newLight);
+       
      }
      
    }
@@ -139,9 +142,16 @@ void render(){
   }
   
   for(Light light: Lights){
-   // noStroke();
-    //fill(0,255,0);
+    fill(0,255,0);
     rect(light.getXPos(),light.getYPos(), light.width, light.height);
+    
+    noStroke();
+    fill(255,0,0);
+    
+    String id = ("id: " + light.id);
+    text(id, light.getXPos() + 30, light.getYPos() + 25);
+    
+    
   }
   
   
