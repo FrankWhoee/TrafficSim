@@ -3,6 +3,8 @@ public static Map<Car,Velocity> carVectors = new HashMap<Car,Velocity>();
 
 public static ArrayList<Car> Cars = new ArrayList<Car>();
 public static ArrayList<Road> Roads = new ArrayList<Road>();
+public static ArrayList<Light> Lights = new ArrayList<Light>();
+
 
 private static int nextCarId = 0;
 private static int nextRoadId = 0;
@@ -22,7 +24,9 @@ Road roadV = new Road(1,centerX - 20,0, 100, displayHeight);
 Road roadV2 = new Road(2,500,0, 100, displayHeight);
 Road roadV3 = new Road(3,100,0, 100, displayHeight);
 Road roadH2 = new Road(4,0, centerY - 200, displayWidth, 100);
-Road roadH3 = new Road(4,0, centerY + 200, displayWidth, 100);
+Road roadH3 = new Road(5,0, centerY + 200, displayWidth, 100);
+
+
 
 void generateCars(int amount){
       for(Road road: Roads){
@@ -30,12 +34,12 @@ void generateCars(int amount){
           
           if(road.getWidth() > road.getHeight()){
             if(nextCarId % 2 == 1){
-              Car newCar = createNewCar(road.getWidth() - (float)(Math.random() * randomSpawnLocOffsetLength), road.getYPos() + (float)((road.getHeight() - randomSpawnLocOffsetWidth) * Math.random()));
+              Car newCar = createNewCar(road.getWidth() - (float)(Math.random() * randomSpawnLocOffsetLength), road.getYPos() + 20 + (float)((road.getHeight() - 20) * Math.random()));
               Cars.add(newCar);
               nextCarId++;
               System.out.println(newCar.getId() + " spawned. Type: Car Location: Right Side");
             }else{
-              Car newCar = createNewCar(road.getXPos() + (float)(Math.random() * randomSpawnLocOffsetLength), road.getYPos() + (float)((road.getHeight() - randomSpawnLocOffsetWidth) * Math.random()));
+              Car newCar = createNewCar(road.getXPos() + (float)(Math.random() * randomSpawnLocOffsetLength), road.getYPos() + 20 + (float)((road.getHeight() - 20) * Math.random()));
               Cars.add(newCar);
               nextCarId++;
               System.out.println(newCar.getId() + " spawned. Type: Car Location: Left Side");
@@ -43,12 +47,12 @@ void generateCars(int amount){
             
           }else{
             if(nextCarId % 2 == 1){
-              Car newCar = createNewCar(road.getXPos() + (float)((road.getWidth() - randomSpawnLocOffsetWidth) * Math.random()), road.getHeight() - (float)(Math.random() * randomSpawnLocOffsetLength));
+              Car newCar = createNewCar(road.getXPos() + 16 + (float)((road.getWidth() - 16) * Math.random()), road.getHeight() - (float)(Math.random() * randomSpawnLocOffsetLength));
               Cars.add(newCar);
               nextCarId++;
               System.out.println(newCar.getId() + " spawned. Type: Car Location: Lower Side");
             }else{
-              Car newCar = createNewCar(road.getXPos() + (float)((road.getWidth() - randomSpawnLocOffsetWidth) * Math.random()), road.getYPos() + (float)(Math.random() * randomSpawnLocOffsetLength));
+              Car newCar = createNewCar(road.getXPos() + 16 + (float)((road.getWidth() - 16) * Math.random()), road.getYPos() + (float)(Math.random() * randomSpawnLocOffsetLength));
               Cars.add(newCar);
               nextCarId++;
               System.out.println(newCar.getId() + " spawned. Type: Car Location: Upper Side");              
@@ -79,24 +83,68 @@ void setup() {
    Roads.add(roadH2);
    Roads.add(roadH3);
    generateCars(25);
+   for(Road road: Roads){
+     for(int i = 0; i < 20; i++){
+       Light newLight = new Light(0,road);
+       Lights.add(newLight);
+     }
+     
+   }
+   
   
 }
 
 void draw() {
+  
   background(0);
   carVectors.clear();
   render();
-  if(keyPressed){
-    if(key == 'p'){
-      runCars();
-    }
+  if(!keyPressed && key != 'l'){
+    runCars();
+    
+  }else if(key == 'p'){
+      
+  }else if(key == 'l'){
+    
   }
-  
-  
-  
   //renderLine();
   
   turn++;
+}
+
+void render(){
+  fill(100);
+  noStroke();
+  
+  
+  for(Road road: Roads){
+    rect(road.getXPos(),road.getYPos(), road.getWidth(), road.getHeight());
+  }
+  
+  noFill();
+  for(Car car : Cars){
+    if(car.collidingWithRoads){
+      stroke(0,255,0);
+    }else{
+      stroke(255,0,0);
+    }
+    ellipse(car.getXPos(), car.getYPos(), Constants.CAR_RADIUS, Constants.CAR_RADIUS);
+    ellipse(car.getXPos(), car.getYPos(), 1, 1);
+    //textSize(10);
+    //fill(0,255,0);
+    //String coordinates = "x: " + (int)car.getXPos() + " y: " + (int)car.getYPos();
+   // String id = ("id: " + car.getId());
+    //text(coordinates, car.getXPos() + 15, car.getYPos() + 15);
+    //text(id, car.getXPos() - 30, car.getYPos() + 25);
+  }
+  
+  for(Light light: Lights){
+    noStroke();
+    fill(0,255,0);
+    rect(light.getXPos(),light.getYPos(), light.width, light.height);
+  }
+  
+  
 }
 
 public ArrayList<Car> getSortedCars(Car car){
@@ -146,34 +194,7 @@ void runCars(){
   
 }
 
-void render(){
-  fill(100);
-  noStroke();
-  
-  
-  for(Road road: Roads){
-    rect(road.getXPos(),road.getYPos(), road.getWidth(), road.getHeight());
-  }
-  
-  noFill();
-  for(Car car : Cars){
-    if(car.collidingWithRoads){
-      stroke(0,255,0);
-    }else{
-      stroke(255,0,0);
-    }
-    ellipse(car.getXPos(), car.getYPos(), Constants.CAR_RADIUS, Constants.CAR_RADIUS);
-    ellipse(car.getXPos(), car.getYPos(), 1, 1);
-    textSize(10);
-    fill(0,255,0);
-    //String coordinates = "x: " + (int)car.getXPos() + " y: " + (int)car.getYPos();
-    String id = ("id: " + car.getId());
-    //text(coordinates, car.getXPos() + 15, car.getYPos() + 15);
-    text(id, car.getXPos() - 30, car.getYPos() + 25);
-  }
-  
-  
-}
+
 
 void renderLine(){
   for(int k = 0; k < Cars.size(); k++){

@@ -15,6 +15,14 @@ public class Position{
     return yPos;
   }
   
+  public void setXPos(float x){
+    xPos = x;
+  }
+  
+  public void setYPos(float y){
+    yPos = y;
+  }
+  
   public float getDistanceTo(final Position target) {
         final double dx = xPos - target.getXPos();
         final double dy = yPos - target.getYPos();
@@ -41,7 +49,7 @@ public class Position{
      float radian = (float)(Math.PI * 2);
      
      
-     for(float i = 0; i < radian; i += radian/90){
+     for(float i = 0; i < radian; i += radian/180){
        
        velX = (float)(Math.cos(angleRad - i) * thrust);
        velY = (float)(Math.sin(angleRad - i) * thrust);
@@ -85,7 +93,7 @@ public class Position{
      float velx;
      float vely;
      float t;
-     for(t = 0; t < thrust + 20; t += 0.1){
+     for(t = 0; t < thrust + 10; t += 0.1){
        float velX = (float)(Math.cos(angleRad) * t);
        float velY = (float)(Math.sin(angleRad) * t);
        float newX = xPos + velX;
@@ -140,7 +148,7 @@ public class Position{
        }
        float velX = (float)(Math.cos(angleRad) * thrust);
        float velY = (float)(Math.sin(angleRad) * thrust);
-       float t = (float)Collision.collision_time(Constants.CAR_RADIUS,this, car, new Velocity(velX, velY), carVectors.get(car));
+       float t = (float)Collision.collision_time(Constants.CAR_RADIUS/2,this, car, new Velocity(velX, velY), carVectors.get(car));
        if(t >= 0 && t <= 1){
          return false;
        }
@@ -172,5 +180,6 @@ public class Position{
             }
         }
     }
+    
    
 }
