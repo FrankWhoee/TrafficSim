@@ -1,4 +1,51 @@
 public static class Collision{
+  
+  public static boolean segmentCircleIntersect(final Position start, final Position end, final Entity circle, final double fudge) {
+        // Parameterize the segment as start + t * (end - start),
+        // and substitute into the equation of a circle
+        // Solve for t
+        final double circleRadius = circle.getRadius();
+        final double startX = start.getXPos();
+        final double startY = start.getYPos();
+        final double endX = end.getXPos();
+        final double endY = end.getYPos();
+        final double centerX = circle.getXPos();
+        final double centerY = circle.getYPos();
+        final double dx = endX - startX;
+        final double dy = endY - startY;
+        
+        final double a = square(dx) + square(dy);
+
+        final double b = -2 * (square(startX) - (startX * endX)
+                            - (startX * centerX) + (endX * centerX)
+                            + square(startY) - (startY * endY)
+                            - (startY * centerY) + (endY * centerY));
+
+        if (a == 0.0) {
+            // Start and end are the same point
+            return start.getDistanceTo(circle) <= circleRadius + fudge;
+        }
+
+        // Time along segment when closest to the circle (vertex of the quadratic)
+        final double t = Math.min(-b / (2 * a), 1.0);
+        if (t < 0) {
+            return false;
+        }
+
+        final double closestX = startX + dx * t;
+        final double closestY = startY + dy * t;
+        
+        final double dx2= closestX - circle.getXPos();
+        final double dy2 = closestY - circle.getYPos();
+        final double closestDistance = (float)Math.sqrt(Math.pow(dx2, 2) + Math.pow(dy2, 2));
+
+        return closestDistance <= circleRadius + fudge;
+    }
+
+    public static double square(final double num) {
+        return num * num;
+    }
+  
   public static double collision_time(double r, final Position loc1, final Position loc2, final Velocity vel1, final Velocity vel2){
         // With credit to Ben Spector
         // Simplified derivation:

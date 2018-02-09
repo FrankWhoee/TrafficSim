@@ -41,16 +41,22 @@ public class Position{
      float radian = (float)(Math.PI * 2);
      
      
-     for(float i = 0; i < radian; i += radian/36){
+     for(float i = 0; i < radian; i += radian/90){
        
        velX = (float)(Math.cos(angleRad - i) * thrust);
        velY = (float)(Math.sin(angleRad - i) * thrust);
        newPosition = new Position(xPos + velX, yPos + velY);
        if(newPosition.getXPos() > 0 && newPosition.getXPos() < displayWidth && newPosition.getYPos() > 0 && newPosition.getYPos() < displayHeight){
          if(courseOnRoad(angleRad - i, thrust)){
-           this.xPos = newPosition.getXPos();
-           this.yPos = newPosition.getYPos();
-           break;
+           if(collisionTime(angleRad - i, thrust)){
+             if(objectsBetween(this,newPosition).isEmpty()){
+               this.xPos = newPosition.getXPos();
+               this.yPos = newPosition.getYPos();
+               carVectors.put((Car)this,new Velocity(velX,velY));
+               break;
+             }
+           }
+           
          }
          
        }
@@ -60,46 +66,19 @@ public class Position{
        newPosition = new Position(xPos + velX, yPos + velY);
        if(newPosition.getXPos() > 0 && newPosition.getXPos() < displayWidth && newPosition.getYPos() > 0 && newPosition.getYPos() < displayHeight){
          if(courseOnRoad(angleRad + i, thrust)){
-           this.xPos = newPosition.getXPos();
-           this.yPos = newPosition.getYPos();
-           break;           
+           if(collisionTime(angleRad + i, thrust)){
+             if(objectsBetween(this,newPosition).isEmpty()){
+               this.xPos = newPosition.getXPos();
+               this.yPos = newPosition.getYPos();
+               carVectors.put((Car)this,new Velocity(velX,velY));
+               break;
+             }
+             
+           }         
          }
 
        }
      }
-     /*
-     for(float i = (angleRad - (angleRad % (radian/8))); i < 50; i += radian/8){
-       velX = (float)(Math.cos(i) * thrust);
-       velY = (float)(Math.sin(i) * thrust);
-       newPosition = new Position(xPos + velX, yPos + velY);
-       if(newPosition.getXPos() > 0 && newPosition.getXPos() < displayWidth && newPosition.getYPos() > 0 && newPosition.getYPos() < displayHeight){
-         if(courseOnRoad(angleRad, thrust)){
-           this.xPos = newPosition.getXPos();
-           this.yPos = newPosition.getYPos();
-           return;
-           
-         }
-         
-       }
-       
-     }
-     
-     for(float i = 0; i < radian; i += radian/360){
-       velX = (float)(Math.cos(i) * thrust);
-       velY = (float)(Math.sin(i) * thrust);
-       newPosition = new Position(xPos + velX, yPos + velY);
-       if(newPosition.getXPos() > 0 && newPosition.getXPos() < displayWidth && newPosition.getYPos() > 0 && newPosition.getYPos() < displayHeight){
-         Car car = (Car)this;
-         System.out.println(car.getId() + " passed border test");
-         if(courseOnRoad(angleRad, thrust)){
-           System.out.println(car.getId() + "passed line test");
-           this.xPos = newPosition.getXPos();
-           this.yPos = newPosition.getYPos();
-           return;
-         }
-       }
-     }
-     */
    }
    
    public boolean courseOnRoad(float angleRad, float thrust){
@@ -154,5 +133,44 @@ public class Position{
     return false;
    }
    
+   public boolean collisionTime(float angleRad, float thrust){
+     for(Car car : carVectors.keySet()){
+       if(this.getDistanceTo(car) > 7){
+         continue;
+       }
+       float velX = (float)(Math.cos(angleRad) * thrust);
+       float velY = (float)(Math.sin(angleRad) * thrust);
+       float t = (float)Collision.collision_time(Constants.CAR_RADIUS,this, car, new Velocity(velX, velY), carVectors.get(car));
+       if(t >= 0 && t <= 1){
+         return false;
+       }
+     }
+     return true;
+     
+   }
+   
+   public ArrayList<Entity> objectsBetween(Position start, Position target) {
+        final ArrayList<Entity> entitiesFound = new ArrayList<Entity>();
+
+        addEntitiesBetween(entitiesFound, start, target, Cars);
+
+        return entitiesFound;
+    }
+    
+    private void addEntitiesBetween(final List<Entity> entitiesFound,
+                                           final Position start, final Position target,
+                                           final Collection<? extends Entity> entitiesToCheck) {
+
+        for (final Entity entity : entitiesToCheck) {
+          if (entity.equals(start) || entity.equals(target)) {
+                continue;
+            }
+            
+            
+            if (Collision.segmentCircleIntersect(start, target, entity, Constants.FORECAST_FUDGE_FACTOR)) {
+                entitiesFound.add(entity);
+            }
+        }
+    }
    
 }
