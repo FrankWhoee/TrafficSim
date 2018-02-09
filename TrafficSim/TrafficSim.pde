@@ -139,8 +139,8 @@ void render(){
   }
   
   for(Light light: Lights){
-    noStroke();
-    fill(0,255,0);
+   // noStroke();
+    //fill(0,255,0);
     rect(light.getXPos(),light.getYPos(), light.width, light.height);
   }
   

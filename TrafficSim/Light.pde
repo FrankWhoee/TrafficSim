@@ -28,13 +28,14 @@ public class Light extends Position{
     for(Road road: TrafficSim.Roads){
       if(road.getWidth() < road.getHeight()){
         viableXPos.add(road.getXPos());
-        viableXPos.add(road.getXPos() + road.getWidth());
+        viableXPos.add(road.getXPos() + road.getWidth() - width);
       }
     }
     
     for(Light light: TrafficSim.Lights){
-      if(viableXPos.contains(light.getXPos()) && light.getYPos() != this.road.getYPos()){
+      if(viableXPos.contains(light.getXPos()) && light.getYPos() == road.getYPos()){
         viableXPos.remove(light.getXPos());
+        System.out.println(light.getXPos() + " removed. For " + road.getYPos());
       }
     }
     if(viableXPos.size() > 0){
@@ -51,16 +52,18 @@ public class Light extends Position{
     for(Road road: TrafficSim.Roads){
       if(road.getWidth() > road.getHeight()){
         viableYPos.add(road.getYPos());
-        viableYPos.add(road.getYPos() + road.getHeight());
+        viableYPos.add(road.getYPos() + road.getHeight() - height);
       }
     }
     
     for(Light light: TrafficSim.Lights){
-      if(viableYPos.contains(light.getYPos()) && light.getXPos() != this.road.getXPos()){
+      if(viableYPos.contains(light.getYPos()) && light.getXPos() == road.getXPos()){
         viableYPos.remove(light.getYPos());
       }
     }
+    
     if(viableYPos.size() > 0){
+      System.out.println("No viable y positions");
       return viableYPos.get(0);
     }else{
       return -1;
