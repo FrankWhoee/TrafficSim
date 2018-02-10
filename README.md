@@ -1,5 +1,5 @@
 # TrafficSim
-The start of a Traffic Simulation built using Processing.
+A Traffic Simulator seeking to solve problems in modern traffic systems.
 
-
-Now with traffic lights that don't work! :smile:
+For my unfinished report, citations and logbook, click this link:
+https://drive.google.com/drive/folders/0B0fPKu6H-p1FYlBocGR6OXhYdk0?usp=sharing
