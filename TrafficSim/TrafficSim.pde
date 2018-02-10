@@ -34,26 +34,28 @@ void generateCars(int amount){
         for(int i = 0; i < Math.max(amount/Roads.size(), 1); i++){
           
           if(road.getWidth() > road.getHeight()){
+            float newYPos = (road.getYPos() + 16) + (float)((road.getHeight() - 32) * Math.random());
             if(nextCarId % 2 == 1){
-              Car newCar = createNewCar(road.getWidth() - (float)(Math.random() * randomSpawnLocOffsetLength), road.getYPos() + (float)((road.getHeight()) * Math.random()));
+              Car newCar = createNewCar(road.getWidth() - (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Right Side");
             }else{
-              Car newCar = createNewCar(road.getXPos() + (float)(Math.random() * randomSpawnLocOffsetLength), road.getYPos() + (float)((road.getHeight()) * Math.random()));
+              Car newCar = createNewCar(road.getXPos() + (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Left Side");
             }
             
           }else{
+            float newXPos = (road.getXPos() + 16) +  (float)((road.getWidth() - 32) * Math.random());
             if(nextCarId % 2 == 1){
-              Car newCar = createNewCar(road.getXPos() +  (float)((road.getWidth()) * Math.random()), road.getHeight() - (float)(Math.random() * randomSpawnLocOffsetLength));
+              Car newCar = createNewCar(newXPos, road.getHeight() - (float)(Math.random() * randomSpawnLocOffsetLength));
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Lower Side");
             }else{
-              Car newCar = createNewCar(road.getXPos() + (float)((road.getWidth() ) * Math.random()), road.getYPos() + (float)(Math.random() * randomSpawnLocOffsetLength));
+              Car newCar = createNewCar(newXPos, road.getYPos() + (float)(Math.random() * randomSpawnLocOffsetLength));
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Upper Side");              
@@ -221,7 +223,6 @@ public ArrayList<Light> getSortedLights(Car car){
         for(Light lights: Lights){
             if(lights.road.getCarList().contains(car)){
               sortedLights.add(lights);
-              System.out.println("light " + lights.id + " added.");
             }
             
         }
