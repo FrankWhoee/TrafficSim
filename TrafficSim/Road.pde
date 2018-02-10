@@ -1,8 +1,11 @@
+import java.util.ArrayList;
+
 public class Road extends Position {
  
     private final int id;
     private final float width;
     private final float height;
+
     public Road(final int id, final float xPos, final float yPos, float width, float height) {
         super(xPos, yPos);
         this.id = id; 
@@ -23,7 +26,21 @@ public class Road extends Position {
       return height;
     }
     
-    
+    public ArrayList<Car> getCarList(){
+      ArrayList<Car> carsOnRoad = new ArrayList<Car>();
+      for(Car car: TrafficSim.Cars){
+        if(width > height){
+           if(car.getYPos() > super.yPos && car.getYPos() < (super.yPos + height)){
+             carsOnRoad.add(car);
+           }
+        }else{
+          if(car.getXPos() > super.xPos && car.getXPos() < (super.xPos + width)){
+             carsOnRoad.add(car);
+           }
+        }
+      }
+      return carsOnRoad;
+    }
 
 
   

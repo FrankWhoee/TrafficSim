@@ -9,6 +9,7 @@ public static ArrayList<Light> Lights = new ArrayList<Light>();
 private static int nextCarId = 0;
 private static int nextRoadId = 0;
 private static int nextLightId = 0;
+private static int lightsInterval = 199;
 
 public int displayWidth = 1280;
 public int displayHeight = 720;
@@ -38,12 +39,12 @@ void generateCars(int amount){
               Car newCar = createNewCar(road.getWidth() - (float)(Math.random() * randomSpawnLocOffsetLength), road.getYPos() + 20 + (float)((road.getHeight() - 20) * Math.random()));
               Cars.add(newCar);
               nextCarId++;
-              System.out.println(newCar.getId() + " spawned. Type: Car Location: Right Side");
+              //System.out.println(newCar.getId() + " spawned. Type: Car Location: Right Side");
             }else{
               Car newCar = createNewCar(road.getXPos() + (float)(Math.random() * randomSpawnLocOffsetLength), road.getYPos() + 20 + (float)((road.getHeight() - 20) * Math.random()));
               Cars.add(newCar);
               nextCarId++;
-              System.out.println(newCar.getId() + " spawned. Type: Car Location: Left Side");
+              //System.out.println(newCar.getId() + " spawned. Type: Car Location: Left Side");
             }
             
           }else{
@@ -51,18 +52,44 @@ void generateCars(int amount){
               Car newCar = createNewCar(road.getXPos() + 16 + (float)((road.getWidth() - 16) * Math.random()), road.getHeight() - (float)(Math.random() * randomSpawnLocOffsetLength));
               Cars.add(newCar);
               nextCarId++;
-              System.out.println(newCar.getId() + " spawned. Type: Car Location: Lower Side");
+              //System.out.println(newCar.getId() + " spawned. Type: Car Location: Lower Side");
             }else{
               Car newCar = createNewCar(road.getXPos() + 16 + (float)((road.getWidth() - 16) * Math.random()), road.getYPos() + (float)(Math.random() * randomSpawnLocOffsetLength));
               Cars.add(newCar);
               nextCarId++;
-              System.out.println(newCar.getId() + " spawned. Type: Car Location: Upper Side");              
+              //System.out.println(newCar.getId() + " spawned. Type: Car Location: Upper Side");              
             }
             
           }
         }
       }
-      System.out.println("Cars generated.");
+      //System.out.println("Cars generated.");
+}
+
+void runCars(){
+  //TODO: Add sentience to cars.
+  
+  for(int i = 0; i < Cars.size(); i++){
+    Car car = Cars.get(i);
+    if(car.getXPos() > centerX - 10 && car.getXPos() < centerX + 10 && car.getYPos() > centerY - 10 && car.getYPos() < centerY + 10){
+      Cars.remove(i);
+    }
+  }
+  
+  for(Car car: Cars){
+    ArrayList<Light> sortedLights = getSortedLights(car);
+    float angleRad = car.orientTowardsInRad(new Position(centerX, centerY));
+    if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("yellow"))){
+      car.move(angleRad, 0.5);
+    }else if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("green"))){
+      car.move(angleRad, 1);
+    }else{
+      car.move(angleRad, 1);
+    }
+    
+    
+  }
+  
 }
 
 Car createNewCar(float x, float y){
@@ -73,10 +100,8 @@ Car createNewCar(float x, float y){
 
 
 void setup() {
+  
   size(displayWidth, displayHeight);
-   
-   System.out.println("roadH width:  " + roadH.getWidth());
-   System.out.println("roadH width:  " + roadV.getHeight());
    Roads.add(roadH);
    Roads.add(roadV);
    Roads.add(roadV2);
@@ -87,12 +112,13 @@ void setup() {
    for(Road road: Roads){
      for(int i = 0; i < 6; i++){
        nextLightId++;
-       Light newLight = new Light(nextLightId,road);
+       Light newLight = new Light(nextLightId,road, "red");
        Lights.add(newLight);
        
      }
      
    }
+   runLights();
    
   
 }
@@ -111,7 +137,7 @@ void draw() {
     
   }
   //renderLine();
-  
+  runLights();
   turn++;
 }
 
@@ -142,16 +168,18 @@ void render(){
   }
   
   for(Light light: Lights){
-    fill(0,255,0);
+    noFill();
+    stroke(light.R,light.G,light.B);
     rect(light.getXPos(),light.getYPos(), light.width, light.height);
     
     noStroke();
-    fill(255,0,0);
+    fill(light.R,light.G,light.B);
     
-    String id = ("id: " + light.id);
-    String coordinates = "x: " + (int)light.getXPos() + " y: " + (int)light.getYPos();
-    text(id, light.getXPos() + 30, light.getYPos() + 25);
-    text(coordinates, light.getXPos() + 15, light.getYPos() + 15);
+    //Debugging for Issue #3
+    //String id = ("id: " + light.id);
+    //String coordinates = "x: " + (int)light.getXPos() + " y: " + (int)light.getYPos();
+    //text(id, light.getXPos() + 30, light.getYPos() + 25);
+    //text(coordinates, light.getXPos() + 15, light.getYPos() + 15);
     
   }
   
@@ -187,23 +215,57 @@ public ArrayList<Car> getSortedCars(Car car){
       return sortedCars;  
 }
 
-void runCars(){
-  //TODO: Add sentience to cars.
-  
-  for(int i = 0; i < Cars.size(); i++){
-    Car car = Cars.get(i);
-    if(car.getXPos() > centerX - 10 && car.getXPos() < centerX + 10 && car.getYPos() > centerY - 10 && car.getYPos() < centerY + 10){
-      Cars.remove(i);
+public ArrayList<Light> getSortedLights(Car car){
+        ArrayList<Light> sortedLights = new ArrayList<Light>();
+        Light removed;
+        sortedLights = new ArrayList<Light>();
+        for(Light lights: Lights){
+            if(lights.road.getCarList().contains(car)){
+              sortedLights.add(lights);
+              System.out.println("light " + lights.id + " added.");
+            }
+            
+        }
+        int index;
+        for(int k = 0; k < sortedLights.size() - 1; k++){
+            index = k;
+            for(int i = k + 1; i < sortedLights.size(); i++){
+                if(sortedLights.get(index).getDistanceTo(car) > sortedLights.get(i).getDistanceTo(car)){
+                    index = i;
+                }
+            }
+            removed = sortedLights.get(k);
+            sortedLights.set(k, sortedLights.get(index));
+            sortedLights.set(index, removed);
+        }
+      return sortedLights;  
+}
+
+void runLights(){
+  for(Light light: Lights){
+    if(light.width > light.height){
+      if(turn % lightsInterval == 0){
+        light.setColour("green");
+      }else if(turn % lightsInterval == lightsInterval/2){
+        light.setColour("yellow");
+      }else if(turn % lightsInterval == (lightsInterval/2) + 23){
+        light.setColour("red");
+      }
+    }else{
+      if(turn % lightsInterval == (lightsInterval/2) + 23){
+        light.setColour("green");
+      }else if(turn % lightsInterval == lightsInterval/2){
+        light.setColour("yellow");
+      }else if(turn % lightsInterval == 0){
+        light.setColour("red");
+      }
     }
-  }
-  
-  for(Car car: Cars){
-    //ArrayList<Car> sortedCars = getSortedCars(Cars.get(i));
-    float angleRad = car.orientTowardsInRad(new Position(centerX, centerY));
-    car.move(angleRad, 1);
+    
   }
   
 }
+
+
 
 
 

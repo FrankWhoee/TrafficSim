@@ -100,7 +100,7 @@ public class Position{
        float newY = yPos + velY;
        //stroke(255,0,0);
        //line(xPos,yPos,newX,newY);
-       if(!isIntersectingRoad(newX, newY)){
+       if(!isIntersectingRoad(newX, newY) || isIntersectingLight(newX,newY)){
           return false;
        }
        
@@ -110,7 +110,6 @@ public class Position{
    
    public boolean isIntersectingRoad(float xPos, float yPos){
      for(Road road: TrafficSim.Roads){
-        //int chosenCar = 7;
         float carX = xPos;
         float carY = yPos;
       
@@ -136,6 +135,41 @@ public class Position{
            car.collidingWithRoads = true;
           }
          return true;
+       }
+    }
+    return false;
+   }
+   
+   public boolean isIntersectingLight(float xPos, float yPos){
+     for(Light light: TrafficSim.Lights){
+        float carX = xPos;
+        float carY = yPos;
+      
+        float lightX = light.getXPos();
+        float lightY = light.getYPos();
+        float lightWidth = light.width;
+        float lightHeight = light.height;
+        float offset = 32;
+       if(lightWidth > lightHeight){
+         lightHeight -= offset;
+         lightY += offset/2;
+       }else{
+         lightWidth -= offset;
+         lightX += offset/2;
+       }
+        float closestX = Math.max(lightX, Math.min(carX, lightX + lightWidth));
+        float closestY = Math.max(lightY, Math.min(carY, lightY + lightHeight));
+        float dx = carX - closestX;
+        float dy = carY - closestY;
+       if((((dx * dx) + (dy * dy)) < 64)){
+         if(light.colour.equals("red")){
+           if(this instanceof Car){
+             Car car = (Car)this;
+             car.collidingWithRoads = true;
+            }
+           return true;
+         }
+         
        }
     }
     return false;
