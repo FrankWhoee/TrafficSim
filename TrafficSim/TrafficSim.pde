@@ -149,8 +149,9 @@ void render(){
     fill(255,0,0);
     
     String id = ("id: " + light.id);
+    String coordinates = "x: " + (int)light.getXPos() + " y: " + (int)light.getYPos();
     text(id, light.getXPos() + 30, light.getYPos() + 25);
-    
+    text(coordinates, light.getXPos() + 15, light.getYPos() + 15);
     
   }
   

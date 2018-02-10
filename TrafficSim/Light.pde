@@ -36,7 +36,7 @@ public class Light extends Position{
     }
     
     for(Light light: TrafficSim.Lights){
-      if(viableXPos.contains(light.getXPos()) && light.getYPos() == road.getYPos()){
+      if(viableXPos.contains(light.getXPos()) && light.getYPos() == road.getYPos() && light.width < light.height){
         viableXPos.remove(light.getXPos());
         System.out.println("light " + this.id + ": " + light.getXPos() + " removed X viable position, light id " + light.id + " already there");
       }
@@ -62,7 +62,7 @@ public class Light extends Position{
     }
     
     for(Light light: TrafficSim.Lights){
-      if(viableYPos.contains(light.getYPos()) && light.getXPos() == road.getXPos()){
+      if(viableYPos.contains(light.getYPos()) && light.getXPos() == road.getXPos() && light.width > light.height){
         viableYPos.remove(light.getYPos());
       }
     }
