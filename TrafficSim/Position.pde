@@ -151,11 +151,11 @@ public class Position{
         float lightHeight = light.height;
         float offset = 32;
        if(lightWidth > lightHeight){
-         lightHeight -= offset;
-         lightY += offset/2;
+         //lightHeight -= offset;
+         //lightY += offset/2;
        }else{
-         lightWidth -= offset;
-         lightX += offset/2;
+         //lightWidth -= offset;
+         //lightX += offset/2;
        }
         float closestX = Math.max(lightX, Math.min(carX, lightX + lightWidth));
         float closestY = Math.max(lightY, Math.min(carY, lightY + lightHeight));
