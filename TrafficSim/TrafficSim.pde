@@ -18,6 +18,11 @@ public int turn = 0;
 public float randomSpawnLocOffsetLength = 100;
 public float randomSpawnLocOffsetWidth = 50;
 public float defaultRoadWidth = 100;
+
+char mode = 'v';
+Road road = new Road(0,0,0,defaultRoadWidth,displayHeight);
+boolean roadUIFinished = false;
+
 void generateCars(int amount){
       for(Road road: Roads){
         for(int i = 0; i < Math.max(amount/Roads.size(), 1); i++){
@@ -82,121 +87,105 @@ Car createNewCar(float x, float y){
     return newCar;
 }
 
-boolean isIntersectingHorzRoads(float y){
-  for(Road road: Roads){
-    if(y >= road.getYPos() && y <= road.getYPos() + road.height){
-      return true;
-    }
-    if((y + defaultRoadWidth) >= road.getYPos() && (y + defaultRoadWidth) <= road.getYPos() + road.height){
-      return true;
-    }
-    
-  }
-  return false;
-}
-
-boolean isIntersectingVertRoads(float x){
-  for(Road road: Roads){
-    if(x >= road.getXPos() && x <= road.getXPos() + road.width){
-      return true;
-    }
-    if((x + defaultRoadWidth) >= road.getXPos() && (x + defaultRoadWidth) <= road.getXPos() + road.width){
-      return true;
-    }
-    
-  }
-  return false;
-}
-
-void generateRoads(int amount){
-  System.out.println("generateRoads initiate.");
-  for(int i = 0; i < amount; i++){
-    float randomX = (float)Math.random() * displayWidth;
-    float randomY = (float)Math.random() * displayHeight;
-    System.out.println("Random numbers initialised.");
-    if(Math.random() > 0.5){
-      System.out.println("Horizontal road chosen.");
-        boolean flag = true;
-        while(flag == false){
-          flag = !isIntersectingHorzRoads(randomY);
-          randomY = (float)Math.random() * displayHeight;
-          System.out.println("Flag is " + flag);
-        }
-      
-      
-      Road newRoad = new Road(nextRoadId,0,randomY, displayWidth, defaultRoadWidth);
-      Roads.add(newRoad);
-    }else{
-      System.out.println("Vertical road chosen.");
-        boolean flag = true;
-        while(flag == false){
-          flag = !isIntersectingVertRoads(randomX);
-          randomX = (float)Math.random() * displayWidth;
-          System.out.println("Flag is " + flag);
-        }
-      
-      
-      Road newRoad = new Road(nextRoadId,randomX,0, defaultRoadWidth, displayHeight);
-      Roads.add(newRoad);
-    }
-    
-    System.out.println("Road " + nextRoadId + " created");
-    nextRoadId++;
-  }
-}
-
-void setup() {
+void roadUI(){
   
-  size(displayWidth, displayHeight);
-   generateRoads(12);
-   generateCars(25);
-   for(Road road: Roads){
+  if(keyPressed && (key == 'h' || key == 'v')){
+    mode = key;
+  }
+  if(mode == 'h'){
+    road.width = displayWidth;
+    road.height = defaultRoadWidth;
+    road.setPosition(new Position(0,road.getYPos()));
+  }else if(mode == 'v'){
+    road.width = defaultRoadWidth;
+    road.height = displayWidth;
+    road.setPosition(new Position(road.getXPos(),0));
+  }
+  
+  if(keyPressed && keyCode == RIGHT && mode == 'v'){
+    road.setPosition(new Position(road.getXPos() + 5, road.getYPos()));
+  }else if(keyPressed && keyCode == LEFT && mode == 'v'){
+    road.setPosition(new Position(road.getXPos() - 5, road.getYPos()));
+  }else if(keyPressed && keyCode == UP && mode == 'h'){
+    road.setPosition(new Position(road.getXPos(), road.getYPos() - 5));
+  }else if(keyPressed && keyCode == DOWN && mode == 'h'){
+    road.setPosition(new Position(road.getXPos(), road.getYPos() + 5));
+  }
+  
+  if(keyPressed && key == ' '){
+    Road newRoad = new Road(nextRoadId, road.getXPos(), road.getYPos(), road.width, road.height);
+    Roads.add(newRoad);
+    nextRoadId++;
+    road.id = nextRoadId;
+    System.out.println("road added");
+    keyPressed = false;
+  }
+  
+  if(keyPressed && (key == ENTER || key == RETURN)){
+    System.out.println("Enter or Return pressed");
+    roadUIFinished = true;
+    generateCars(25);
+    for(Road road: Roads){
      int intersections = 0;
      if(road.width > road.height){
        for(Road roads: Roads){
          if(roads.height > roads.width){
            intersections++;
-           System.out.println("Intersection detected. Total intersections: " + intersections);
+           System.out.println("Horz-Vert Intersection detected. Total intersections: " + intersections);
          }
        }
      }else{
        for(Road roads: Roads){
-         if(roads.height < roads.width){
+         if(roads.width > roads.height){
            intersections++;
-           System.out.println("Intersection detected. Total intersections: " + intersections);
+           System.out.println("Vert-Horz Intersection detected. Total intersections: " + intersections);
          }
        }
      }
-     
-     for(int i = 0; i < intersections; i++){
+     for(int i = 0; i < intersections * 2; i++){
        nextLightId++;
        Light newLight = new Light(nextLightId,road, "red");
        Lights.add(newLight);
        
      }
-     
    }
-   runLights();
-   
+  }
+  
   
 }
 
+void setup() {
+  size(displayWidth, displayHeight);
+}
+
 void draw() {
-  
-  background(0);
-  carVectors.clear();
-  render();
-  if(!keyPressed && key != 'l'){
-    runCars();
-    
-  }else if(key == 'p'){
-      
-  }else if(key == 'l'){
-    
+  if(roadUIFinished == false){
+    background(0);
+    roadUI();
+    roadUIRender();
+  }else{
+     background(0);
+    carVectors.clear();
+    render();
+    if(!keyPressed && key != 'l'){
+      runCars();
+    }
+    //renderLine();
+    runLights();
+    turn++;
   }
-  //renderLine();
-  runLights();
-  turn++;
+ 
+}
+
+void roadUIRender(){
+  fill(75);
+  noStroke();
+  rect(road.getXPos(),road.getYPos(), road.getWidth(), road.getHeight());
+  
+  for(Road roads: Roads){
+    rect(roads.getXPos(),roads.getYPos(), roads.getWidth(), roads.getHeight());
+    //System.out.println("road " + roads.getId() + " drawn at x: " + roads.getXPos() + " y: " + roads.getYPos());
+  }
 }
 
 void render(){
