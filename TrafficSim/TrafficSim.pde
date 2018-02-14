@@ -124,7 +124,7 @@ void roadUI(){
   if(keyPressed && (key == ENTER || key == RETURN)){
     System.out.println("Enter or Return pressed");
     roadUIFinished = true;
-    generateCars(25);
+    generateCars(100);
     for(Road road: Roads){
      int intersections = 0;
      if(road.width > road.height){
@@ -155,6 +155,8 @@ void roadUI(){
 }
 
 void setup() {
+  int displayWidth = this.displayWidth + 100;
+  int displayHeight = this.displayHeight + 100;
   size(displayWidth, displayHeight);
 }
 
@@ -206,6 +208,7 @@ void render(){
     }
     noFill();
     ellipse(car.getXPos(), car.getYPos(), Constants.CAR_RADIUS, Constants.CAR_RADIUS);
+    fill(0,255,0);
     ellipse(car.objective.getXPos(), car.objective.getYPos(), 10, 10);
     //textSize(10);
     fill(0,255,0);
