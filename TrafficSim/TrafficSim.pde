@@ -10,14 +10,16 @@ private static int nextRoadId = 0;
 private static int nextLightId = 0;
 private static int lightsInterval = 199;
 
-public int displayWidth = 1280;
-public int displayHeight = 720;
+public int displayWidth = 1300;
+public int displayHeight = 700;
 public int centerX = displayWidth/2;
 public int centerY = displayHeight/2;
 public int turn = 0;
 public float randomSpawnLocOffsetLength = 100;
 public float randomSpawnLocOffsetWidth = 50;
-public float defaultRoadWidth = 100;
+public int defaultRoadWidth = 100;
+
+public int[][] grid = new int[displayWidth/defaultRoadWidth][displayHeight/defaultRoadWidth];
 
 char mode = 'v';
 Road road = new Road(0,0,0,defaultRoadWidth,displayHeight);
@@ -103,13 +105,26 @@ void roadUI(){
   }
   
   if(keyPressed && keyCode == RIGHT && mode == 'v'){
-    road.setPosition(new Position(road.getXPos() + 5, road.getYPos()));
+    if(road.getXPos() + defaultRoadWidth < displayWidth){
+      road.setPosition(new Position(road.getXPos() + defaultRoadWidth, road.getYPos()));
+      keyPressed = false;
+    }
+    
   }else if(keyPressed && keyCode == LEFT && mode == 'v'){
-    road.setPosition(new Position(road.getXPos() - 5, road.getYPos()));
+    if(road.getXPos() - defaultRoadWidth > -1){
+      road.setPosition(new Position(road.getXPos() - defaultRoadWidth, road.getYPos()));
+      keyPressed = false;
+    }
   }else if(keyPressed && keyCode == UP && mode == 'h'){
-    road.setPosition(new Position(road.getXPos(), road.getYPos() - 5));
+    if(road.getYPos() - defaultRoadWidth > -1){
+      road.setPosition(new Position(road.getXPos(), road.getYPos() - defaultRoadWidth));
+      keyPressed = false;
+    }
   }else if(keyPressed && keyCode == DOWN && mode == 'h'){
-    road.setPosition(new Position(road.getXPos(), road.getYPos() + 5));
+    if(road.getYPos() + defaultRoadWidth < displayHeight){
+      road.setPosition(new Position(road.getXPos(), road.getYPos() + defaultRoadWidth));
+      keyPressed = false;
+    }
   }
   
   if(keyPressed && key == ' '){
@@ -117,28 +132,34 @@ void roadUI(){
     Roads.add(newRoad);
     nextRoadId++;
     road.id = nextRoadId;
-    System.out.println("road added");
+    if(newRoad.width > newRoad.height){
+      fillRow((int)(road.getYPos()/defaultRoadWidth));
+    }else{
+      fillCol((int)(road.getXPos()/defaultRoadWidth));
+    }
+    System.out.println("road added (total roads: " + nextRoadId + ")");
+    printGrid();
     keyPressed = false;
   }
   
   if(keyPressed && (key == ENTER || key == RETURN)){
     System.out.println("Enter or Return pressed");
     roadUIFinished = true;
-    generateCars(100);
+    generateCars(50);
     for(Road road: Roads){
      int intersections = 0;
      if(road.width > road.height){
        for(Road roads: Roads){
          if(roads.height > roads.width){
            intersections++;
-           System.out.println("Horz-Vert Intersection detected. Total intersections: " + intersections);
+           //System.out.println("Horz-Vert Intersection detected. Total intersections: " + intersections);
          }
        }
      }else{
        for(Road roads: Roads){
          if(roads.width > roads.height){
            intersections++;
-           System.out.println("Vert-Horz Intersection detected. Total intersections: " + intersections);
+           //System.out.println("Vert-Horz Intersection detected. Total intersections: " + intersections);
          }
        }
      }
@@ -155,10 +176,44 @@ void roadUI(){
 }
 
 void setup() {
-  int displayWidth = this.displayWidth + 100;
-  int displayHeight = this.displayHeight + 100;
   size(displayWidth, displayHeight);
+  clearGrid();
 }
+
+void clearGrid(){
+  for(int row = 0; row < grid[0].length; row++){
+    for(int column = 0; column < grid.length; column++){
+      grid[column][row] = 0;
+    }
+  }
+  System.out.println("Grid cleared.");
+}
+
+void printGrid(){
+  for(int row = 0; row < grid[0].length; row++){
+    String output = "";
+    for(int column = 0; column < grid.length; column++){
+      output = output + grid[column][row] + " ";
+    }
+    System.out.println(output);
+  }
+}
+
+void fillRow(int rowNum){
+    for(int column = 0; column < grid.length; column++){
+      grid[column][rowNum] = 1;
+    }
+  
+}
+
+void fillCol(int colNum){
+    for(int row = 0; row < grid[colNum].length; row++){
+      grid[colNum][row] = 1;
+    }
+  
+}
+
+
 
 void draw() {
   if(roadUIFinished == false){
@@ -185,6 +240,7 @@ void roadUIRender(){
   rect(road.getXPos(),road.getYPos(), road.getWidth(), road.getHeight());
   
   for(Road roads: Roads){
+    fill(100);
     rect(roads.getXPos(),roads.getYPos(), roads.getWidth(), roads.getHeight());
     //System.out.println("road " + roads.getId() + " drawn at x: " + roads.getXPos() + " y: " + roads.getYPos());
   }
@@ -208,7 +264,8 @@ void render(){
     }
     noFill();
     ellipse(car.getXPos(), car.getYPos(), Constants.CAR_RADIUS, Constants.CAR_RADIUS);
-    fill(0,255,0);
+    noStroke();
+    fill(255,0,0);
     ellipse(car.objective.getXPos(), car.objective.getYPos(), 10, 10);
     //textSize(10);
     fill(0,255,0);
@@ -346,7 +403,7 @@ void renderLine(){
       stroke(255,0,0);
     }else{
       stroke(0,255,0);
-    } 
+    }
     line(Cars.get(chosenCar).getXPos(),Cars.get(chosenCar).getYPos(),closestX, closestY);
     }
   }

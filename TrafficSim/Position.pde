@@ -93,7 +93,7 @@ public class Position{
      float velx;
      float vely;
      float t;
-     for(t = 0; t < thrust + 5; t += 0.1){
+     for(t = 0; t < thrust; t += 0.1){
        float velX = (float)(Math.cos(angleRad) * t);
        float velY = (float)(Math.sin(angleRad) * t);
        float newX = xPos + velX;
