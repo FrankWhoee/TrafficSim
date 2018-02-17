@@ -85,6 +85,11 @@ Car createNewCar(float x, float y){
     float randomX = (float)Math.random() * displayWidth;
     float randomY = (float)Math.random() * displayHeight;
     Position objective = new Position(randomX, randomY);
+    while(objective.isIntersectingRoad(randomX,randomY)){
+      randomX = (float)Math.random() * displayWidth;
+      randomY = (float)Math.random() * displayHeight;
+    }
+    objective = new Position(randomX,randomY);
     Car newCar = new Car(nextCarId,x,y, Constants.MAX_HEALTH, objective);
     return newCar;
 }
@@ -213,7 +218,38 @@ void fillCol(int colNum){
   
 }
 
-
+Position breadthFirstSearch(Car car){
+  //MAP KEY:
+  //-1 = objective position
+  //0 = inaccesible area
+  //2 = car
+  //1 = accessible area
+  //3 = frontier
+  //4 = visited
+  From[][] map = new From[grid.length][grid[0].length];
+  int[][] temp = new int[grid.length][grid[0].length];
+  
+  //import grid -> temp
+  //for(int row = 0; row < grid[0].length; row++){
+    //for(int column = 0; column < grid.length; column++){
+      //temp[column][row] = grid[column][row];
+    //}
+  //}
+  
+  //plot objective on temp
+  int objCol = ((int)car.objective.getXPos() - ((int)car.objective.getXPos() % 100))/100;
+  int objRow = ((int)car.objective.getYPos() - ((int)car.objective.getYPos() % 100))/100;
+  temp[objCol][objRow] = -1;
+  
+  //Calculate
+  for(int row = 0; row < grid[0].length; row++){
+    for(int column = 0; column < grid.length; column++){
+      
+    }
+  }
+  
+  return null;
+}
 
 void draw() {
   if(roadUIFinished == false){
