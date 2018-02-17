@@ -223,28 +223,48 @@ Position breadthFirstSearch(Car car){
   //-1 = objective position
   //0 = inaccesible area
   //2 = car
-  //1 = accessible area
+  //1 = unvisited area
   //3 = frontier
   //4 = visited
   From[][] map = new From[grid.length][grid[0].length];
   int[][] temp = new int[grid.length][grid[0].length];
+  Map<Integer, Integer> frontier = new HashMap<Integer,Integer>();
   
   //import grid -> temp
-  //for(int row = 0; row < grid[0].length; row++){
-    //for(int column = 0; column < grid.length; column++){
-      //temp[column][row] = grid[column][row];
-    //}
-  //}
+  for(int row = 0; row < grid[0].length; row++){
+    for(int column = 0; column < grid.length; column++){
+      temp[column][row] = grid[column][row];
+    }
+  }
   
   //plot objective on temp
   int objCol = ((int)car.objective.getXPos() - ((int)car.objective.getXPos() % 100))/100;
   int objRow = ((int)car.objective.getYPos() - ((int)car.objective.getYPos() % 100))/100;
   temp[objCol][objRow] = -1;
   
+   //plot objective on temp
+  int carCol = ((int)car.getXPos() - ((int)car.getXPos() % 100))/100;
+  int carRow = ((int)car.getYPos() - ((int)car.getYPos() % 100))/100;
+  temp[carCol][carRow] = 2;
+  
   //Calculate
-  for(int row = 0; row < grid[0].length; row++){
-    for(int column = 0; column < grid.length; column++){
-      
+  int col = 0;
+  int row = 0;
+  while(col != objCol && row != objRow){
+      if(temp[col][row] == 3){
+        if(temp[col][row + 1] == 1){
+        temp[col][row + 1] = 3;
+      }
+      if(temp[col][row - 1] == 1){
+        temp[col][row - 1] = 3;
+      }
+      if(temp[col + 1][row] == 1){
+        temp[col + 1][row] = 3;
+      }
+      if(temp[col - 1][row] == 1){
+        temp[col - 1][row] = 3;
+      }
+      temp[col][row] = 4;
     }
   }
   
