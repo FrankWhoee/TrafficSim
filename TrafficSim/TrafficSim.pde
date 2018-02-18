@@ -15,7 +15,7 @@ public int displayHeight = 700;
 public int centerX = displayWidth/2;
 public int centerY = displayHeight/2;
 public int turn = 0;
-public float randomSpawnLocOffsetLength = 100;
+public float randomSpawnLocOffsetLength = 50;
 public float randomSpawnLocOffsetWidth = 50;
 public int defaultRoadWidth = 100;
 
@@ -31,8 +31,10 @@ void generateCars(int amount){
 
           if(road.getWidth() > road.getHeight()){
             float newYPos = (road.getYPos() + 16) + (float)((road.getHeight() - 32) * Math.random());
+            System.out.println("newYPos: " + newYPos);
             if(nextCarId % 2 == 1){
               Car newCar = createNewCar(road.getWidth() - (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
+              
               newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
@@ -41,6 +43,7 @@ void generateCars(int amount){
               
             }else{
               Car newCar = createNewCar(road.getXPos() + (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
+              
               newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
@@ -49,14 +52,17 @@ void generateCars(int amount){
             
           }else{
             float newXPos = (road.getXPos() + 16) +  (float)((road.getWidth() - 32) * Math.random());
+            System.out.println("newXPos: " + newXPos);
             if(nextCarId % 2 == 1){
-              Car newCar = createNewCar(newXPos, road.getHeight() - (float)(Math.random() * randomSpawnLocOffsetLength));
+              Car newCar = createNewCar(newXPos, road.getHeight() - Constants.CAR_RADIUS - (float)(Math.random() * randomSpawnLocOffsetLength));
+              System.out.println("road height: " + road.getHeight());
               newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Lower Side");
             }else{
-              Car newCar = createNewCar(newXPos, road.getYPos() + (float)(Math.random() * randomSpawnLocOffsetLength));
+              Car newCar = createNewCar(newXPos, road.getYPos() + Constants.CAR_RADIUS + (float)(Math.random() * randomSpawnLocOffsetLength));
+               System.out.println("road Y: " + road.getYPos());
               newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
@@ -132,7 +138,7 @@ void roadUI(){
     road.setPosition(new Position(0,road.getYPos()));
   }else if(mode == 'v'){
     road.width = defaultRoadWidth;
-    road.height = displayWidth;
+    road.height = displayHeight;
     road.setPosition(new Position(road.getXPos(),0));
   }
   
@@ -279,7 +285,13 @@ ArrayList<Position> breadthFirstSearch(Car car){
    //plot car on temp and map
   int carCol = ((int)car.getXPos() - ((int)car.getXPos() % 100))/100;
   int carRow = ((int)car.getYPos() - ((int)car.getYPos() % 100))/100;
+  System.out.println("col: " + carCol + " carRow: " + carRow);
+  System.out.println("temp row length: " + temp[0].length);
+  System.out.println("temp col length: " + temp.length);
+  System.out.println("car x: " + car.getXPos() + " car y: " + car.getYPos());
+  System.out.println("car id: " + car.getId());
   temp[carCol][carRow] = 2;
+  
   Position carPos = new Position(carCol, carRow);
   map[carCol][carRow] = new From(carPos,carPos);
   System.out.println("car plotted on temp");
