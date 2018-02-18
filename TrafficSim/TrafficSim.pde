@@ -33,11 +33,15 @@ void generateCars(int amount){
             float newYPos = (road.getYPos() + 16) + (float)((road.getHeight() - 32) * Math.random());
             if(nextCarId % 2 == 1){
               Car newCar = createNewCar(road.getWidth() - (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
+              newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Right Side");
+              
+              
             }else{
               Car newCar = createNewCar(road.getXPos() + (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
+              newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Left Side");
@@ -47,11 +51,13 @@ void generateCars(int amount){
             float newXPos = (road.getXPos() + 16) +  (float)((road.getWidth() - 32) * Math.random());
             if(nextCarId % 2 == 1){
               Car newCar = createNewCar(newXPos, road.getHeight() - (float)(Math.random() * randomSpawnLocOffsetLength));
+              newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Lower Side");
             }else{
               Car newCar = createNewCar(newXPos, road.getYPos() + (float)(Math.random() * randomSpawnLocOffsetLength));
+              newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Upper Side");              
@@ -61,26 +67,6 @@ void generateCars(int amount){
         }
       }
       //System.out.println("Cars generated.");
-}
-
-void runCars(){
-  //TODO: Add sentience to cars.
-  for(Car car: Cars){
-    ArrayList<Light> sortedLights = getSortedLights(car);
-    ArrayList<Position> checkpoints = breadthFirstSearch(car);
-    Position nextObj = checkpoints.get(checkpoints.size() - 1); //ERROR ON THIS LINE index out of bounds index 4, size 4
-    float angleRad = car.orientTowardsInRad(nextObj);
-    if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("yellow"))){
-      car.move(angleRad, 1);
-    }else if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("green"))){
-      car.move(angleRad, 2);
-    }else{
-      car.move(angleRad, 2);
-    }
-    
-    
-  }
-  
 }
 
 Car createNewCar(float x, float y){
@@ -95,6 +81,45 @@ Car createNewCar(float x, float y){
     Car newCar = new Car(nextCarId,x,y, Constants.MAX_HEALTH, objective);
     return newCar;
 }
+
+void runCars(){
+  //TODO: Add sentience to cars.
+  for(Car car: Cars){
+    
+    
+    
+    ArrayList<Light> sortedLights = getSortedLights(car);
+    Position nextObj = car.path.get(car.path.size() - 1);
+    
+    if(car.getDistanceTo(car.objective) < defaultRoadWidth/2){
+      nextObj = car.objective;
+    }
+    
+    if(car.getDistanceTo(nextObj) < 1){
+      if(car.path.size() > 1){
+        car.path.remove(car.path.size() - 1);
+      }
+      nextObj = car.path.get(car.path.size() - 1);
+      
+    }
+    
+    
+    
+    float angleRad = car.orientTowardsInRad(nextObj);
+    if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("yellow"))){
+      car.move(angleRad, 1);
+    }else if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("green"))){
+      car.move(angleRad, 2);
+    }else{
+      car.move(angleRad, 2);
+    }
+    
+    
+  }
+  
+}
+
+
 
 void roadUI(){
   
@@ -349,7 +374,10 @@ ArrayList<Position> breadthFirstSearch(Car car){
   From start = map[carCol][carRow];
   
   while(!same(current,start)){
-    Position convertedPosition = new Position(current.is.getXPos() * defaultRoadWidth, current.is.getYPos() * defaultRoadWidth);
+    float convertedX = ((float)current.is.getXPos() * (float)defaultRoadWidth) + (float)defaultRoadWidth/2;
+    float convertedY = ((float)current.is.getYPos() * (float)defaultRoadWidth) + (float)defaultRoadWidth/2;
+    
+    Position convertedPosition = new Position(convertedX, convertedY);
     path.add(convertedPosition);
     current = map[(int)current.from.getXPos()][(int)current.from.getYPos()];
   }
