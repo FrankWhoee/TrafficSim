@@ -56,11 +56,12 @@ public class Position{
        newPosition = new Position(xPos + velX, yPos + velY);
        if(newPosition.getXPos() > 0 && newPosition.getXPos() < displayWidth && newPosition.getYPos() > 0 && newPosition.getYPos() < displayHeight){
          if(courseOnRoad(angleRad - i, thrust)){
-           if(collisionTime(angleRad - i, thrust)){
+           if(collisionTime((angleRad - i), thrust)){
              if(objectsBetween(this,newPosition).isEmpty()){
                this.xPos = newPosition.getXPos();
                this.yPos = newPosition.getYPos();
-               carVectors.put((Car)this,new Velocity(velX,velY));
+               Velocity actualVel = new Velocity(velX,velY);
+               carVectors.put((Car)this,actualVel);
                break;
              }
            }
@@ -73,12 +74,13 @@ public class Position{
        velY = (float)(Math.sin(angleRad + i) * thrust);
        newPosition = new Position(xPos + velX, yPos + velY);
        if(newPosition.getXPos() > 0 && newPosition.getXPos() < displayWidth && newPosition.getYPos() > 0 && newPosition.getYPos() < displayHeight){
-         if(courseOnRoad(angleRad + i, thrust)){
-           if(collisionTime(angleRad + i, thrust)){
+         if(courseOnRoad((angleRad + i), thrust)){
+           if(collisionTime((angleRad + i), thrust)){
              if(objectsBetween(this,newPosition).isEmpty()){
                this.xPos = newPosition.getXPos();
                this.yPos = newPosition.getYPos();
-               carVectors.put((Car)this,new Velocity(velX,velY));
+               Velocity actualVel = new Velocity(velX,velY);
+               carVectors.put((Car)this,actualVel);
                break;
              }
              
@@ -179,18 +181,18 @@ public class Position{
      
      for(Car car : carVectors.keySet()){
        
-       /*
-       if(this.getDistanceTo(car) > 7){
+       
+       if(this.getDistanceTo(car) > 20){
          continue;
-       }*/
+       }
        float velX = (float)(Math.cos(angleRad) * thrust);
        float velY = (float)(Math.sin(angleRad) * thrust);
        Velocity thisCarVel = new Velocity(velX,velY);
-       float t = (float)Collision.collision_time(Constants.CAR_RADIUS/2,this, car, thisCarVel, carVectors.get(car));
-       if(t > 0 && t <= 1){
+       float t = (float)Collision.collision_time(Constants.CAR_RADIUS,this, car, thisCarVel, carVectors.get(car));
+       if(t >= 0 && t <= 1){
          //TrafficSim.pause = true;
          //Car thisCar = (Car)this;
-         //System.out.println("collision detected. t = " + t);
+         //System.out.println("collision detected. t = " + t + " between cars " + thisCar.getId() + " and " + car.getId());
          return false;
        }
      }
