@@ -10,14 +10,14 @@ public static boolean pause = false;
 private static int nextCarId = 0;
 private static int nextRoadId = 0;
 private static int nextLightId = 0;
-private static int lightsInterval = 199;
+private static int lightsInterval = 300;
 
 public int displayWidth = 1300;
 public int displayHeight = 700;
 public int centerX = displayWidth/2;
 public int centerY = displayHeight/2;
 public int turn = 0;
-public int amountOfCars = 25;
+public int amountOfCars = 50;
 public float randomSpawnLocOffsetLength = 50;
 public float randomSpawnLocOffsetWidth = 50;
 public int defaultRoadWidth = 100;
@@ -99,7 +99,7 @@ void runCars(){
     ArrayList<Light> sortedLights = getSortedLights(car);
     Position nextObj = car.path.get(car.path.size() - 1);
     
-    if(car.getDistanceTo(car.objective) < 10){
+    if(car.getDistanceTo(car.objective) < 25){
       Cars.remove(i);
     }
     
@@ -559,20 +559,20 @@ public ArrayList<Light> getSortedLights(Car car){
 void runLights(){
   for(Light light: Lights){
     if(light.width > light.height){
-      if(turn % lightsInterval == 0){
+      if(turn % lightsInterval == 15){
         light.setColour("green");
       }else if(turn % lightsInterval == lightsInterval/2){
         light.setColour("yellow");
-      }else if(turn % lightsInterval == (lightsInterval/2) + 23){
+      }else if(turn % lightsInterval == (lightsInterval/2) + 30){
         light.setColour("red");
       }
     }else{
-      if(turn % lightsInterval == (lightsInterval/2) + 23){
-        light.setColour("green");
-      }else if(turn % lightsInterval == lightsInterval/2){
-        light.setColour("yellow");
-      }else if(turn % lightsInterval == 0){
+      if(turn % lightsInterval == 15){
         light.setColour("red");
+      }else if(turn % lightsInterval == lightsInterval/2){
+        light.setColour("green");
+      }else if(turn % lightsInterval == (lightsInterval/2) + 30){
+        light.setColour("yellow");
       }
     }
     
