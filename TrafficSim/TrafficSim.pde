@@ -5,6 +5,8 @@ public static ArrayList<Car> Cars = new ArrayList<Car>();
 public static ArrayList<Road> Roads = new ArrayList<Road>();
 public static ArrayList<Light> Lights = new ArrayList<Light>();
 
+public static boolean pause = false;
+
 private static int nextCarId = 0;
 private static int nextRoadId = 0;
 private static int nextLightId = 0;
@@ -15,9 +17,11 @@ public int displayHeight = 700;
 public int centerX = displayWidth/2;
 public int centerY = displayHeight/2;
 public int turn = 0;
+public int amountOfCars = 25;
 public float randomSpawnLocOffsetLength = 50;
 public float randomSpawnLocOffsetWidth = 50;
 public int defaultRoadWidth = 100;
+
 
 public int[][] grid = new int[displayWidth/defaultRoadWidth][displayHeight/defaultRoadWidth];
 
@@ -90,14 +94,16 @@ Car createNewCar(float x, float y){
 
 void runCars(){
   //TODO: Add sentience to cars.
-  for(Car car: Cars){
-    
-    
-    
+  for(int i = (Cars.size() - 1); i > 0; i--){
+    Car car = Cars.get(i);
     ArrayList<Light> sortedLights = getSortedLights(car);
     Position nextObj = car.path.get(car.path.size() - 1);
     
-    if(car.getDistanceTo(car.objective) < defaultRoadWidth/2){
+    if(car.getDistanceTo(car.objective) < 10){
+      Cars.remove(i);
+    }
+    
+    if(car.getDistanceTo(car.objective) < defaultRoadWidth){
       nextObj = car.objective;
     }
     
@@ -113,11 +119,11 @@ void runCars(){
     
     float angleRad = car.orientTowardsInRad(nextObj);
     if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("yellow"))){
-      car.move(angleRad, 1);
+      car.move(angleRad, 0.5);
     }else if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("green"))){
-      car.move(angleRad, 2);
+      car.move(angleRad, 1);
     }else{
-      car.move(angleRad, 2);
+      car.move(angleRad, 1);
     }
     
     
@@ -183,7 +189,7 @@ void roadUI(){
   if(keyPressed && (key == ENTER || key == RETURN)){
     System.out.println("Enter or Return pressed");
     roadUIFinished = true;
-    generateCars(1);
+    generateCars(amountOfCars);
     for(Road road: Roads){
      int intersections = 0;
      if(road.width > road.height){
@@ -273,7 +279,7 @@ ArrayList<Position> breadthFirstSearch(Car car){
   }
   System.out.println("grid has been imported to temp");
   System.out.println("temp:");
-  printGrid(temp);
+  //printGrid(temp);
   
   //plot objective on temp
   int objCol = ((int)car.objective.getXPos() - ((int)car.objective.getXPos() % 100))/100;
@@ -296,7 +302,7 @@ ArrayList<Position> breadthFirstSearch(Car car){
   map[carCol][carRow] = new From(carPos,carPos);
   System.out.println("car plotted on temp");
   System.out.println("temp:");
-  printGrid(temp);
+  //printGrid(temp);
   
   //add car to frontier
   frontier.add(new Position(carCol,carRow));
@@ -307,8 +313,6 @@ ArrayList<Position> breadthFirstSearch(Car car){
   System.out.println("Breadth First Search: Variables ready for car " + car.getId() + ". Proceeding with calculations.");
   //Calculate
   while(!flagEarlyExit){
-    printGrid(temp);
-    System.out.println("");
     for(int index = frontier.size() - 1; index >= 0; index--){
       
       
@@ -414,10 +418,10 @@ void draw() {
     roadUI();
     roadUIRender();
   }else{
-     background(0);
+    background(0);
     carVectors.clear();
     render();
-    if(!keyPressed && key != 'l'){
+    if((!keyPressed && key != 'l') && !pause){
       runCars();
     }
     //renderLine();

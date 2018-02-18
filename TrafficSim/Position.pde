@@ -176,14 +176,20 @@ public class Position{
    }
    
    public boolean collisionTime(float angleRad, float thrust){
+     
      for(Car car : carVectors.keySet()){
+       
+       /*
        if(this.getDistanceTo(car) > 7){
          continue;
-       }
+       }*/
        float velX = (float)(Math.cos(angleRad) * thrust);
        float velY = (float)(Math.sin(angleRad) * thrust);
-       float t = (float)Collision.collision_time(Constants.CAR_RADIUS/2,this, car, new Velocity(velX, velY), carVectors.get(car));
-       if(t >= 0 && t <= 1){
+       float t = (float)Collision.collision_time(Constants.CAR_RADIUS,this, car, new Velocity(velX, velY), carVectors.get(car));
+       if(t > 0 && t <= 1){
+         //TrafficSim.pause = true;
+         //Car thisCar = (Car)this;
+         //System.out.println("collision detected. t = " + t);
          return false;
        }
      }
@@ -207,8 +213,6 @@ public class Position{
           if (entity.equals(start) || entity.equals(target)) {
                 continue;
             }
-            
-            
             if (Collision.segmentCircleIntersect(start, target, entity, Constants.FORECAST_FUDGE_FACTOR)) {
                 entitiesFound.add(entity);
             }

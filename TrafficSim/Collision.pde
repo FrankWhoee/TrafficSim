@@ -47,6 +47,7 @@ public static class Collision{
     }
   
   public static double collision_time(double r, final Position loc1, final Position loc2, final Velocity vel1, final Velocity vel2){
+    
         // With credit to Ben Spector
         // Simplified derivation:
         // 1. Set up the distance between the two entities in terms of time,
