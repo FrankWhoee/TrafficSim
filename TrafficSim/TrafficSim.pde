@@ -267,7 +267,8 @@ ArrayList<Position> breadthFirstSearch(Car car){
   //4 = visited
   From[][] map = new From[grid.length][grid[0].length];
   int[][] temp = new int[grid.length][grid[0].length];
-  System.out.println("Matrices \"map\" and \"temp\" initialised.");
+  ArrayList<Position> path = new ArrayList<Position>();
+  System.out.println("Matrices \"map\", \"path\", and \"temp\" initialised.");
   //xPos = Column, yPos = Row
   ArrayList<Position> frontier = new ArrayList<Position>();
   System.out.println("ArrayList \"frontier\" initialised.");
@@ -285,7 +286,9 @@ ArrayList<Position> breadthFirstSearch(Car car){
   int objRow = ((int)car.objective.getYPos() - ((int)car.objective.getYPos() % 100))/100;
   temp[objCol][objRow] = -1;
   System.out.println("objective plotted on temp");
-  
+  System.out.println("objCol: " + objCol + " objRow: " + objRow);
+  System.out.println("obj x: " + car.objective.getXPos() + " obj y: " + car.objective.getYPos());
+ 
   
    //plot car on temp and map
   int carCol = ((int)car.getXPos() - ((int)car.getXPos() % 100))/100;
@@ -297,11 +300,18 @@ ArrayList<Position> breadthFirstSearch(Car car){
   System.out.println("car id: " + car.getId());
   temp[carCol][carRow] = 2;
   
+  if(objCol == carCol && objRow == carRow){
+    float convertedX = ((float)carCol * (float)defaultRoadWidth) + (float)defaultRoadWidth/2;
+    float convertedY = ((float)carRow * (float)defaultRoadWidth) + (float)defaultRoadWidth/2;
+    path.add( new Position(convertedX, convertedY));
+    return path;
+  }
+  
   Position carPos = new Position(carCol, carRow);
   map[carCol][carRow] = new From(carPos,carPos);
   System.out.println("car plotted on temp");
   System.out.println("temp:");
-  //printGrid(temp);
+  
   
   //add car to frontier
   frontier.add(new Position(carCol,carRow));
@@ -312,6 +322,7 @@ ArrayList<Position> breadthFirstSearch(Car car){
   System.out.println("Breadth First Search: Variables ready for car " + car.getId() + ". Proceeding with calculations.");
   //Calculate
   while(!flagEarlyExit){
+    //printGrid(temp);
     for(int index = frontier.size() - 1; index >= 0; index--){
       
       
@@ -381,7 +392,7 @@ ArrayList<Position> breadthFirstSearch(Car car){
   }
   
   //List of positions that form the path
-  ArrayList<Position> path = new ArrayList<Position>();
+  
   
   From current = map[objCol][objRow];
   
