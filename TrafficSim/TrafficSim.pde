@@ -94,7 +94,7 @@ Car createNewCar(float x, float y){
 
 void runCars(){
   //TODO: Add sentience to cars.
-  for(int i = (Cars.size() - 1); i > 0; i--){
+  for(int i = (Cars.size() - 1); i >= 0; i--){
     Car car = Cars.get(i);
     ArrayList<Light> sortedLights = getSortedLights(car);
     Position nextObj = car.path.get(car.path.size() - 1);
@@ -103,7 +103,7 @@ void runCars(){
       Cars.remove(i);
     }
     
-    if(car.getDistanceTo(car.objective) < defaultRoadWidth){
+    if(car.getDistanceTo(car.objective) < (defaultRoadWidth/2) + 25){
       nextObj = car.objective;
     }
     
@@ -278,8 +278,7 @@ ArrayList<Position> breadthFirstSearch(Car car){
     }
   }
   System.out.println("grid has been imported to temp");
-  System.out.println("temp:");
-  //printGrid(temp);
+
   
   //plot objective on temp
   int objCol = ((int)car.objective.getXPos() - ((int)car.objective.getXPos() % 100))/100;

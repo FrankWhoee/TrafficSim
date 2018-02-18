@@ -185,7 +185,8 @@ public class Position{
        }*/
        float velX = (float)(Math.cos(angleRad) * thrust);
        float velY = (float)(Math.sin(angleRad) * thrust);
-       float t = (float)Collision.collision_time(Constants.CAR_RADIUS,this, car, new Velocity(velX, velY), carVectors.get(car));
+       Velocity thisCarVel = new Velocity(velX,velY);
+       float t = (float)Collision.collision_time(Constants.CAR_RADIUS/2,this, car, thisCarVel, carVectors.get(car));
        if(t > 0 && t <= 1){
          //TrafficSim.pause = true;
          //Car thisCar = (Car)this;
@@ -210,7 +211,7 @@ public class Position{
                                            final Collection<? extends Entity> entitiesToCheck) {
 
         for (final Entity entity : entitiesToCheck) {
-          if (entity.equals(start) || entity.equals(target)) {
+          if (entity.equals(start) || entity.equals(target) || TrafficSim.carVectors.containsKey(entity)) {
                 continue;
             }
             if (Collision.segmentCircleIntersect(start, target, entity, Constants.FORECAST_FUDGE_FACTOR)) {
