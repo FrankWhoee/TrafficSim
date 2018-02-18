@@ -68,7 +68,7 @@ void runCars(){
   for(Car car: Cars){
     ArrayList<Light> sortedLights = getSortedLights(car);
     ArrayList<Position> checkpoints = breadthFirstSearch(car);
-    Position nextObj = checkpoints.get(checkpoints.size());
+    Position nextObj = checkpoints.get(checkpoints.size() - 1); //ERROR ON THIS LINE index out of bounds index 4, size 4
     float angleRad = car.orientTowardsInRad(nextObj);
     if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("yellow"))){
       car.move(angleRad, 1);
@@ -274,42 +274,62 @@ ArrayList<Position> breadthFirstSearch(Car car){
     System.out.println("");
     for(int index = frontier.size() - 1; index >= 0; index--){
       
-      if(frontier.get(index).getXPos() == objCol && frontier.get(index).getYPos() == objRow){
-        System.out.println("Early exit flag triggered. Exiting calculation loop.");
-        flagEarlyExit = true;
-        break;
-      }
+      
       
       int col = (int)frontier.get(index).getXPos();
       int row = (int)frontier.get(index).getYPos();
       if(temp[col][row] == 3 || temp[col][row] == 2){
-          if(row < temp[col].length - 1 && temp[col][row + 1] == 1){//ERROR ON THIS LINE
+          if(row < temp[col].length - 1 && (temp[col][row + 1] == 1 || temp[col][row + 1] == -1)){
             temp[col][row + 1] = 3;
             Position is = new Position(col,row  +1);
             Position from = new Position(col,row);
             map[col][row + 1] = new From(is, from);
             frontier.add(new Position(col,row + 1));
+            
+            if(col == objCol && (row + 1) == objRow){
+              System.out.println("Early exit flag triggered. Exiting calculation loop.");
+              flagEarlyExit = true;
+              break;
+            }
           }
-          if(row > 0 && temp[col][row - 1] == 1){ 
+          if(row > 0 && (temp[col][row - 1] == 1 || temp[col][row - 1] == -1)){ 
             temp[col][row - 1] = 3;
             Position is = new Position(col,row  - 1);
             Position from = new Position(col,row);
             map[col][row - 1] = new From(is, from);
             frontier.add(new Position(col,row - 1));
+            
+            if(col == objCol && (row - 1) == objRow){
+              System.out.println("Early exit flag triggered. Exiting calculation loop.");
+              flagEarlyExit = true;
+              break;
+            }
           }
-          if(col < temp.length - 1 && temp[col + 1][row] == 1){
+          if(col < temp.length - 1 && (temp[col + 1][row] == 1 || temp[col + 1][row] == -1)){
             temp[col + 1][row] = 3;
             Position is = new Position(col + 1,row);
             Position from = new Position(col,row);
             map[col + 1][row] = new From(is, from);
             frontier.add(new Position(col + 1,row));
+            
+            if((col + 1) == objCol && (row) == objRow){
+              System.out.println("Early exit flag triggered. Exiting calculation loop.");
+              flagEarlyExit = true;
+              break;
+            }
           }
-          if(col > 0 && temp[col - 1][row] == 1){
+          if(col > 0 && (temp[col - 1][row] == 1 || temp[col - 1][row] == -1)){
             temp[col - 1][row] = 3;
             Position is = new Position(col - 1,row);
             Position from = new Position(col,row);
             map[col - 1][row] = new From(is, from);
             frontier.add(new Position(col - 1,row));
+            
+            if((col - 1) == objCol && (row) == objRow){
+              System.out.println("Early exit flag triggered. Exiting calculation loop.");
+              flagEarlyExit = true;
+              break;
+            }
           }
           if(temp[col][row] != 2){
             temp[col][row] = 4;
@@ -339,7 +359,7 @@ ArrayList<Position> breadthFirstSearch(Car car){
 }
 
 boolean same(From from1, From from2){
-  if(from1.is.getXPos() == from2.is.getXPos() && from1.is.getYPos() == from2.is.getYPos()){
+  if(from1.is.getXPos() == from2.is.getXPos() && from1.is.getYPos() == from2.is.getYPos()){ //ERROR ON THIS LINE NullPointerException
     if(from1.from.getXPos() == from2.from.getXPos() && from1.from.getYPos() == from2.from.getYPos()){
       return true;
     }
