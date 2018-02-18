@@ -67,7 +67,9 @@ void runCars(){
   //TODO: Add sentience to cars.
   for(Car car: Cars){
     ArrayList<Light> sortedLights = getSortedLights(car);
-    float angleRad = car.orientTowardsInRad(car.objective);
+    ArrayList<Position> checkpoints = breadthFirstSearch(car);
+    Position nextObj = checkpoints.get(checkpoints.size());
+    float angleRad = car.orientTowardsInRad(nextObj);
     if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("yellow"))){
       car.move(angleRad, 1);
     }else if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("green"))){
@@ -85,7 +87,7 @@ Car createNewCar(float x, float y){
     float randomX = (float)Math.random() * displayWidth;
     float randomY = (float)Math.random() * displayHeight;
     Position objective = new Position(randomX, randomY);
-    while(objective.isIntersectingRoad(randomX,randomY)){
+    while(!objective.isIntersectingRoad(randomX,randomY)){
       randomX = (float)Math.random() * displayWidth;
       randomY = (float)Math.random() * displayHeight;
     }
@@ -143,14 +145,14 @@ void roadUI(){
       fillCol((int)(road.getXPos()/defaultRoadWidth));
     }
     System.out.println("road added (total roads: " + nextRoadId + ")");
-    printGrid();
+    printGrid(grid);
     keyPressed = false;
   }
   
   if(keyPressed && (key == ENTER || key == RETURN)){
     System.out.println("Enter or Return pressed");
     roadUIFinished = true;
-    generateCars(50);
+    generateCars(1);
     for(Road road: Roads){
      int intersections = 0;
      if(road.width > road.height){
@@ -194,7 +196,7 @@ void clearGrid(){
   System.out.println("Grid cleared.");
 }
 
-void printGrid(){
+void printGrid(int[][] grid){
   for(int row = 0; row < grid[0].length; row++){
     String output = "";
     for(int column = 0; column < grid.length; column++){
@@ -228,38 +230,52 @@ ArrayList<Position> breadthFirstSearch(Car car){
   //4 = visited
   From[][] map = new From[grid.length][grid[0].length];
   int[][] temp = new int[grid.length][grid[0].length];
-  
+  System.out.println("Matrices \"map\" and \"temp\" initialised.");
   //xPos = Column, yPos = Row
   ArrayList<Position> frontier = new ArrayList<Position>();
-  
+  System.out.println("ArrayList \"frontier\" initialised.");
   //import grid -> temp
   for(int row = 0; row < grid[0].length; row++){
     for(int column = 0; column < grid.length; column++){
       temp[column][row] = grid[column][row];
     }
   }
+  System.out.println("grid has been imported to temp");
+  System.out.println("temp:");
+  printGrid(temp);
   
   //plot objective on temp
   int objCol = ((int)car.objective.getXPos() - ((int)car.objective.getXPos() % 100))/100;
   int objRow = ((int)car.objective.getYPos() - ((int)car.objective.getYPos() % 100))/100;
   temp[objCol][objRow] = -1;
+  System.out.println("objective plotted on temp");
   
-   //plot car on temp
+  
+   //plot car on temp and map
   int carCol = ((int)car.getXPos() - ((int)car.getXPos() % 100))/100;
   int carRow = ((int)car.getYPos() - ((int)car.getYPos() % 100))/100;
   temp[carCol][carRow] = 2;
+  Position carPos = new Position(carCol, carRow);
+  map[carCol][carRow] = new From(carPos,carPos);
+  System.out.println("car plotted on temp");
+  System.out.println("temp:");
+  printGrid(temp);
   
   //add car to frontier
   frontier.add(new Position(carCol,carRow));
+  System.out.println("car added to frontier.");
   
   //flag for early exit out of Breadth First Search
   boolean flagEarlyExit = false;
-  
+  System.out.println("Breadth First Search: Variables ready for car " + car.getId() + ". Proceeding with calculations.");
   //Calculate
   while(!flagEarlyExit){
-    for(int index = frontier.size() - 1; index < 0; index++){
+    printGrid(temp);
+    System.out.println("");
+    for(int index = frontier.size() - 1; index >= 0; index--){
       
       if(frontier.get(index).getXPos() == objCol && frontier.get(index).getYPos() == objRow){
+        System.out.println("Early exit flag triggered. Exiting calculation loop.");
         flagEarlyExit = true;
         break;
       }
@@ -267,35 +283,37 @@ ArrayList<Position> breadthFirstSearch(Car car){
       int col = (int)frontier.get(index).getXPos();
       int row = (int)frontier.get(index).getYPos();
       if(temp[col][row] == 3 || temp[col][row] == 2){
-          if(temp[col][row + 1] == 1){
+          if(row < temp[col].length - 1 && temp[col][row + 1] == 1){//ERROR ON THIS LINE
             temp[col][row + 1] = 3;
             Position is = new Position(col,row  +1);
             Position from = new Position(col,row);
             map[col][row + 1] = new From(is, from);
             frontier.add(new Position(col,row + 1));
           }
-          if(temp[col][row - 1] == 1){
+          if(row > 0 && temp[col][row - 1] == 1){ 
             temp[col][row - 1] = 3;
             Position is = new Position(col,row  - 1);
             Position from = new Position(col,row);
             map[col][row - 1] = new From(is, from);
             frontier.add(new Position(col,row - 1));
           }
-          if(temp[col + 1][row] == 1){
+          if(col < temp.length - 1 && temp[col + 1][row] == 1){
             temp[col + 1][row] = 3;
             Position is = new Position(col + 1,row);
             Position from = new Position(col,row);
             map[col + 1][row] = new From(is, from);
             frontier.add(new Position(col + 1,row));
           }
-          if(temp[col - 1][row] == 1){
+          if(col > 0 && temp[col - 1][row] == 1){
             temp[col - 1][row] = 3;
             Position is = new Position(col - 1,row);
             Position from = new Position(col,row);
             map[col - 1][row] = new From(is, from);
             frontier.add(new Position(col - 1,row));
           }
-          temp[col][row] = 4;
+          if(temp[col][row] != 2){
+            temp[col][row] = 4;
+          }
           frontier.remove(index);
           
       }
@@ -305,16 +323,30 @@ ArrayList<Position> breadthFirstSearch(Car car){
   //List of positions that form the path
   ArrayList<Position> path = new ArrayList<Position>();
   
-  //Temporary is and from
-  Position tempIs = new Position(0,0);
-  Position tempFrom = new Position(0,0);
+  From current = map[objCol][objRow];
   
+  
+  From start = map[carCol][carRow];
+  
+  while(!same(current,start)){
+    Position convertedPosition = new Position(current.is.getXPos() * defaultRoadWidth, current.is.getYPos() * defaultRoadWidth);
+    path.add(convertedPosition);
+    current = map[(int)current.from.getXPos()][(int)current.from.getYPos()];
+  }
   
   
   return path;
 }
 
-
+boolean same(From from1, From from2){
+  if(from1.is.getXPos() == from2.is.getXPos() && from1.is.getYPos() == from2.is.getYPos()){
+    if(from1.from.getXPos() == from2.from.getXPos() && from1.from.getYPos() == from2.from.getYPos()){
+      return true;
+    }
+    return false;
+  }
+  return false;
+}
 
 void draw() {
   if(roadUIFinished == false){
