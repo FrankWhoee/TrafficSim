@@ -13,5 +13,6 @@ https://drive.google.com/drive/folders/0B0fPKu6H-p1FYlBocGR6OXhYdk0?usp=sharing
 6. Press `Ctrl + R` to run the program
 7. Use the arrow buttons to navigate the road
 8. Press h to switch to a horizontal road, or press v to switch to a vertical road
-9. Press space to place the road
-10. Press enter to run the simulation.
+9. Use s and w to change the length of the roads. s is to decrease the length while w is to increase the length.
+10. Press space to place the road
+11. Press enter to run the simulation.
