@@ -3,8 +3,8 @@ import java.util.ArrayList;
 public class Road extends Position {
  
     public int id;
-    private float width;
-    private float height;
+    public float width;
+    public float height;
 
     public Road(final int id, final float xPos, final float yPos, float width, float height) {
         super(xPos, yPos);
@@ -26,10 +26,7 @@ public class Road extends Position {
       return height;
     }
     
-    public void setPosition(Position position){
-      super.xPos = position.getXPos();
-      super.yPos = position.getYPos();
-    }
+    
     
     public ArrayList<Car> getCarList(){
       ArrayList<Car> carsOnRoad = new ArrayList<Car>();

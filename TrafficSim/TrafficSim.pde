@@ -12,12 +12,12 @@ private static int nextRoadId = 0;
 private static int nextLightId = 0;
 private static int lightsInterval = 300;
 
-public int displayWidth = 1300;
-public int displayHeight = 700;
+public int displayWidth = 1600;
+public int displayHeight = 900;
 public int centerX = displayWidth/2;
 public int centerY = displayHeight/2;
 public int turn = 0;
-public int amountOfCars = 50;
+public int amountOfCars = 75 ;
 public float randomSpawnLocOffsetLength = 50;
 public float randomSpawnLocOffsetWidth = 50;
 public int defaultRoadWidth = 100;
@@ -34,10 +34,20 @@ void generateCars(int amount){
         for(int i = 0; i < Math.max(amount/Roads.size(), 1); i++){
 
           if(road.getWidth() > road.getHeight()){
-            float newYPos = (road.getYPos() + 16) + (float)((road.getHeight() - 32) * Math.random());
+            float newYPos = (road.getYPos() + 17) + (float)((road.getHeight() - 33) * Math.random());
             System.out.println("newYPos: " + newYPos);
             if(nextCarId % 2 == 1){
               Car newCar = createNewCar(road.getWidth() - (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
+              
+              float randomX = newCar.getXPos();
+              float randomY = newCar.getYPos();
+              Position nextPos = new Position(randomX, randomY);
+              while(!newCar.isIntersectingRoad(randomX,randomY)){
+                  randomX = (float)Math.random() * displayWidth;
+                  randomY = (float)Math.random() * displayHeight;
+                  nextPos = new Position(randomX, randomY);
+              }
+              newCar.setPosition(nextPos);
               
               newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
@@ -48,6 +58,16 @@ void generateCars(int amount){
             }else{
               Car newCar = createNewCar(road.getXPos() + (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
               
+              float randomX = newCar.getXPos();
+              float randomY = newCar.getYPos();
+              Position nextPos = new Position(randomX, randomY);
+              while(!newCar.isIntersectingRoad(randomX,randomY)){
+                  randomX = (float)Math.random() * displayWidth;
+                  randomY = (float)Math.random() * displayHeight;
+                  nextPos = new Position(randomX, randomY);
+              }
+              newCar.setPosition(nextPos);
+              
               newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
@@ -55,18 +75,40 @@ void generateCars(int amount){
             }
             
           }else{
-            float newXPos = (road.getXPos() + 16) +  (float)((road.getWidth() - 32) * Math.random());
+            float newXPos = (road.getXPos() + 17) +  (float)((road.getWidth() - 33) * Math.random());
             System.out.println("newXPos: " + newXPos);
             if(nextCarId % 2 == 1){
               Car newCar = createNewCar(newXPos, road.getHeight() - Constants.CAR_RADIUS - (float)(Math.random() * randomSpawnLocOffsetLength));
-              System.out.println("road height: " + road.getHeight());
+              //System.out.println("road height: " + road.getHeight());
+              
+              float randomX = newCar.getXPos();
+              float randomY = newCar.getYPos();
+              Position nextPos = new Position(randomX, randomY);
+              while(!newCar.isIntersectingRoad(randomX,randomY)){
+                  randomX = (float)Math.random() * displayWidth;
+                  randomY = (float)Math.random() * displayHeight;
+                  nextPos = new Position(randomX, randomY);
+              }
+              newCar.setPosition(nextPos);
+              
               newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Lower Side");
             }else{
               Car newCar = createNewCar(newXPos, road.getYPos() + Constants.CAR_RADIUS + (float)(Math.random() * randomSpawnLocOffsetLength));
-               System.out.println("road Y: " + road.getYPos());
+               //System.out.println("road Y: " + road.getYPos());
+               
+               float randomX = newCar.getXPos();
+              float randomY = newCar.getYPos();
+              Position nextPos = new Position(randomX, randomY);
+              while(!newCar.isIntersectingRoad(randomX,randomY)){
+                  randomX = (float)Math.random() * displayWidth;
+                  randomY = (float)Math.random() * displayHeight;
+                  nextPos = new Position(randomX, randomY);
+              }
+              newCar.setPosition(nextPos);
+               
               newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
@@ -74,6 +116,7 @@ void generateCars(int amount){
             }
             
           }
+          
         }
       }
       //System.out.println("Cars generated.");
@@ -134,37 +177,49 @@ void runCars(){
 
 
 void roadUI(){
-  
-  if(keyPressed && (key == 'h' || key == 'v')){
-    mode = key;
-  }
   if(mode == 'h'){
-    road.width = displayWidth;
-    road.height = defaultRoadWidth;
-    road.setPosition(new Position(0,road.getYPos()));
+    if(keyPressed && key == 's'){
+      if(road.width > defaultRoadWidth){
+        road.width -= defaultRoadWidth;
+        keyPressed = false;
+      }
+    }else if(keyPressed && key == 'w'){
+      if(road.height < displayWidth){
+        road.width += defaultRoadWidth;
+        keyPressed = false;
+      }
+    }
   }else if(mode == 'v'){
-    road.width = defaultRoadWidth;
-    road.height = displayHeight;
-    road.setPosition(new Position(road.getXPos(),0));
+    if(keyPressed && key == 's'){
+      if(road.height > defaultRoadWidth){
+        road.height -= defaultRoadWidth;
+        keyPressed = false;
+      }
+    }else if(keyPressed && key == 'w'){
+      if(road.height < displayHeight){
+        road.height += defaultRoadWidth;
+        keyPressed = false;
+      }
+    }
   }
   
-  if(keyPressed && keyCode == RIGHT && mode == 'v'){
+  if(keyPressed && keyCode == RIGHT){
     if(road.getXPos() + defaultRoadWidth < displayWidth){
       road.setPosition(new Position(road.getXPos() + defaultRoadWidth, road.getYPos()));
       keyPressed = false;
     }
     
-  }else if(keyPressed && keyCode == LEFT && mode == 'v'){
+  }else if(keyPressed && keyCode == LEFT){
     if(road.getXPos() - defaultRoadWidth > -1){
       road.setPosition(new Position(road.getXPos() - defaultRoadWidth, road.getYPos()));
       keyPressed = false;
     }
-  }else if(keyPressed && keyCode == UP && mode == 'h'){
+  }else if(keyPressed && keyCode == UP){
     if(road.getYPos() - defaultRoadWidth > -1){
       road.setPosition(new Position(road.getXPos(), road.getYPos() - defaultRoadWidth));
       keyPressed = false;
     }
-  }else if(keyPressed && keyCode == DOWN && mode == 'h'){
+  }else if(keyPressed && keyCode == DOWN){
     if(road.getYPos() + defaultRoadWidth < displayHeight){
       road.setPosition(new Position(road.getXPos(), road.getYPos() + defaultRoadWidth));
       keyPressed = false;
@@ -177,15 +232,39 @@ void roadUI(){
     nextRoadId++;
     road.id = nextRoadId;
     if(newRoad.width > newRoad.height){
-      fillRow((int)(road.getYPos()/defaultRoadWidth));
+      int col = convertToMatrix(newRoad.getXPos());
+      int row = convertToMatrix(newRoad.getYPos());
+      int l = convertToMatrix(road.width); 
+      
+      fillRow(col,row,l);
     }else{
-      fillCol((int)(road.getXPos()/defaultRoadWidth));
+      int col = convertToMatrix(newRoad.getXPos());
+      int row = convertToMatrix(newRoad.getYPos());
+      int l = convertToMatrix(road.height); 
+      
+      fillCol(col,row,l);
     }
     System.out.println("road added (total roads: " + nextRoadId + ")");
     printGrid(grid);
     keyPressed = false;
   }
   
+  if(keyPressed && (key == 'h' || key == 'v')){
+    mode = key;
+  }
+  
+  if(keyPressed){
+    if(mode == 'h'){
+      //road.width = displayWidth;
+      road.height = defaultRoadWidth;
+      road.setPosition(new Position(0,road.getYPos()));
+    }else if(mode == 'v'){
+      road.width = defaultRoadWidth;
+      //road.height = displayHeight;
+      road.setPosition(new Position(road.getXPos(),0));
+    }
+  }
+
   if(keyPressed && (key == ENTER || key == RETURN)){
     System.out.println("Enter or Return pressed");
     roadUIFinished = true;
@@ -219,6 +298,10 @@ void roadUI(){
   
 }
 
+int convertToMatrix(double number){
+  return (int)(number/defaultRoadWidth);
+}
+
 void setup() {
   size(displayWidth, displayHeight);
   clearGrid();
@@ -243,15 +326,15 @@ void printGrid(int[][] grid){
   }
 }
 
-void fillRow(int rowNum){
-    for(int column = 0; column < grid.length; column++){
+void fillRow(int colNum, int rowNum, int rowWidth){
+    for(int column = colNum; column < colNum + rowWidth; column++){
       grid[column][rowNum] = 1;
     }
   
 }
 
-void fillCol(int colNum){
-    for(int row = 0; row < grid[colNum].length; row++){
+void fillCol(int colNum, int rowNum, int colHeight){
+    for(int row = rowNum; row < rowNum + colHeight; row++){
       grid[colNum][row] = 1;
     }
   
@@ -442,19 +525,21 @@ void draw() {
 }
 
 void roadUIRender(){
+  for(Road roads: Roads){
+    fill(150);
+    rect(roads.getXPos(),roads.getYPos(), roads.getWidth(), roads.getHeight());
+    //System.out.println("road " + roads.getId() + " drawn at x: " + roads.getXPos() + " y: " + roads.getYPos());
+  }
+  
   fill(75);
   noStroke();
   rect(road.getXPos(),road.getYPos(), road.getWidth(), road.getHeight());
   
-  for(Road roads: Roads){
-    fill(100);
-    rect(roads.getXPos(),roads.getYPos(), roads.getWidth(), roads.getHeight());
-    //System.out.println("road " + roads.getId() + " drawn at x: " + roads.getXPos() + " y: " + roads.getYPos());
-  }
+  
 }
 
 void render(){
-  fill(100);
+  fill(150);
   noStroke();
   
   

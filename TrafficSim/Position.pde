@@ -11,6 +11,11 @@ public class Position{
     return xPos;
   }
   
+  public void setPosition(Position position){
+      xPos = position.getXPos();
+      yPos = position.getYPos();
+  }
+  
   public float getYPos(){
     return yPos;
   }
@@ -151,14 +156,7 @@ public class Position{
         float lightY = light.getYPos();
         float lightWidth = light.width;
         float lightHeight = light.height;
-        float offset = 32;
-       if(lightWidth > lightHeight){
-         //lightHeight -= offset;
-         //lightY += offset/2;
-       }else{
-         //lightWidth -= offset;
-         //lightX += offset/2;
-       }
+        
         float closestX = Math.max(lightX, Math.min(carX, lightX + lightWidth));
         float closestY = Math.max(lightY, Math.min(carY, lightY + lightHeight));
         float dx = carX - closestX;
