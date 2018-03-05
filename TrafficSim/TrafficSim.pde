@@ -650,27 +650,29 @@ ArrayList<Position> breadthFirstSearch(Car car){
     }
   }
   
-  //List of positions that form the path
-  
-  
+  //Which coordinate is being iterated currently.
   From current = map[objCol][objRow];
-  
-  
+  //Where the car is right now
   From start = map[carCol][carRow];
   
+  //While the current coordinates do not equal the start coordinates,
   while(!same(current,start)){
+    
+    //Convert the current position from matrix coordinates to real coordinates
     float convertedX = ((float)current.is.getXPos() * (float)defaultRoadWidth) + (float)defaultRoadWidth/2;
     float convertedY = ((float)current.is.getYPos() * (float)defaultRoadWidth) + (float)defaultRoadWidth/2;
     
+    //Store newly converted position into a Position variable
     Position convertedPosition = new Position(convertedX, convertedY);
+    //Add the new Position into the path
     path.add(convertedPosition);
+    //Follow the "breadcrumbs" back to the start, so get where this current positions is "from".
     current = map[(int)current.from.getXPos()][(int)current.from.getYPos()];
   }
-  
-  
   return path;
 }
 
+//Checks if a From is the same as the other From.
 boolean same(From from1, From from2){
   if(from1.is.getXPos() == from2.is.getXPos() && from1.is.getYPos() == from2.is.getYPos()){ //ERROR ON THIS LINE NullPointerException
     if(from1.from.getXPos() == from2.from.getXPos() && from1.from.getYPos() == from2.from.getYPos()){
