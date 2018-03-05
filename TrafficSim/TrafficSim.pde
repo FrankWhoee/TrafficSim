@@ -10,7 +10,8 @@ public static boolean pause = false;
 private static int nextCarId = 0;
 private static int nextRoadId = 0;
 private static int nextLightId = 0;
-private static int lightsInterval = 300;
+
+private static int lightsInterval = 100;
 
 public int displayWidth = 1600;
 public int displayHeight = 900;
@@ -516,6 +517,7 @@ void fillCol(int colNum, int rowNum, int colHeight){
   
 }
 
+//TODO: Code Dijkstra's Algorithm, instead of Breadth First Search, or just modify BFS so it can avoid traffic jams. Probably not as hard as I make it to be. 
 ArrayList<Position> breadthFirstSearch(Car car){
   //MAP KEY:
   //-1 = objective position
@@ -583,9 +585,6 @@ ArrayList<Position> breadthFirstSearch(Car car){
   while(!flagEarlyExit){
     //printGrid(temp);
     for(int index = frontier.size() - 1; index >= 0; index--){
-      
-      
-      
       int col = (int)frontier.get(index).getXPos();
       int row = (int)frontier.get(index).getYPos();
       if(temp[col][row] == 3 || temp[col][row] == 2){
@@ -715,15 +714,17 @@ void roadUIRender(){
 }
 
 void render(){
+  //Set colour to a nice gray and remove the stroke.
   fill(150);
   noStroke();
   
-  
+  //Draw all roads
   for(Road road: Roads){
     rect(road.getXPos(),road.getYPos(), road.getWidth(), road.getHeight());
   }
   
-  noFill();
+  //For cars we want a green stroke but no fill.
+  //The car's objective should be a red, filled dot.
   for(Car car : Cars){
     if(car.collidingWithRoads){
       stroke(0,255,0);
@@ -738,19 +739,19 @@ void render(){
     //textSize(10);
     fill(0,255,0);
     //String coordinates = "x: " + (int)car.getXPos() + " y: " + (int)car.getYPos();
-     String id = ("id: " + car.getId());
     //text(coordinates, car.getXPos() + 15, car.getYPos() + 15);
+    String id = ("id: " + car.getId());
     text(id, car.getXPos() - 30, car.getYPos() + 25);
     text(id, car.objective.getXPos() - 30, car.objective.getYPos() + 25);
   }
   
   for(Light light: Lights){
-    noFill();
-    stroke(light.R,light.G,light.B);
-    rect(light.getXPos(),light.getYPos(), light.width, light.height);
-    
     noStroke();
     fill(light.R,light.G,light.B);
+    rect(light.getXPos(),light.getYPos(), light.width, light.height);
+    
+    //noStroke();
+    //fill(light.R,light.G,light.B);
     
     //Debugging for Issue #3
     //String id = ("id: " + light.id);
@@ -818,6 +819,7 @@ public ArrayList<Light> getSortedLights(Car car){
 }
 
 void runLights(){
+  //TODO: Code more intelligent lights.
   for(Light light: Lights){
     if(light.width > light.height){
       if(turn % lightsInterval == 15){
