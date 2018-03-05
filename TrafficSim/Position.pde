@@ -54,7 +54,7 @@ public class Position{
      float radian = (float)(Math.PI * 2);
      
      
-     for(float i = 0; i < radian; i += radian/180){
+     for(float i = 0; i < radian; i += radian/120){
        
        velX = (float)(Math.cos(angleRad - i) * thrust);
        velY = (float)(Math.sin(angleRad - i) * thrust);

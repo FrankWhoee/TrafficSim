@@ -18,16 +18,195 @@ public int centerX = displayWidth/2;
 public int centerY = displayHeight/2;
 public int turn = 0;
 public int amountOfCars = 75 ;
+public int defaultRoadWidth = 100;
 public float randomSpawnLocOffsetLength = 50;
 public float randomSpawnLocOffsetWidth = 50;
-public int defaultRoadWidth = 100;
 
+//formationType can be:
+//"grid"
+//"orbital"
+//"trib_tree"
+
+//Here is the variable declared in all three ways since I know you're lazy:
+public String formationType = "grid";
+//public String formationType = "orbital";
+//public String formationType = "trib_tree";
 
 public int[][] grid = new int[displayWidth/defaultRoadWidth][displayHeight/defaultRoadWidth];
 
 char mode = 'v';
 Road road = new Road(0,0,0,defaultRoadWidth,displayHeight);
 boolean roadUIFinished = false;
+
+void setup() {
+  size(displayWidth, displayHeight);
+  clearGrid();
+  //disp_setup();
+}
+
+void disp_setup(){
+  size(displayWidth, displayHeight);
+  clearGrid();
+  formation(formationType);
+  
+   generateCars(amountOfCars);
+    for(Road road: Roads){
+     int intersections = 0;
+     if(road.width > road.height){
+       for(Road roads: Roads){
+         if(roads.height > roads.width){
+           intersections++;
+           //System.out.println("Horz-Vert Intersection detected. Total intersections: " + intersections);
+         }
+       }
+     }else{
+       for(Road roads: Roads){
+         if(roads.width > roads.height){
+           intersections++;
+           //System.out.println("Vert-Horz Intersection detected. Total intersections: " + intersections);
+         }
+       }
+     }
+     for(int i = 0; i < intersections * 2; i++){
+       nextLightId++;
+       Light newLight = new Light(nextLightId,road, "red");
+       Lights.add(newLight);
+       
+     }
+}
+}
+
+void master_draw(){
+  if(roadUIFinished == false){
+    background(0);
+    roadUI();
+    roadUIRender();
+  }else{
+    background(0);
+    carVectors.clear();
+    render();
+    if((!keyPressed && key != 'l') && !pause){
+      runCars();
+    }
+    //renderLine();
+    runLights();
+    turn++;
+  }
+}
+
+void formation(String formation){
+  if(formation.equals("grid")){
+    Road road0  = new Road(0,0.0,0.0,100.0,900.0);
+    Road road1  = new Road(1,200.0,0.0,100.0,900.0);
+    Road road2  = new Road(2,400.0,0.0,100.0,900.0);
+    Road road3  = new Road(3,600.0,0.0,100.0,900.0);
+    Road road4  = new Road(4,800.0,0.0,100.0,900.0);
+    Road road5  = new Road(5,1000.0,0.0,100.0,900.0);
+    Road road6  = new Road(6,1200.0,0.0,100.0,900.0);
+    Road road7  = new Road(7,1400.0,0.0,100.0,900.0);
+    Road road8  = new Road(8,0.0,0.0,1600.0,100.0);
+    Road road9  = new Road(9,0.0,200.0,1600.0,100.0);
+    Road road10  = new Road(10,0.0,400.0,1600.0,100.0);
+    Road road11  = new Road(11,0.0,600.0,1600.0,100.0);
+    Road road12  = new Road(12,0.0,800.0,1600.0,100.0);
+    
+    Roads.add(road0);
+    Roads.add(road1);
+    Roads.add(road2);
+    Roads.add(road3);
+    Roads.add(road4);
+    Roads.add(road5);
+    Roads.add(road6);
+    Roads.add(road7);
+    Roads.add(road8);
+    Roads.add(road9);
+    Roads.add(road10);
+    Roads.add(road11);
+    Roads.add(road12);
+
+  }else if(formation.equals("orbital")){
+    Road road0  = new Road(0,0.0,0.0,100.0,900.0);
+    Road road1  = new Road(1,1500.0,0.0,100.0,900.0);
+    Road road2  = new Road(2,0.0,0.0,1600.0,100.0);
+    Road road3  = new Road(3,0.0,800.0,1600.0,100.0);
+    Road road4  = new Road(4,200.0,600.0,1200.0,100.0);
+    Road road5  = new Road(5,200.0,200.0,1200.0,100.0);
+    Road road6  = new Road(6,200.0,200.0,100.0,500.0);
+    Road road7  = new Road(7,1300.0,200.0,100.0,500.0);
+    Road road8  = new Road(8,0.0,400.0,1600.0,100.0);
+    Road road9  = new Road(9,800.0,0.0,100.0,900.0);
+    
+    Roads.add(road0);
+    Roads.add(road1);
+    Roads.add(road2);
+    Roads.add(road3);
+    Roads.add(road4);
+    Roads.add(road5);
+    Roads.add(road6);
+    Roads.add(road7);
+    Roads.add(road8);
+    Roads.add(road9);
+    
+  }else if(formation.equals("trib_tree")){
+    Road road0  = new Road(0,0,800.0,1600.0,100.0);
+    Road road1  = new Road(1,700,0.0,100.0,900.0);
+    Road road2  = new Road(2,700,100.0,800.0,100.0);
+    Road road3  = new Road(3,100,300.0,700.0,100.0);
+    Road road4  = new Road(4,700,500.0,700.0,100.0);
+    Road road5  = new Road(5,100,300.0,100.0,400.0);
+    Road road6  = new Road(6,1400,100.0,100.0,300.0);
+    Road road7  = new Road(7,1200,300.0,100.0,300.0);
+    Road road8  = new Road(8,900,300.0,400.0,100.0);
+    Road road9  = new Road(9,100,500.0,400.0,100.0);
+    Road road10  = new Road(10,500,100.0,100.0,300.0);
+    Road road11  = new Road(11,200,100.0,400.0,100.0);
+    Road road12  = new Road(12,1000,500.0,100.0,200.0);
+    
+    Roads.add(road0);
+    Roads.add(road1);
+    Roads.add(road2);
+    Roads.add(road3);
+    Roads.add(road4);
+    Roads.add(road5);
+    Roads.add(road6);
+    Roads.add(road7);
+    Roads.add(road8);
+    Roads.add(road9);
+    Roads.add(road10);
+    Roads.add(road11);
+    Roads.add(road12);
+  }else{
+    return;
+  }
+  affixRoadsToMatrix();
+}
+
+void translateToMatrix(Road newRoad){
+  
+  if(newRoad.width > newRoad.height){
+      int col = convertToMatrix(newRoad.getXPos());
+      int row = convertToMatrix(newRoad.getYPos());
+      int l = convertToMatrix(newRoad.width); 
+      fillRow(col,row,l);
+    }else{
+      int col = convertToMatrix(newRoad.getXPos());
+      int row = convertToMatrix(newRoad.getYPos());
+      int l = convertToMatrix(newRoad.height); 
+      
+      fillCol(col,row,l);
+    }
+  
+}
+
+void affixRoadsToMatrix(){
+  
+  for(Road road: Roads){
+    translateToMatrix(road);
+    //System.out.println("Road road" + road.getId() + " = new Road(" + road.getId() + "," + road.getXPos() + "," + road.getYPos() + "," + road.width + "," + road.height + ");");
+  }
+  //confirmation
+  //printGrid(grid);
+}
 
 void generateCars(int amount){
       for(Road road: Roads){
@@ -302,10 +481,7 @@ int convertToMatrix(double number){
   return (int)(number/defaultRoadWidth);
 }
 
-void setup() {
-  size(displayWidth, displayHeight);
-  clearGrid();
-}
+
 
 void clearGrid(){
   for(int row = 0; row < grid[0].length; row++){
@@ -506,12 +682,12 @@ boolean same(From from1, From from2){
 }
 
 void draw() {
-  if(roadUIFinished == false){
-    background(0);
-    roadUI();
-    roadUIRender();
-  }else{
-    background(0);
+  //disp_draw();
+  master_draw();
+}
+
+void disp_draw(){
+  background(0);
     carVectors.clear();
     render();
     if((!keyPressed && key != 'l') && !pause){
@@ -520,8 +696,6 @@ void draw() {
     //renderLine();
     runLights();
     turn++;
-  }
- 
 }
 
 void roadUIRender(){
