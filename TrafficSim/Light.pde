@@ -26,7 +26,7 @@ public class Light extends Position{
     }
   }
   
-  public float calculateIdUnrounded(){
+  public float calculateTimingUnrounded(){
     float output = 0;
     if(road.getWidth() > road.getHeight()){
       output = super.getXPos();

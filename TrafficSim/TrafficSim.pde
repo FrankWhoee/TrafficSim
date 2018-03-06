@@ -10,7 +10,7 @@ public static boolean pause = false;
 private static int nextCarId = 0;
 private static int nextRoadId = 0;
 private static int nextLightId = 0;
-private static int lightsInterval = 300;
+private static int lightsInterval = 100;
 
 public int displayWidth = 1600;
 public int displayHeight = 900;
@@ -41,7 +41,12 @@ boolean roadUIFinished = false;
 void setup() {
   size(displayWidth, displayHeight);
   clearGrid();
-  //disp_setup();
+  disp_setup();
+}
+
+void draw() {
+  disp_draw();
+  //master_draw();
 }
 
 void disp_setup(){
@@ -434,36 +439,84 @@ void roadUI(){
 
 void generateLights(){
   for(Road road: Roads){
-    
+    nextLightId = 0;
      int intersections = 0;
      if(road.width > road.height){
        for(Road roads: Roads){
          if(roads.height > roads.width){
            intersections++;
-           //System.out.println("Horz-Vert Intersection detected. Total intersections: " + intersections);
+           for(int i = 0; i < 2; i++){
+             nextLightId++;
+             Light newLight = new Light(nextLightId,roads, "red");
+             Lights.add(newLight);
+           }
          }
        }
      }else{
        for(Road roads: Roads){
          if(roads.width > roads.height){
            intersections++;
-           //System.out.println("Vert-Horz Intersection detected. Total intersections: " + intersections);
+           for(int i = 0; i < 2; i++){
+             nextLightId++;
+             Light newLight = new Light(nextLightId,roads, "red");
+             Lights.add(newLight);
+           }
          }
        }
      }
+     /*
      for(int i = 0; i < intersections * 2; i++){
        nextLightId++;
-       
        Light newLight = new Light(nextLightId,road, "red");
-       int id = convertToMatrix(newLight.calculateIdUnrounded());
-       
        Lights.add(newLight);
      }
+     */
+     nextLightId = 0;
    }
 }
 
 void runLights(){
   for(Light light: Lights){
+    if(light.width > light.height){
+      if(light.id % 2 == 0){
+        if(turn % lightsInterval == 15){
+          light.setColour("green");
+        }else if(turn % lightsInterval == lightsInterval/2){
+          //light.setColour("yellow");
+        }else if(turn % lightsInterval == (lightsInterval/2) + 30){
+          light.setColour("red");
+        }
+      }else{
+        if(turn % lightsInterval == 15){
+          //light.setColour("yellow");
+        }else if(turn % lightsInterval == lightsInterval/2){
+          light.setColour("red");
+        }else if(turn % lightsInterval == (lightsInterval/2) + 30){
+          light.setColour("green");
+        }
+      } 
+    }else{
+      if(light.id % 2 == 0){
+        if(turn % lightsInterval == 15){
+          light.setColour("red");
+        }else if(turn % lightsInterval == lightsInterval/2){
+          light.setColour("green");
+        }else if(turn % lightsInterval == (lightsInterval/2) + 30){
+          //light.setColour("yellow");
+        }
+      }else{
+        if(turn % lightsInterval == 15){
+          light.setColour("green");
+        }else if(turn % lightsInterval == lightsInterval/2){
+          //light.setColour("yellow");
+        }else if(turn % lightsInterval == (lightsInterval/2) + 30){
+          light.setColour("red");
+        }
+      }
+    }
+    
+    
+    /*
     if(light.width > light.height){
       if(turn % lightsInterval == 15){
         light.setColour("green");
@@ -481,7 +534,7 @@ void runLights(){
         light.setColour("yellow");
       }
     }
-    
+    */
   }
   
 }
@@ -690,11 +743,6 @@ boolean same(From from1, From from2){
     return false;
   }
   return false;
-}
-
-void draw() {
-  //disp_draw();
-  master_draw();
 }
 
 void disp_draw(){
