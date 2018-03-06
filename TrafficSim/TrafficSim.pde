@@ -50,30 +50,8 @@ void disp_setup(){
   formation(formationType);
   
    generateCars(amountOfCars);
-    for(Road road: Roads){
-     int intersections = 0;
-     if(road.width > road.height){
-       for(Road roads: Roads){
-         if(roads.height > roads.width){
-           intersections++;
-           //System.out.println("Horz-Vert Intersection detected. Total intersections: " + intersections);
-         }
-       }
-     }else{
-       for(Road roads: Roads){
-         if(roads.width > roads.height){
-           intersections++;
-           //System.out.println("Vert-Horz Intersection detected. Total intersections: " + intersections);
-         }
-       }
-     }
-     for(int i = 0; i < intersections * 2; i++){
-       nextLightId++;
-       Light newLight = new Light(nextLightId,road, "red");
-       Lights.add(newLight);
-       
-     }
-}
+   generateLights();
+
 }
 
 void master_draw(){
@@ -448,7 +426,15 @@ void roadUI(){
     System.out.println("Enter or Return pressed");
     roadUIFinished = true;
     generateCars(amountOfCars);
-    for(Road road: Roads){
+    generateLights();
+  }
+  
+  
+}
+
+void generateLights(){
+  for(Road road: Roads){
+    
      int intersections = 0;
      if(road.width > road.height){
        for(Road roads: Roads){
@@ -467,13 +453,36 @@ void roadUI(){
      }
      for(int i = 0; i < intersections * 2; i++){
        nextLightId++;
-       Light newLight = new Light(nextLightId,road, "red");
-       Lights.add(newLight);
        
+       Light newLight = new Light(nextLightId,road, "red");
+       int id = convertToMatrix(newLight.calculateIdUnrounded());
+       
+       Lights.add(newLight);
      }
    }
+}
+
+void runLights(){
+  for(Light light: Lights){
+    if(light.width > light.height){
+      if(turn % lightsInterval == 15){
+        light.setColour("green");
+      }else if(turn % lightsInterval == lightsInterval/2){
+        light.setColour("yellow");
+      }else if(turn % lightsInterval == (lightsInterval/2) + 30){
+        light.setColour("red");
+      }
+    }else{
+      if(turn % lightsInterval == 15){
+        light.setColour("red");
+      }else if(turn % lightsInterval == lightsInterval/2){
+        light.setColour("green");
+      }else if(turn % lightsInterval == (lightsInterval/2) + 30){
+        light.setColour("yellow");
+      }
+    }
+    
   }
-  
   
 }
 
@@ -816,34 +825,6 @@ public ArrayList<Light> getSortedLights(Car car){
         }
       return sortedLights;  
 }
-
-void runLights(){
-  for(Light light: Lights){
-    if(light.width > light.height){
-      if(turn % lightsInterval == 15){
-        light.setColour("green");
-      }else if(turn % lightsInterval == lightsInterval/2){
-        light.setColour("yellow");
-      }else if(turn % lightsInterval == (lightsInterval/2) + 30){
-        light.setColour("red");
-      }
-    }else{
-      if(turn % lightsInterval == 15){
-        light.setColour("red");
-      }else if(turn % lightsInterval == lightsInterval/2){
-        light.setColour("green");
-      }else if(turn % lightsInterval == (lightsInterval/2) + 30){
-        light.setColour("yellow");
-      }
-    }
-    
-  }
-  
-}
-
-
-
-
 
 void renderLine(){
   for(int k = 0; k < Cars.size(); k++){

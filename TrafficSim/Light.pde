@@ -26,6 +26,16 @@ public class Light extends Position{
     }
   }
   
+  public float calculateIdUnrounded(){
+    float output = 0;
+    if(road.getWidth() > road.getHeight()){
+      output = super.getXPos();
+    }else{
+      output = super.getYPos();
+    }
+    return output;
+  }
+  
   public void setColour(String colour){
     if(colour.equals("green")){
       R = 0;
