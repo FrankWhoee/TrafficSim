@@ -18,12 +18,29 @@ public class Light extends Position{
       height = road.getHeight();
       super.yPos = road.getYPos();
       super.xPos = getSpotX();
+      if(!checkEmpty(super.xPos,super.yPos)){
+        this.colour = "noRender";
+      }
     }else{
       width = road.getWidth();
       height = 1;
       super.xPos = road.getXPos();
       super.yPos = getSpotY();
+      if(!checkEmpty(super.xPos,super.yPos)){
+        this.colour = "noRender";
+      }
     }
+  }
+  
+  public boolean checkEmpty(double x, double y){
+    for(Light light: TrafficSim.Lights){
+      if(light.getXPos() == x){
+        if(light.getYPos() == y){
+          return false;
+        }
+      }
+    }
+    return true;
   }
   
   public float calculateTimingUnrounded(){

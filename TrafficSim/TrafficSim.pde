@@ -439,15 +439,13 @@ void roadUI(){
 
 void generateLights(){
   for(Road road: Roads){
-    nextLightId = 0;
-     int intersections = 0;
+    //nextLightId = 0;
      if(road.width > road.height){
        for(Road roads: Roads){
          if(roads.height > roads.width){
-           intersections++;
+           nextLightId++;
            for(int i = 0; i < 2; i++){
-             nextLightId++;
-             Light newLight = new Light(nextLightId,roads, "red");
+             Light newLight = new Light(nextLightId,road, "red");
              Lights.add(newLight);
            }
          }
@@ -455,10 +453,9 @@ void generateLights(){
      }else{
        for(Road roads: Roads){
          if(roads.width > roads.height){
-           intersections++;
+           nextLightId++;
            for(int i = 0; i < 2; i++){
-             nextLightId++;
-             Light newLight = new Light(nextLightId,roads, "red");
+             Light newLight = new Light(nextLightId,road, "red");
              Lights.add(newLight);
            }
          }
@@ -475,6 +472,8 @@ void generateLights(){
    }
 }
 
+
+
 void runLights(){
   for(Light light: Lights){
     if(light.width > light.height){
@@ -482,13 +481,13 @@ void runLights(){
         if(turn % lightsInterval == 15){
           light.setColour("green");
         }else if(turn % lightsInterval == lightsInterval/2){
-          //light.setColour("yellow");
+          light.setColour("yellow");
         }else if(turn % lightsInterval == (lightsInterval/2) + 30){
           light.setColour("red");
         }
       }else{
         if(turn % lightsInterval == 15){
-          //light.setColour("yellow");
+          light.setColour("yellow");
         }else if(turn % lightsInterval == lightsInterval/2){
           light.setColour("red");
         }else if(turn % lightsInterval == (lightsInterval/2) + 30){
@@ -502,13 +501,13 @@ void runLights(){
         }else if(turn % lightsInterval == lightsInterval/2){
           light.setColour("green");
         }else if(turn % lightsInterval == (lightsInterval/2) + 30){
-          //light.setColour("yellow");
+          light.setColour("yellow");
         }
       }else{
         if(turn % lightsInterval == 15){
           light.setColour("green");
         }else if(turn % lightsInterval == lightsInterval/2){
-          //light.setColour("yellow");
+          light.setColour("yellow");
         }else if(turn % lightsInterval == (lightsInterval/2) + 30){
           light.setColour("red");
         }
@@ -799,22 +798,28 @@ void render(){
     //text(coordinates, car.getXPos() + 15, car.getYPos() + 15);
     text(id, car.getXPos() - 30, car.getYPos() + 25);
     text(id, car.objective.getXPos() - 30, car.objective.getYPos() + 25);
+    
+
   }
   
   for(Light light: Lights){
-    noFill();
-    stroke(light.R,light.G,light.B);
-    rect(light.getXPos(),light.getYPos(), light.width, light.height);
-    
-    noStroke();
-    fill(light.R,light.G,light.B);
-    
-    //Debugging for Issue #3
-    //String id = ("id: " + light.id);
-    //String coordinates = "x: " + (int)light.getXPos() + " y: " + (int)light.getYPos();
-    //text(id, light.getXPos() + 30, light.getYPos() + 25);
-    //text(coordinates, light.getXPos() + 15, light.getYPos() + 15);
-    
+    if(!light.colour.equals("noRender")){
+      noFill();
+      stroke(light.R,light.G,light.B);
+      rect(light.getXPos(),light.getYPos(), light.width, light.height);
+      
+      noStroke();
+      fill(light.R,light.G,light.B);
+      
+      //Debugging for Issue #3
+      //String id = ("id: " + light.id);
+      //String coordinates = "x: " + (int)light.getXPos() + " y: " + (int)light.getYPos();
+      //text(id, light.getXPos() + 30, light.getYPos() + 25);
+      //text(coordinates, light.getXPos() + 15, light.getYPos() + 15);
+      
+      String id = ("id: " + light.id);
+      text(id, light.getXPos() - 30, light.getYPos() + 25);
+    }
   }
   
   
