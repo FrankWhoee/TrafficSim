@@ -13,6 +13,7 @@ public class Light extends Position{
     this.road = road;
     this.id = id;
     this.colour = colour;
+    setColour(this.colour);
     if(road.getWidth() > road.getHeight()){
       width = 1;
       height = road.getHeight();

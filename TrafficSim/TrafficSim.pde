@@ -10,7 +10,7 @@ public static boolean pause = false;
 private static int nextCarId = 0;
 private static int nextRoadId = 0;
 private static int nextLightId = 0;
-private static int lightsInterval = 50;
+private static int lightsInterval = 64;
 
 public int displayWidth = 1600;
 public int displayHeight = 900;
@@ -443,6 +443,7 @@ void generateLights(){
                newLight = new Light(nextLightId,roads, "red");
              }else{
                newLight = new Light(nextLightId,roads, "green");
+               
              }
              if(!newLight.colour.equals("noRender")){
                Lights.add(newLight);
@@ -457,7 +458,6 @@ void generateLights(){
 void runLights(){
   for(Light light: Lights){
     if(light.width > light.height){
-      
       if(turn % lightsInterval == lightsInterval/2){
         if(light.id % 2 == 0){
            light.setColour("red");
@@ -471,7 +471,6 @@ void runLights(){
           light.setColour("red");
         }
       }
-
     }else{
       if(turn % lightsInterval == lightsInterval/2){
         if(light.id % 2 == 0){
@@ -487,39 +486,12 @@ void runLights(){
         }
       }
     }
-
-
-
-    
-    
-    /*
-    if(light.width > light.height){
-      if(turn % lightsInterval == 15){
-        light.setColour("green");
-      }else if(turn % lightsInterval == lightsInterval/2){
-        light.setColour("yellow");
-      }else if(turn % lightsInterval == (lightsInterval/2) + 30){
-        light.setColour("red");
-      }
-    }else{
-      if(turn % lightsInterval == 15){
-        light.setColour("red");
-      }else if(turn % lightsInterval == lightsInterval/2){
-        light.setColour("green");
-      }else if(turn % lightsInterval == (lightsInterval/2) + 30){
-        light.setColour("yellow");
-      }
-    }
-    */
   }
-  
 }
 
 int convertToMatrix(double number){
   return (int)(number/defaultRoadWidth);
 }
-
-
 
 void clearGrid(){
   for(int row = 0; row < grid[0].length; row++){
@@ -577,7 +549,6 @@ ArrayList<Position> breadthFirstSearch(Car car){
   }
   System.out.println("grid has been imported to temp");
 
-  
   //plot objective on temp
   int objCol = ((int)car.objective.getXPos() - ((int)car.objective.getXPos() % 100))/100;
   int objRow = ((int)car.objective.getYPos() - ((int)car.objective.getYPos() % 100))/100;
