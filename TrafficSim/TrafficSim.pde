@@ -453,18 +453,16 @@ void generateLights(){
    }
 }
 
-
-
 void runLights(){
   for(Light light: Lights){
     if(light.width > light.height){
-      if(turn % lightsInterval == lightsInterval/2){
+      if(turn % (lightsInterval)== (lightsInterval/2  + (int)(Math.random() * 50))){
         if(light.id % 2 == 0){
            light.setColour("red");
         }else{
           light.setColour("green");
         }
-      }else if(turn % lightsInterval == 0l){
+      }else if(turn % lightsInterval == 0){
         if(light.id % 2 == 0){
            light.setColour("green");
         }else{
@@ -472,18 +470,18 @@ void runLights(){
         }
       }
     }else{
-      if(turn % lightsInterval == lightsInterval/2){
-        if(light.id % 2 == 0){
-           light.setColour("green");
-        }else{
-          light.setColour("red");
+      Light verticalLight = new Light(0, Roads.get(0), "");
+      for(Light compareLight: Lights){
+        if(light.getXPos() == compareLight.getXPos() && light.getYPos() == compareLight.getYPos()){
+          if(light.width != verticalLight.width && light.height != verticalLight.height){
+            verticalLight = compareLight;
+          }
         }
-      }else if(turn % lightsInterval == 0){
-        if(light.id % 2 == 0){
-           light.setColour("red");
-        }else{
-          light.setColour("green");
-        }
+      }
+      if(verticalLight.colour.equals("red")){
+        light.setColour("green");
+      }else{
+        light.setColour("red");
       }
     }
   }
