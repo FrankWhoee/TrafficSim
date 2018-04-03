@@ -445,7 +445,12 @@ void generateLights(){
          if(roads.height > roads.width){
            nextLightId++;
            for(int i = 0; i < 2; i++){
-             Light newLight = new Light(nextLightId,roads, "red");
+             Light newLight;
+             if(nextLightId % 2 == 0){
+               newLight = new Light(nextLightId,roads, "red");
+             }else{
+               newLight = new Light(nextLightId,roads, "green");
+             }
              if(!newLight.colour.equals("noRender")){
                Lights.add(newLight);
              }
@@ -458,7 +463,13 @@ void generateLights(){
          if(roads.width > roads.height){
            nextLightId++;
            for(int i = 0; i < 2; i++){
-             Light newLight = new Light(nextLightId,roads, "red");
+             Light newLight;
+             if(nextLightId % 2 == 0){
+               newLight = new Light(nextLightId,roads, "red");
+             }else{
+               newLight = new Light(nextLightId,roads, "green");
+             }
+             
              if(!newLight.colour.equals("noRender")){
                Lights.add(newLight);
              }
@@ -482,42 +493,39 @@ void generateLights(){
 void runLights(){
   for(Light light: Lights){
     if(light.width > light.height){
-      if(light.id % 2 == 0){
-        if(turn % lightsInterval == 15){
-          light.setColour("green");
-        }else if(turn % lightsInterval == lightsInterval/2){
-          //light.setColour("yellow");
-        }else if(turn % lightsInterval == (lightsInterval/2) + 30){
-          light.setColour("red");
-        }
-      }else{
-        if(turn % lightsInterval == 15){
-          //light.setColour("yellow");
-        }else if(turn % lightsInterval == lightsInterval/2){
-          light.setColour("red");
-        }else if(turn % lightsInterval == (lightsInterval/2) + 30){
+      
+      if(turn % lightsInterval == lightsInterval/2){
+        if(light.id % 2 == 0){
+           light.setColour("red");
+        }else{
           light.setColour("green");
         }
-      } 
-    }else{
-      if(light.id % 2 == 0){
-        if(turn % lightsInterval == 15){
-          light.setColour("red");
-        }else if(turn % lightsInterval == lightsInterval/2){
-          light.setColour("green");
-        }else if(turn % lightsInterval == (lightsInterval/2) + 30){
-          //light.setColour("yellow");
-        }
-      }else{
-        if(turn % lightsInterval == 15){
-          light.setColour("green");
-        }else if(turn % lightsInterval == lightsInterval/2){
-          //light.setColour("yellow");
-        }else if(turn % lightsInterval == (lightsInterval/2) + 30){
+      }else if(turn % lightsInterval == 0l){
+        if(light.id % 2 == 0){
+           light.setColour("green");
+        }else{
           light.setColour("red");
         }
       }
+
+    }else{
+      if(turn % lightsInterval == lightsInterval/2){
+        if(light.id % 2 == 0){
+           light.setColour("green");
+        }else{
+          light.setColour("red");
+        }
+      }else if(turn % lightsInterval == 0){
+        if(light.id % 2 == 0){
+           light.setColour("red");
+        }else{
+          light.setColour("green");
+        }
+      }
     }
+
+
+
     
     
     /*
