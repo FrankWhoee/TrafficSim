@@ -10,7 +10,7 @@ public static boolean pause = false;
 private static int nextCarId = 0;
 private static int nextRoadId = 0;
 private static int nextLightId = 0;
-private static int lightsInterval = 100;
+private static int lightsInterval = 300;
 
 public int displayWidth = 1600;
 public int displayHeight = 900;
@@ -322,7 +322,7 @@ void runCars(){
 
     float angleRad = car.orientTowardsInRad(nextObj);
     if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("yellow"))){
-      car.move(angleRad, 0.5);
+      car.move(angleRad, 1);
     }else if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("green"))){
       car.move(angleRad, 1);
     }else{
@@ -794,8 +794,9 @@ void render(){
       //text(id, light.getXPos() + 30, light.getYPos() + 25);
       //text(coordinates, light.getXPos() + 15, light.getYPos() + 15);
       
-      String id = ("id: " + light.id);
-      text(id, light.getXPos() - 30, light.getYPos() + 25);
+      //Debugging for Issue #8
+      //String id = ("id: " + light.id);
+      //text(id, light.getXPos() - 30, light.getYPos() + 25);
     }
   }
   
