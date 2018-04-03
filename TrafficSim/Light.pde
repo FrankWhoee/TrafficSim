@@ -21,7 +21,7 @@ public class Light extends Position{
       super.xPos = getSpotX();
       if(!checkEmpty(super.xPos,super.yPos)){
         this.colour = "noRender";
-        System.out.println("Light " + id + " removed. noRender activated"); 
+        //System.out.println("Light " + id + " removed. noRender activated"); 
       }
     }else{
       width = road.getWidth();
@@ -30,7 +30,7 @@ public class Light extends Position{
       super.yPos = getSpotY();
       if(!checkEmpty(super.xPos,super.yPos)){
         this.colour = "noRender";
-        System.out.println("Light " + id + " removed. noRender activated"); 
+        //System.out.println("Light " + id + " removed. noRender activated"); 
       }
     }
   }

@@ -17,7 +17,7 @@ public int displayHeight = 900;
 public int centerX = displayWidth/2;
 public int centerY = displayHeight/2;
 public int turn = 0;
-public int amountOfCars = 75 ;
+public int amountOfCars = 75;
 public int defaultRoadWidth = 100;
 public float randomSpawnLocOffsetLength = 50;
 public float randomSpawnLocOffsetWidth = 50;
@@ -456,7 +456,7 @@ void generateLights(){
 void runLights(){
   for(Light light: Lights){
     if(light.width > light.height){
-      if(turn % (lightsInterval)== (lightsInterval/2  + (int)(Math.random() * 50))){
+      if(turn % (lightsInterval)== lightsInterval/2){
         if(light.id % 2 == 0){
            light.setColour("red");
         }else{
@@ -470,18 +470,32 @@ void runLights(){
         }
       }
     }else{
-      Light verticalLight = new Light(0, Roads.get(0), "");
+      Light verticalLight = new Light(-1, Roads.get(0), "");
       for(Light compareLight: Lights){
         if(light.getXPos() == compareLight.getXPos() && light.getYPos() == compareLight.getYPos()){
-          if(light.width != verticalLight.width && light.height != verticalLight.height){
+          if(light.width != compareLight.width && light.height != compareLight.height){
             verticalLight = compareLight;
           }
         }
       }
-      if(verticalLight.colour.equals("red")){
-        light.setColour("green");
+      if(verticalLight.id == -1){
+        System.out.println("Light " + light.id + " has not found pairing. Trying alternative search.");
+         for(Light compareLight: TrafficSim.Lights){
+          if(/*Math.abs(light.getXPos() - compareLight.getXPos()) == 100 &&*/ light.getYPos() == compareLight.getYPos()){
+              if(light.width != compareLight.width && light.height != compareLight.height){
+                  System.out.println("Light " + light.id + " paired.");
+                  verticalLight = compareLight;
+                  break;
+              }
+          }
+         }
+         light.setColour(verticalLight.colour);
       }else{
-        light.setColour("red");
+        if(verticalLight.colour.equals("red")){
+          light.setColour("green");
+        }else{
+          light.setColour("red");
+        }
       }
     }
   }
@@ -764,8 +778,8 @@ void render(){
       //text(coordinates, light.getXPos() + 15, light.getYPos() + 15);
       
       //Debugging for Issue #8
-      //String id = ("id: " + light.id);
-      //text(id, light.getXPos() - 30, light.getYPos() + 25);
+      String id = ("id: " + light.id);
+      text(id, light.getXPos() - 30, light.getYPos() + 25);
     }
   }
   
