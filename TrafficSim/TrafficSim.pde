@@ -435,10 +435,7 @@ void roadUI(){
 
 void generateLights(){
   for(Road road: Roads){
-    //nextLightId = 0;
-     if(road.width > road.height){
        for(Road roads: Roads){
-         if(roads.height > roads.width){
            nextLightId++;
            for(int i = 0; i < 2; i++){
              Light newLight;
@@ -450,37 +447,8 @@ void generateLights(){
              if(!newLight.colour.equals("noRender")){
                Lights.add(newLight);
              }
-             
            }
-         }
        }
-     }else{
-       for(Road roads: Roads){
-         if(roads.width > roads.height){
-           nextLightId++;
-           for(int i = 0; i < 2; i++){
-             Light newLight;
-             if(nextLightId % 2 == 0){
-               newLight = new Light(nextLightId,roads, "red");
-             }else{
-               newLight = new Light(nextLightId,roads, "green");
-             }
-             
-             if(!newLight.colour.equals("noRender")){
-               Lights.add(newLight);
-             }
-           }
-         }
-       }
-     }
-     /*
-     for(int i = 0; i < intersections * 2; i++){
-       nextLightId++;
-       Light newLight = new Light(nextLightId,road, "red");
-       Lights.add(newLight);
-     }
-     */
-     //nextLightId = 0;
    }
 }
 
