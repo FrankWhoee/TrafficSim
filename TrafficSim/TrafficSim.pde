@@ -10,7 +10,7 @@ public static boolean pause = false;
 private static int nextCarId = 0;
 private static int nextRoadId = 0;
 private static int nextLightId = 0;
-private static int lightsInterval = 300;
+private static int lightsInterval = 50;
 
 public int displayWidth = 1600;
 public int displayHeight = 900;
