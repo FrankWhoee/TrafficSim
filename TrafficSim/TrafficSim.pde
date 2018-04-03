@@ -445,8 +445,11 @@ void generateLights(){
          if(roads.height > roads.width){
            nextLightId++;
            for(int i = 0; i < 2; i++){
-             Light newLight = new Light(nextLightId,road, "red");
-             Lights.add(newLight);
+             Light newLight = new Light(nextLightId,roads, "red");
+             if(!newLight.colour.equals("noRender")){
+               Lights.add(newLight);
+             }
+             
            }
          }
        }
@@ -455,8 +458,10 @@ void generateLights(){
          if(roads.width > roads.height){
            nextLightId++;
            for(int i = 0; i < 2; i++){
-             Light newLight = new Light(nextLightId,road, "red");
-             Lights.add(newLight);
+             Light newLight = new Light(nextLightId,roads, "red");
+             if(!newLight.colour.equals("noRender")){
+               Lights.add(newLight);
+             }
            }
          }
        }
@@ -468,7 +473,7 @@ void generateLights(){
        Lights.add(newLight);
      }
      */
-     nextLightId = 0;
+     //nextLightId = 0;
    }
 }
 
@@ -481,13 +486,13 @@ void runLights(){
         if(turn % lightsInterval == 15){
           light.setColour("green");
         }else if(turn % lightsInterval == lightsInterval/2){
-          light.setColour("yellow");
+          //light.setColour("yellow");
         }else if(turn % lightsInterval == (lightsInterval/2) + 30){
           light.setColour("red");
         }
       }else{
         if(turn % lightsInterval == 15){
-          light.setColour("yellow");
+          //light.setColour("yellow");
         }else if(turn % lightsInterval == lightsInterval/2){
           light.setColour("red");
         }else if(turn % lightsInterval == (lightsInterval/2) + 30){
@@ -501,13 +506,13 @@ void runLights(){
         }else if(turn % lightsInterval == lightsInterval/2){
           light.setColour("green");
         }else if(turn % lightsInterval == (lightsInterval/2) + 30){
-          light.setColour("yellow");
+          //light.setColour("yellow");
         }
       }else{
         if(turn % lightsInterval == 15){
           light.setColour("green");
         }else if(turn % lightsInterval == lightsInterval/2){
-          light.setColour("yellow");
+          //light.setColour("yellow");
         }else if(turn % lightsInterval == (lightsInterval/2) + 30){
           light.setColour("red");
         }

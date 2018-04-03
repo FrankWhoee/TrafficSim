@@ -20,6 +20,7 @@ public class Light extends Position{
       super.xPos = getSpotX();
       if(!checkEmpty(super.xPos,super.yPos)){
         this.colour = "noRender";
+        System.out.println("Light " + id + " removed. noRender activated"); 
       }
     }else{
       width = road.getWidth();
@@ -28,6 +29,7 @@ public class Light extends Position{
       super.yPos = getSpotY();
       if(!checkEmpty(super.xPos,super.yPos)){
         this.colour = "noRender";
+        System.out.println("Light " + id + " removed. noRender activated"); 
       }
     }
   }
@@ -36,7 +38,11 @@ public class Light extends Position{
     for(Light light: TrafficSim.Lights){
       if(light.getXPos() == x){
         if(light.getYPos() == y){
-          return false;
+          if(light.width == this.width){
+            if(light.height == this.height){
+              return false;
+            }
+          }
         }
       }
     }
