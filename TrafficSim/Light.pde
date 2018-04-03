@@ -36,14 +36,11 @@ public class Light extends Position{
   
   public boolean checkEmpty(double x, double y){
     for(Light light: TrafficSim.Lights){
-      if(light.getXPos() == x){
-        if(light.getYPos() == y){
-          if(light.width == this.width){
-            if(light.height == this.height){
+      if(light.getXPos() == x && light.getYPos() == y){
+          if(light.width == this.width && light.height == this.height){
               return false;
-            }
           }
-        }
+        
       }
     }
     return true;

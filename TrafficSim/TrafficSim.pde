@@ -187,7 +187,7 @@ void affixRoadsToMatrix(){
     translateToMatrix(road);
     //System.out.println("Road road" + road.getId() + " = new Road(" + road.getId() + "," + road.getXPos() + "," + road.getYPos() + "," + road.width + "," + road.height + ");");
   }
-  //confirmation
+  //Confirming if grid has been correctly transformed (debugging)
   //printGrid(grid);
 }
 
@@ -319,9 +319,7 @@ void runCars(){
       nextObj = car.path.get(car.path.size() - 1);
       
     }
-    
-    
-    
+
     float angleRad = car.orientTowardsInRad(nextObj);
     if(sortedLights.size() > 0 && (sortedLights.get(0).colour.equals("yellow"))){
       car.move(angleRad, 0.5);
@@ -335,8 +333,6 @@ void runCars(){
   }
   
 }
-
-
 
 void roadUI(){
   if(mode == 'h'){
