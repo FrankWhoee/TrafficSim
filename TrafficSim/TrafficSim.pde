@@ -1,6 +1,7 @@
 import java.util.*;
 public static Map<Car,Velocity> carVectors = new HashMap<Car,Velocity>();
 
+
 public static ArrayList<Car> Cars = new ArrayList<Car>();
 public static ArrayList<Road> Roads = new ArrayList<Road>();
 public static ArrayList<Light> Lights = new ArrayList<Light>();
@@ -33,6 +34,7 @@ public String formationType = "grid";
 //public String formationType = "trib_tree";
 
 public int[][] grid = new int[displayWidth/defaultRoadWidth][displayHeight/defaultRoadWidth];
+public int[][] costMap = new int [grid.length][grid[0].length];
 
 char mode = 'v';
 Road road = new Road(0,0,0,defaultRoadWidth,displayHeight);
@@ -47,6 +49,7 @@ void setup() {
 void draw() {
   disp_draw();
   //master_draw();
+  costMap = createCostMap();
 }
 
 void disp_setup(){
@@ -551,18 +554,19 @@ void fillCol(int colNum, int rowNum, int colHeight){
   
 }
 
-int createCostMap(){
-  int[][] costMap = new int [grid.length][grid[0].length];
+int[][] createCostMap(){
+  int[][] cost = new int [grid.length][grid[0].length];
   for(int row = 0; row < costMap[0].length; row++){
     for(int column = 0; column < costMap.length; column++){
-      costMap[column][row] = 0;
+      costMap[column][row] = 1;
     }
   }
   
   for(Car car : Cars){
-    
+    Position carPos = translateToMatrix(car);
+    cost[(int)carPos.getXPos()][(int)carPos.getYPos()]++;
   }
-  return 0;
+  return cost;
 }
 
 ArrayList<Position> breadthFirstSearch(Car car){
@@ -735,14 +739,13 @@ ArrayList<Position> dijksAlgo(Car car){
   
   From[][] map = new From[grid.length][grid[0].length];
   int[][] temp = new int[grid.length][grid[0].length];
-  int[][] costMap = new int [grid.length][grid[0].length];
+  
   System.out.println("Matrices \"map\" and \"temp\" initialised.");
   
   //Path that car should take. To be filled with positions.
   ArrayList<Position> path = new ArrayList<Position>();
   
-  //Cost accumulated 
-  int costSoFar = 0;
+  ArrayList<Cost> costSoFar = new ArrayList<>();
   
   //xPos = Column, yPos = Row
   //import grid -> temp
