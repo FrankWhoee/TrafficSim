@@ -164,8 +164,7 @@ void formation(String formation){
   affixRoadsToMatrix();
 }
 
-void translateToMatrix(Road newRoad){
-  
+void translateRoadToMatrix(Road newRoad){
   if(newRoad.width > newRoad.height){
       int col = convertToMatrix(newRoad.getXPos());
       int row = convertToMatrix(newRoad.getYPos());
@@ -178,13 +177,18 @@ void translateToMatrix(Road newRoad){
       
       fillCol(col,row,l);
     }
-  
+}
+
+Position translateToMatrix(Position pos){
+      int col = convertToMatrix(pos.getXPos());
+      int row = convertToMatrix(pos.getYPos());
+      return new Position(col,row);
 }
 
 void affixRoadsToMatrix(){
   
   for(Road road: Roads){
-    translateToMatrix(road);
+    translateRoadToMatrix(road);
     //System.out.println("Road road" + road.getId() + " = new Road(" + road.getId() + "," + road.getXPos() + "," + road.getYPos() + "," + road.width + "," + road.height + ");");
   }
   //Confirming if grid has been correctly transformed (debugging)
@@ -211,7 +215,7 @@ void generateCars(int amount){
               }
               newCar.setPosition(nextPos);
               
-              newCar.path = findPath(newCar);
+              newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Right Side");
@@ -230,7 +234,7 @@ void generateCars(int amount){
               }
               newCar.setPosition(nextPos);
               
-              newCar.path = findPath(newCar);
+              newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Left Side");
@@ -253,7 +257,7 @@ void generateCars(int amount){
               }
               newCar.setPosition(nextPos);
               
-              newCar.path = findPath(newCar);
+              newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Lower Side");
@@ -271,7 +275,7 @@ void generateCars(int amount){
               }
               newCar.setPosition(nextPos);
                
-              newCar.path = findPath(newCar);
+              newCar.path = breadthFirstSearch(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Upper Side");              
@@ -547,7 +551,21 @@ void fillCol(int colNum, int rowNum, int colHeight){
   
 }
 
-ArrayList<Position> findPath(Car car){
+int createCostMap(){
+  int[][] costMap = new int [grid.length][grid[0].length];
+  for(int row = 0; row < costMap[0].length; row++){
+    for(int column = 0; column < costMap.length; column++){
+      costMap[column][row] = 0;
+    }
+  }
+  
+  for(Car car : Cars){
+    
+  }
+  return 0;
+}
+
+ArrayList<Position> breadthFirstSearch(Car car){
   //MAP KEY:
   //-1 = objective position
   //0 = inaccesible area
@@ -702,6 +720,170 @@ ArrayList<Position> findPath(Car car){
   return path;
 }
 
+/*
+ArrayList<Position> dijksAlgo(Car car){
+  //MAP KEY:
+  //0 = inaccesible area
+  //2 = car
+  //1 = unvisited area
+  //3 = frontier
+  //4 = visited
+  //5 = objective position
+  
+  PriorityQueue<PriorityPosition> frontier = new PriorityQueue<>();
+  System.out.println("ArrayList \"frontier\" initialised.");
+  
+  From[][] map = new From[grid.length][grid[0].length];
+  int[][] temp = new int[grid.length][grid[0].length];
+  int[][] costMap = new int [grid.length][grid[0].length];
+  System.out.println("Matrices \"map\" and \"temp\" initialised.");
+  
+  //Path that car should take. To be filled with positions.
+  ArrayList<Position> path = new ArrayList<Position>();
+  
+  //Cost accumulated 
+  int costSoFar = 0;
+  
+  //xPos = Column, yPos = Row
+  //import grid -> temp
+  for(int row = 0; row < grid[0].length; row++){
+    for(int column = 0; column < grid.length; column++){
+      temp[column][row] = grid[column][row];
+    }
+  }
+  System.out.println("grid has been imported to temp");
+
+  //plot objective on temp
+  int objCol = ((int)car.objective.getXPos() - ((int)car.objective.getXPos() % 100))/100;
+  int objRow = ((int)car.objective.getYPos() - ((int)car.objective.getYPos() % 100))/100;
+  temp[objCol][objRow] = 5;
+  System.out.println("objective plotted on temp");
+  System.out.println("objCol: " + objCol + " objRow: " + objRow);
+  System.out.println("obj x: " + car.objective.getXPos() + " obj y: " + car.objective.getYPos());
+ 
+  
+   //plot car on temp
+  int carCol = ((int)car.getXPos() - ((int)car.getXPos() % 100))/100;
+  int carRow = ((int)car.getYPos() - ((int)car.getYPos() % 100))/100;
+  System.out.println("col: " + carCol + " carRow: " + carRow);
+  System.out.println("temp row length: " + temp[0].length);
+  System.out.println("temp col length: " + temp.length);
+  System.out.println("car x: " + car.getXPos() + " car y: " + car.getYPos());
+  System.out.println("car id: " + car.getId());
+  temp[carCol][carRow] = 2;
+  
+  //if car is already in the same square as the objective, just go to objective.
+  if(objCol == carCol && objRow == carRow){
+    float convertedX = ((float)carCol * (float)defaultRoadWidth) + (float)defaultRoadWidth/2;
+    float convertedY = ((float)carRow * (float)defaultRoadWidth) + (float)defaultRoadWidth/2;
+    path.add(new Position(convertedX, convertedY));
+    return path;
+  }
+  
+  Position carPos = new Position(carCol, carRow);
+  map[carCol][carRow] = new From(carPos,carPos);
+  System.out.println("car plotted on temp");
+  System.out.println("temp:");
+  
+  
+  //add car to frontier
+  frontier.offer(new PriorityPosition(new Position(carCol, carRow),0));
+  System.out.println("car added to frontier.");
+  
+  //flag for early exit out of Breadth First Search
+  boolean flagEarlyExit = false;
+  System.out.println("Breadth First Search: Variables ready for car " + car.getId() + ". Proceeding with calculations.");
+  //Calculate
+  while(!flagEarlyExit){
+    //printGrid(temp);
+    for(int index = frontier.size() - 1; index >= 0; index--){
+      int col = (int)frontier.peek().p.getXPos();
+      int row = (int)frontier.peek().p.getYPos();
+      
+      if(temp[col][row] == 3 || temp[col][row] == 2){
+          if(row < temp[col].length - 1 && (temp[col][row + 1] == 1 || temp[col][row + 1] == 5)){
+            temp[col][row + 1] = 3;
+            Position is = new Position(col,row  +1);
+            Position from = new Position(col,row);
+            map[col][row + 1] = new From(is, from);
+            frontier.add(new PriorityPosition(new Position(col,row + 1),5));
+            
+            if(col == objCol && (row + 1) == objRow){
+              System.out.println("Early exit flag triggered. Exiting calculation loop.");
+              flagEarlyExit = true;
+              break;
+            }
+          }
+          if(row > 0 && (temp[col][row - 1] == 1 || temp[col][row - 1] == 5)){ 
+            temp[col][row - 1] = 3;
+            Position is = new Position(col,row  - 1);
+            Position from = new Position(col,row);
+            map[col][row - 1] = new From(is, from);
+            frontier.add(new Position(col,row - 1));
+            
+            if(col == objCol && (row - 1) == objRow){
+              System.out.println("Early exit flag triggered. Exiting calculation loop.");
+              flagEarlyExit = true;
+              break;
+            }
+          }
+          if(col < temp.length - 1 && (temp[col + 1][row] == 1 || temp[col + 1][row] == 5)){
+            temp[col + 1][row] = 3;
+            Position is = new Position(col + 1,row);
+            Position from = new Position(col,row);
+            map[col + 1][row] = new From(is, from);
+            frontier.add(new Position(col + 1,row));
+            
+            if((col + 1) == objCol && (row) == objRow){
+              System.out.println("Early exit flag triggered. Exiting calculation loop.");
+              flagEarlyExit = true;
+              break;
+            }
+          }
+          if(col > 0 && (temp[col - 1][row] == 1 || temp[col - 1][row] == 5)){
+            temp[col - 1][row] = 3;
+            Position is = new Position(col - 1,row);
+            Position from = new Position(col,row);
+            map[col - 1][row] = new From(is, from);
+            frontier.add(new Position(col - 1,row));
+            
+            if((col - 1) == objCol && (row) == objRow){
+              System.out.println("Early exit flag triggered. Exiting calculation loop.");
+              flagEarlyExit = true;
+              break;
+            }
+          }
+          if(temp[col][row] != 2){
+            temp[col][row] = 4;
+          }
+          frontier.remove(index);
+          
+      }
+    }
+  }
+  
+  //Which coordinate is being iterated currently.
+  From current = map[objCol][objRow];
+  //Where the car is right now
+  From start = map[carCol][carRow];
+  
+  //While the current coordinates do not equal the start coordinates,
+  while(!same(current,start)){
+    
+    //Convert the current position from matrix coordinates to real coordinates
+    float convertedX = ((float)current.is.getXPos() * (float)defaultRoadWidth) + (float)defaultRoadWidth/2;
+    float convertedY = ((float)current.is.getYPos() * (float)defaultRoadWidth) + (float)defaultRoadWidth/2;
+    
+    //Store newly converted position into a Position variable
+    Position convertedPosition = new Position(convertedX, convertedY);
+    //Add the new Position into the path
+    path.add(convertedPosition);
+    //Follow the "breadcrumbs" back to the start, so get where this current positions is "from".
+    current = map[(int)current.from.getXPos()][(int)current.from.getYPos()];
+  }
+  return path;
+}
+*/
 //Checks if a From is the same as the other From.
 boolean same(From from1, From from2){
   if(from1.is.getXPos() == from2.is.getXPos() && from1.is.getYPos() == from2.is.getYPos()){ //ERROR ON THIS LINE NullPointerException
