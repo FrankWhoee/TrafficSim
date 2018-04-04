@@ -10,7 +10,7 @@ public static boolean pause = false;
 private static int nextCarId = 0;
 private static int nextRoadId = 0;
 private static int nextLightId = 0;
-private static int lightsInterval = 64;
+private static int lightsInterval = 232;
 
 public int displayWidth = 1600;
 public int displayHeight = 900;
@@ -479,17 +479,22 @@ void runLights(){
         }
       }
       if(verticalLight.id == -1){
+        if(turn == 1){  
         System.out.println("Light " + light.id + " has not found pairing. Trying alternative search.");
+        }
          for(Light compareLight: TrafficSim.Lights){
           if(/*Math.abs(light.getXPos() - compareLight.getXPos()) == 100 &&*/ light.getYPos() == compareLight.getYPos()){
-              if(light.width != compareLight.width && light.height != compareLight.height){
-                  System.out.println("Light " + light.id + " paired.");
+              if(light.width != compareLight.width && light.height != compareLight.height && (light.id % 2) != (compareLight.id % 2)){
+                if(turn == 1){  
+                System.out.println("Light " + light.id + " paired with " + compareLight.id);
+                }
                   verticalLight = compareLight;
                   break;
               }
           }
          }
          light.setColour(verticalLight.colour);
+         
       }else{
         if(verticalLight.colour.equals("red")){
           light.setColour("green");
@@ -756,8 +761,8 @@ void render(){
     //String coordinates = "x: " + (int)car.getXPos() + " y: " + (int)car.getYPos();
      String id = ("id: " + car.getId());
     //text(coordinates, car.getXPos() + 15, car.getYPos() + 15);
-    text(id, car.getXPos() - 30, car.getYPos() + 25);
-    text(id, car.objective.getXPos() - 30, car.objective.getYPos() + 25);
+    //text(id, car.getXPos() - 30, car.getYPos() + 25);
+    //text(id, car.objective.getXPos() - 30, car.objective.getYPos() + 25);
     
 
   }
@@ -779,7 +784,7 @@ void render(){
       
       //Debugging for Issue #8
       String id = ("id: " + light.id);
-      text(id, light.getXPos() - 30, light.getYPos() + 25);
+      text(id, light.getXPos() + 15, light.getYPos() + 25);
     }
   }
   
