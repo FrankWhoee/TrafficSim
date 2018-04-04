@@ -474,7 +474,11 @@ void runLights(){
       for(Light compareLight: Lights){
         if(light.getXPos() == compareLight.getXPos() && light.getYPos() == compareLight.getYPos()){
           if(light.width != compareLight.width && light.height != compareLight.height){
+            if(turn == 1){  
+              System.out.println("Light " + light.id + " paired with " + compareLight.id);
+            }
             verticalLight = compareLight;
+            break;
           }
         }
       }
@@ -486,7 +490,7 @@ void runLights(){
           if(/*Math.abs(light.getXPos() - compareLight.getXPos()) == 100 &&*/ light.getYPos() == compareLight.getYPos()){
               if(light.width != compareLight.width && light.height != compareLight.height && (light.id % 2) != (compareLight.id % 2)){
                 if(turn == 1){  
-                System.out.println("Light " + light.id + " paired with " + compareLight.id);
+                  System.out.println("Light " + light.id + " paired with " + compareLight.id);
                 }
                   verticalLight = compareLight;
                   break;
