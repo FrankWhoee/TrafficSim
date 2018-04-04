@@ -211,7 +211,7 @@ void generateCars(int amount){
               }
               newCar.setPosition(nextPos);
               
-              newCar.path = breadthFirstSearch(newCar);
+              newCar.path = findPath(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Right Side");
@@ -230,7 +230,7 @@ void generateCars(int amount){
               }
               newCar.setPosition(nextPos);
               
-              newCar.path = breadthFirstSearch(newCar);
+              newCar.path = findPath(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Left Side");
@@ -253,7 +253,7 @@ void generateCars(int amount){
               }
               newCar.setPosition(nextPos);
               
-              newCar.path = breadthFirstSearch(newCar);
+              newCar.path = findPath(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Lower Side");
@@ -271,7 +271,7 @@ void generateCars(int amount){
               }
               newCar.setPosition(nextPos);
                
-              newCar.path = breadthFirstSearch(newCar);
+              newCar.path = findPath(newCar);
               Cars.add(newCar);
               nextCarId++;
               //System.out.println(newCar.getId() + " spawned. Type: Car Location: Upper Side");              
@@ -547,7 +547,7 @@ void fillCol(int colNum, int rowNum, int colHeight){
   
 }
 
-ArrayList<Position> breadthFirstSearch(Car car){
+ArrayList<Position> findPath(Car car){
   //MAP KEY:
   //-1 = objective position
   //0 = inaccesible area
