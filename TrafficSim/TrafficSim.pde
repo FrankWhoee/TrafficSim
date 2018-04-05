@@ -724,7 +724,15 @@ ArrayList<Position> breadthFirstSearch(Car car){
   return path;
 }
 
-/*
+int getCost(ArrayList<Cost> costSoFar, Position p){
+  for(Cost cost : costSoFar){
+    if(cost.p.getXPos() == p.getXPos() && cost.p.getYPos() == p.getYPos()){
+      return cost.cost;
+    }
+  }
+  return -1;
+}
+
 ArrayList<Position> dijksAlgo(Car car){
   //MAP KEY:
   //0 = inaccesible area
@@ -734,7 +742,7 @@ ArrayList<Position> dijksAlgo(Car car){
   //4 = visited
   //5 = objective position
   
-  PriorityQueue<PriorityPosition> frontier = new PriorityQueue<>();
+  PriorityQueue<PriorityPosition> frontier = new PriorityQueue<PriorityPosition>();
   System.out.println("ArrayList \"frontier\" initialised.");
   
   From[][] map = new From[grid.length][grid[0].length];
@@ -745,7 +753,7 @@ ArrayList<Position> dijksAlgo(Car car){
   //Path that car should take. To be filled with positions.
   ArrayList<Position> path = new ArrayList<Position>();
   
-  ArrayList<Cost> costSoFar = new ArrayList<>();
+  ArrayList<Cost> costSoFar = new ArrayList<Cost>();
   
   //xPos = Column, yPos = Row
   //import grid -> temp
@@ -803,63 +811,87 @@ ArrayList<Position> dijksAlgo(Car car){
       int col = (int)frontier.peek().p.getXPos();
       int row = (int)frontier.peek().p.getYPos();
       
+      
       if(temp[col][row] == 3 || temp[col][row] == 2){
           if(row < temp[col].length - 1 && (temp[col][row + 1] == 1 || temp[col][row + 1] == 5)){
-            temp[col][row + 1] = 3;
-            Position is = new Position(col,row  +1);
-            Position from = new Position(col,row);
-            map[col][row + 1] = new From(is, from);
-            frontier.add(new PriorityPosition(new Position(col,row + 1),5));
-            
-            if(col == objCol && (row + 1) == objRow){
-              System.out.println("Early exit flag triggered. Exiting calculation loop.");
-              flagEarlyExit = true;
-              break;
+            int newCost = getCost(costSoFar, new Position(col,row)) + costMap[col][row + 1];
+            if(getCost(costSoFar,new Position(col,row + 1)) != -1 || newCost < getCost(costSoFar,new Position(col,row + 1))){
+              frontier.add(new PriorityPosition(new Position(col,row + 1),newCost));
+              temp[col][row + 1] = 3;
+              Position is = new Position(col,row  +1);
+              Position from = new Position(col,row);
+              map[col][row + 1] = new From(is, from);
+              
+              if(col == objCol && (row + 1) == objRow){
+                System.out.println("Early exit flag triggered. Exiting calculation loop.");
+                flagEarlyExit = true;
+                break;
+              }
             }
           }
           if(row > 0 && (temp[col][row - 1] == 1 || temp[col][row - 1] == 5)){ 
-            temp[col][row - 1] = 3;
-            Position is = new Position(col,row  - 1);
-            Position from = new Position(col,row);
-            map[col][row - 1] = new From(is, from);
-            frontier.add(new Position(col,row - 1));
-            
-            if(col == objCol && (row - 1) == objRow){
-              System.out.println("Early exit flag triggered. Exiting calculation loop.");
-              flagEarlyExit = true;
-              break;
+            int newCost = getCost(costSoFar, new Position(col,row)) + costMap[col][row - 1];
+            if(getCost(costSoFar,new Position(col,row - 1)) != -1 || newCost < getCost(costSoFar,new Position(col,row - 1))){
+              frontier.add(new PriorityPosition(new Position(col,row - 1),newCost));
+              temp[col][row - 1] = 3;
+              Position is = new Position(col,row  - 1);
+              Position from = new Position(col,row);
+              map[col][row - 1] = new From(is, from);
+              
+              if(col == objCol && (row - 1) == objRow){
+                System.out.println("Early exit flag triggered. Exiting calculation loop.");
+                flagEarlyExit = true;
+                break;
+              }
             }
           }
           if(col < temp.length - 1 && (temp[col + 1][row] == 1 || temp[col + 1][row] == 5)){
-            temp[col + 1][row] = 3;
-            Position is = new Position(col + 1,row);
-            Position from = new Position(col,row);
-            map[col + 1][row] = new From(is, from);
-            frontier.add(new Position(col + 1,row));
-            
-            if((col + 1) == objCol && (row) == objRow){
-              System.out.println("Early exit flag triggered. Exiting calculation loop.");
-              flagEarlyExit = true;
-              break;
+            int newCost = getCost(costSoFar, new Position(col,row)) + costMap[col + 1][row];
+            if(getCost(costSoFar,new Position(col + 1,row)) != -1 || newCost < getCost(costSoFar,new Position(col + 1,row))){
+              frontier.add(new PriorityPosition(new Position(col + 1,row),newCost));
+              temp[col + 1][row] = 3;
+              Position is = new Position(col + 1,row);
+              Position from = new Position(col,row);
+              map[col + 1][row] = new From(is, from);
+              
+              if((col + 1) == objCol && (row) == objRow){
+                System.out.println("Early exit flag triggered. Exiting calculation loop.");
+                flagEarlyExit = true;
+                break;
+              }
             }
           }
           if(col > 0 && (temp[col - 1][row] == 1 || temp[col - 1][row] == 5)){
-            temp[col - 1][row] = 3;
-            Position is = new Position(col - 1,row);
-            Position from = new Position(col,row);
-            map[col - 1][row] = new From(is, from);
-            frontier.add(new Position(col - 1,row));
-            
-            if((col - 1) == objCol && (row) == objRow){
-              System.out.println("Early exit flag triggered. Exiting calculation loop.");
-              flagEarlyExit = true;
-              break;
+            int newCost = getCost(costSoFar, new Position(col,row)) + costMap[col - 1][row];
+            if(getCost(costSoFar,new Position(col - 1,row)) != -1 || newCost < getCost(costSoFar,new Position(col - 1,row))){
+              frontier.add(new PriorityPosition(new Position(col - 1,row),newCost));
+              temp[col - 1][row] = 3;
+              Position is = new Position(col - 1,row);
+              Position from = new Position(col,row);
+              map[col - 1][row] = new From(is, from);
+              
+              if((col - 1) == objCol && (row) == objRow){
+                System.out.println("Early exit flag triggered. Exiting calculation loop.");
+                flagEarlyExit = true;
+                break;
+              }
             }
           }
           if(temp[col][row] != 2){
             temp[col][row] = 4;
           }
-          frontier.remove(index);
+          
+          Position pos = new Position(-1,-1);
+          int priority = 0;
+          
+          PriorityPosition prioPos = new PriorityPosition(pos,-1);
+          
+          for(PriorityPosition priorityPos : frontier){
+            if(priorityPos.p.getXPos() == col && priorityPos.p.getYPos() == row){
+              prioPos = priorityPos;
+            }
+          }
+          frontier.remove(prioPos);
           
       }
     }
@@ -886,7 +918,7 @@ ArrayList<Position> dijksAlgo(Car car){
   }
   return path;
 }
-*/
+
 //Checks if a From is the same as the other From.
 boolean same(From from1, From from2){
   if(from1.is.getXPos() == from2.is.getXPos() && from1.is.getYPos() == from2.is.getYPos()){ //ERROR ON THIS LINE NullPointerException
