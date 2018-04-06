@@ -773,7 +773,7 @@ void runLights() {
     if(light.isIntersectingCar(light.getXPos(),light.getYPos())){
           System.out.println("Light " + light.id + " intersecting with car.");
           light.setColour("green");
-        }
+     }
   }
 }
 
