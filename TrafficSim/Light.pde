@@ -48,6 +48,27 @@ public class Light extends Position{
     return true;
   }
   
+   public boolean isIntersectingCar(float xPos, float yPos){
+     for(Car car: TrafficSim.Cars){
+        float carX = car.getXPos();
+        float carY = car.getXPos();
+      
+        float lightX = xPos;
+        float lightY = yPos;
+        float lightWidth = width;
+        float lightHeight = height;
+        
+        float closestX = Math.max(lightX, Math.min(carX, lightX + lightWidth));
+        float closestY = Math.max(lightY, Math.min(carY, lightY + lightHeight));
+        float dx = carX - closestX;
+        float dy = carY - closestY;
+       if((((dx * dx) + (dy * dy)) < 64)){
+           return true;
+       }
+    }
+    return false;
+   }
+  
   public float calculateTimingUnrounded(){
     float output = 0;
     if(road.getWidth() > road.getHeight()){

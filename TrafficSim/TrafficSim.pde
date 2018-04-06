@@ -767,7 +767,13 @@ void runLights() {
               }
             }
         }
+        
+        
     }
+    if(light.isIntersectingCar(light.getXPos(),light.getYPos())){
+          System.out.println("Light " + light.id + " intersecting with car.");
+          light.setColour("green");
+        }
   }
 }
 
@@ -1252,8 +1258,8 @@ void render() {
       //text(coordinates, light.getXPos() + 15, light.getYPos() + 15);
 
       //Debugging for Issue #8 & #9
-      //String lightId = ("id: " + light.id);
-      //text(lightId, light.getXPos() + 15, light.getYPos() + 25);
+      String lightId = ("id: " + light.id);
+      text(lightId, light.getXPos() + 15, light.getYPos() + 25);
     }
   }
 }
