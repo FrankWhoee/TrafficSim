@@ -467,75 +467,32 @@ ArrayList<Car> getCarsInGrid(int col, int row){
 }
 
 void runLights() {
+  int localCooldownDefault = 50;
   for (Light light : Lights) {
-    ArrayList<Car> sortedCars = getSortedCars(light);
-    Position middle = new Position(-1,-1);
     
-    if(light.width > light.height){
-      middle = new Position(light.getXPos() + light.width/2,light.getYPos());
-    }else{
-      middle = new Position(light.getXPos(), light.getYPos() + light.height/2);
+    if(light.colour.equals("red")){
+      light.cooldown = 0;
     }
     
-    if(middle.getDistanceTo(sortedCars.get(0)) < 50){
-      int col = convertToMatrix(light.getXPos());
-      int row = convertToMatrix(light.getYPos());
-      try{
-        if(col != 0 && col != displayWidth/defaultRoadWidth && row > 0 && row  != displayHeight/defaultRoadWidth - 1){
-          if((costMap[col + 1][row] + costMap[col - 1][row]) > (costMap[col][row + 1] + costMap[col][row - 1])){
-             if (light.width < light.height) {
-               light.setColour("green");
-             } else {
-                light.setColour("red");
-             } 
-          }else{
-            if (light.width < light.height) {
-               light.setColour("red");
-             } else {
-                light.setColour("green");
-             } 
-          }
-          
-          
-        }else{
-          
-          if(col == displayWidth/defaultRoadWidth && row == displayHeight/defaultRoadWidth){
-            //System.out.println("col: " + col + ", row: " + row); 
-            if(costMap[col - 1][row] > (costMap[col][row - 1])){
-             if (light.width < light.height) {
-               light.setColour("green");
-             } else {
-                light.setColour("red");
-             } 
-            }else{
-              if (light.width < light.height) {
-                 light.setColour("red");
-               } else {
-                  light.setColour("green");
-               } 
-            }
-          }
-          
-          if(col == 0 && row == displayHeight/defaultRoadWidth){
-            //System.out.println("col: " + col + ", row: " + row); 
-            if((costMap[col + 1][row]) > (costMap[col][row - 1])){
-             if (light.width < light.height) {
-               light.setColour("green");
-             } else {
-                light.setColour("red");
-             } 
-          }else{
-            if (light.width < light.height) {
-               light.setColour("red");
-             } else {
-                light.setColour("green");
-             } 
-          }
-          }
-          
-          if(col == 0 && row == 0){
-              //System.out.println("col: " + col + ", row: " + row); 
-              if((costMap[col + 1][row]) > (costMap[col][row + 1])){
+    if(light.cooldown > 0){
+      light.cooldown--;
+    }else{
+      ArrayList<Car> sortedCars = getSortedCars(light);
+      Position middle = new Position(-1,-1);
+      
+      if(light.width > light.height){
+        middle = new Position(light.getXPos() + light.width/2,light.getYPos());
+      }else{
+        middle = new Position(light.getXPos(), light.getYPos() + light.height/2);
+      }
+      
+      if(middle.getDistanceTo(sortedCars.get(0)) < 75){
+        light.cooldown = localCooldownDefault;
+        int col = convertToMatrix(light.getXPos());
+        int row = convertToMatrix(light.getYPos());
+        try{
+          if(col != 0 && col != displayWidth/defaultRoadWidth && row > 0 && row  != displayHeight/defaultRoadWidth - 1){
+            if((costMap[col + 1][row] + costMap[col - 1][row]) > (costMap[col][row + 1] + costMap[col][row - 1])){
                if (light.width < light.height) {
                  light.setColour("green");
                } else {
@@ -548,18 +505,35 @@ void runLights() {
                   light.setColour("green");
                } 
             }
-          }
-          
-          
-          
-          if(col == displayWidth/defaultRoadWidth && row == 0){
-           // System.out.println("col: " + col + ", row: " + row); 
-            if((costMap[col - 1][row]) > (costMap[col][row + 1])){
-             if (light.width < light.height) {
-               light.setColour("green");
-             } else {
-                light.setColour("red");
-             } 
+            
+            
+          }else{
+            
+            if(col == displayWidth/defaultRoadWidth && row == displayHeight/defaultRoadWidth){
+              //System.out.println("col: " + col + ", row: " + row); 
+              if(costMap[col - 1][row] > (costMap[col][row - 1])){
+               if (light.width < light.height) {
+                 light.setColour("green");
+               } else {
+                  light.setColour("red");
+               } 
+              }else{
+                if (light.width < light.height) {
+                   light.setColour("red");
+                 } else {
+                    light.setColour("green");
+                 } 
+              }
+            }
+            
+            if(col == 0 && row == displayHeight/defaultRoadWidth){
+              //System.out.println("col: " + col + ", row: " + row); 
+              if((costMap[col + 1][row]) > (costMap[col][row - 1])){
+               if (light.width < light.height) {
+                 light.setColour("green");
+               } else {
+                  light.setColour("red");
+               } 
             }else{
               if (light.width < light.height) {
                  light.setColour("red");
@@ -567,203 +541,233 @@ void runLights() {
                   light.setColour("green");
                } 
             }
-          }
-          
-          if(col == displayWidth/defaultRoadWidth && row < displayHeight/defaultRoadWidth){
-            //System.out.println("col: " + col + ", row: " + row); 
-            if((costMap[col - 1][row]) > (costMap[col][row + 1])){
-             if (light.width < light.height) {
-               light.setColour("green");
-             } else {
-                light.setColour("red");
-             } 
-            }else{
-              if (light.width < light.height) {
-                 light.setColour("red");
-               } else {
-                  light.setColour("green");
-               } 
             }
-          }
-          
-          if(col == 0 && row != displayHeight/defaultRoadWidth - 1 && row != 0){
-           // System.out.println("col: " + col + ", row: " + row); 
-            if((costMap[col + 1][row] + 1) > (costMap[col][row + 1] + costMap[col][row - 1])){
-             if (light.width < light.height) {
-               light.setColour("green");
-             } else {
-                light.setColour("red");
-             } 
-            }else{
-              if (light.width < light.height) {
-                 light.setColour("red");
-               } else {
-                  light.setColour("green");
-               } 
+            
+            if(col == 0 && row == 0){
+                //System.out.println("col: " + col + ", row: " + row); 
+                if((costMap[col + 1][row]) > (costMap[col][row + 1])){
+                 if (light.width < light.height) {
+                   light.setColour("green");
+                 } else {
+                    light.setColour("red");
+                 } 
+              }else{
+                if (light.width < light.height) {
+                   light.setColour("red");
+                 } else {
+                    light.setColour("green");
+                 } 
+              }
             }
-          }
-          
-          if(row == 0 && col != displayWidth/defaultRoadWidth - 1 && col != 0){
-           // System.out.println("col: " + col + ", row: " + row); 
-            if((costMap[col + 1][row] + costMap[col - 1][row]) > (costMap[col][row + 1] + 1)){
-             if (light.width < light.height) {
-               light.setColour("green");
-             } else {
-                light.setColour("red");
-             } 
-            }else{
-              if (light.width < light.height) {
-                 light.setColour("red");
+            
+            
+            
+            if(col == displayWidth/defaultRoadWidth && row == 0){
+             // System.out.println("col: " + col + ", row: " + row); 
+              if((costMap[col - 1][row]) > (costMap[col][row + 1])){
+               if (light.width < light.height) {
+                 light.setColour("green");
                } else {
-                  light.setColour("green");
+                  light.setColour("red");
                } 
+              }else{
+                if (light.width < light.height) {
+                   light.setColour("red");
+                 } else {
+                    light.setColour("green");
+                 } 
+              }
             }
-          }
-          
-          if(row == displayHeight/defaultRoadWidth - 1 && col != displayWidth/defaultRoadWidth && col != 0){
-            //System.out.println("col: " + col + ", row: " + row); 
-            if((costMap[col + 1][row] + costMap[col - 1][row]) > (costMap[col][row - 1] + 1)){
-             if (light.width < light.height) {
-               light.setColour("green");
-             } else {
-                light.setColour("red");
-             } 
-            }else{
-              if (light.width < light.height) {
-                 light.setColour("red");
+            
+            if(col == displayWidth/defaultRoadWidth && row < displayHeight/defaultRoadWidth){
+              //System.out.println("col: " + col + ", row: " + row); 
+              if((costMap[col - 1][row]) > (costMap[col][row + 1])){
+               if (light.width < light.height) {
+                 light.setColour("green");
                } else {
-                  light.setColour("green");
+                  light.setColour("red");
                } 
+              }else{
+                if (light.width < light.height) {
+                   light.setColour("red");
+                 } else {
+                    light.setColour("green");
+                 } 
+              }
             }
-          }
-          
-          if(col == displayWidth/defaultRoadWidth && row != displayHeight/defaultRoadWidth - 1 && row != 0){
-            //System.out.println("col: " + col + ", row: " + row); 
-            if((costMap[col - 1][row] + 1) > (costMap[col][row + 1] + costMap[col][row - 1])){
-             if (light.width < light.height) {
-               light.setColour("green");
-             } else {
-                light.setColour("red");
-             } 
-            }else{
-              if (light.width < light.height) {
-                 light.setColour("red");
+            
+            if(col == 0 && row != displayHeight/defaultRoadWidth - 1 && row != 0){
+             // System.out.println("col: " + col + ", row: " + row); 
+              if((costMap[col + 1][row] + 1) > (costMap[col][row + 1] + costMap[col][row - 1])){
+               if (light.width < light.height) {
+                 light.setColour("green");
                } else {
-                  light.setColour("green");
+                  light.setColour("red");
                } 
+              }else{
+                if (light.width < light.height) {
+                   light.setColour("red");
+                 } else {
+                    light.setColour("green");
+                 } 
+              }
             }
+            
+            if(row == 0 && col != displayWidth/defaultRoadWidth - 1 && col != 0){
+             // System.out.println("col: " + col + ", row: " + row); 
+              if((costMap[col + 1][row] + costMap[col - 1][row]) > (costMap[col][row + 1] + 1)){
+               if (light.width < light.height) {
+                 light.setColour("green");
+               } else {
+                  light.setColour("red");
+               } 
+              }else{
+                if (light.width < light.height) {
+                   light.setColour("red");
+                 } else {
+                    light.setColour("green");
+                 } 
+              }
+            }
+            
+            if(row == displayHeight/defaultRoadWidth - 1 && col != displayWidth/defaultRoadWidth && col != 0){
+              //System.out.println("col: " + col + ", row: " + row); 
+              if((costMap[col + 1][row] + costMap[col - 1][row]) > (costMap[col][row - 1] + 1)){
+               if (light.width < light.height) {
+                 light.setColour("green");
+               } else {
+                  light.setColour("red");
+               } 
+              }else{
+                if (light.width < light.height) {
+                   light.setColour("red");
+                 } else {
+                    light.setColour("green");
+                 } 
+              }
+            }
+            
+            if(col == displayWidth/defaultRoadWidth && row != displayHeight/defaultRoadWidth - 1 && row != 0){
+              //System.out.println("col: " + col + ", row: " + row); 
+              if((costMap[col - 1][row] + 1) > (costMap[col][row + 1] + costMap[col][row - 1])){
+               if (light.width < light.height) {
+                 light.setColour("green");
+               } else {
+                  light.setColour("red");
+               } 
+              }else{
+                if (light.width < light.height) {
+                   light.setColour("red");
+                 } else {
+                    light.setColour("green");
+                 } 
+              }
+            }
+            
           }
           
+        }catch(Exception e){
+          System.out.println("[" + e + "] row: " + row + ", col: " + col);
         }
         
-      }catch(Exception e){
-        System.out.println("[" + e + "] row: " + row + ", col: " + col);
-      }
-      
-      
-    }else{
-      if(light.width > light.height){
-        if(turn % (lightsInterval)== lightsInterval/2){
-          if(light.id % 2 == 0){
-             light.setColour("red");
-          }else{
-            light.setColour("green");
-          }
-        }else if(turn % lightsInterval == 0){
-          if(light.id % 2 == 0){
-             light.setColour("green");
-          }else{
-            light.setColour("red");
-          }
-        }
+        
       }else{
-        Light verticalLight = new Light(-1, Roads.get(0), "");
-        for(Light compareLight: Lights){
-          if(light.getXPos() == compareLight.getXPos() && light.getYPos() == compareLight.getYPos()){
-            if(light.width != compareLight.width && light.height != compareLight.height){
-              if(turn == 1){  
-                System.out.println("Light " + light.id + " paired with " + compareLight.id);
-              }
-              verticalLight = compareLight;
-              break;
+        if(light.width > light.height){
+          if(turn % (lightsInterval)== lightsInterval/2){
+            if(light.id % 2 == 0){
+               light.setColour("red");
+            }else{
+              light.setColour("green");
+            }
+          }else if(turn % lightsInterval == 0){
+            if(light.id % 2 == 0){
+               light.setColour("green");
+            }else{
+              light.setColour("red");
             }
           }
-        }
-        if(verticalLight.id == -1){
-          if(turn == 1){  
-          System.out.println("Light " + light.id + " has not found pairing. Trying alternative search.");
-          }
-           for(Light compareLight: TrafficSim.Lights){
-            if(/*Math.abs(light.getXPos() - compareLight.getXPos()) == 100 &&*/ light.getYPos() == compareLight.getYPos()){
-                if(light.width != compareLight.width && light.height != compareLight.height && (light.id % 2) != (compareLight.id % 2)){
-                  if(turn == 1){  
-                    System.out.println("Light " + light.id + " paired with " + compareLight.id);
-                  }
-                    verticalLight = compareLight;
-                    break;
-                }
-            }
-           }
-           light.setColour(verticalLight.colour);
-  
         }else{
-          if(verticalLight.colour.equals("red")){
-            light.setColour("green");
+          Light verticalLight = new Light(-1, Roads.get(0), "");
+          for(Light compareLight: Lights){
+            if(light.getXPos() == compareLight.getXPos() && light.getYPos() == compareLight.getYPos()){
+              if(light.width != compareLight.width && light.height != compareLight.height){
+                if(turn == 1){  
+                  System.out.println("Light " + light.id + " paired with " + compareLight.id);
+                }
+                verticalLight = compareLight;
+                break;
+              }
+            }
+          }
+          if(verticalLight.id == -1){
+            if(turn == 1){  
+            System.out.println("Light " + light.id + " has not found pairing. Trying alternative search.");
+            }
+             for(Light compareLight: TrafficSim.Lights){
+              if(/*Math.abs(light.getXPos() - compareLight.getXPos()) == 100 &&*/ light.getYPos() == compareLight.getYPos()){
+                  if(light.width != compareLight.width && light.height != compareLight.height && (light.id % 2) != (compareLight.id % 2)){
+                    if(turn == 1){  
+                      System.out.println("Light " + light.id + " paired with " + compareLight.id);
+                    }
+                      verticalLight = compareLight;
+                      break;
+                  }
+              }
+             }
+             light.setColour(verticalLight.colour);
+    
           }else{
-            light.setColour("red");
+            if(verticalLight.colour.equals("red")){
+              light.setColour("green");
+            }else{
+              light.setColour("red");
+            }
           }
         }
+      
       }
-    
-    }
-    
-    int col = convertToMatrix(light.getXPos());
-    int row = convertToMatrix(light.getYPos());
-    
-    if(costMap[col][row] > 1){
-          ArrayList<Car> gridCars = getCarsInGrid(col,row);
-          int vert = 0;
-          int horz = 0;
-          
-          for(Car car : gridCars){
-            int pathCol = convertToMatrix(car.path.get(car.path.size() - 1).getXPos());
-            int pathRow = convertToMatrix(car.path.get(car.path.size() - 1).getYPos());
+      
+      int col = convertToMatrix(light.getXPos());
+      int row = convertToMatrix(light.getYPos());
+      
+      if(costMap[col][row] > 1){
+        light.cooldown = localCooldownDefault;
+            ArrayList<Car> gridCars = getCarsInGrid(col,row);
+            int vert = 0;
+            int horz = 0;
             
-            if(pathRow > row || pathRow < row){
+            for(Car car : gridCars){
+              int pathCol = convertToMatrix(car.path.get(car.path.size() - 1).getXPos());
+              int pathRow = convertToMatrix(car.path.get(car.path.size() - 1).getYPos());
+              
+              if(pathRow > row || pathRow < row){
                 vert++;
-            }
-            
-            if(pathCol > col || pathCol < col){
-               horz++;
-            }
-            
-            
+              }
               
-            if(costMap[col][row] > 6){
-              System.out.println(" ");
-              System.out.println("col: " + col + " row: " + row);
-              System.out.println("pathCol: " + pathCol + " pathRow: " + pathRow);
+              if(pathCol > col || pathCol < col){
+                 horz++;
+              }
+              
               
             }
-          }
-          System.out.println("horz: " + horz + " vert: " + vert);
-          
-          if((vert) > (horz)){
-            //horizontal light, lets vertical through
-            if(light.width < light.height){
-              light.setColour("red");
+            
+            if((vert) > (horz)){
+              //horizontal light, lets vertical through
+              if(light.width < light.height){
+                light.setColour("red");
+              }else{
+                light.setColour("green");
+              }
             }else{
-              light.setColour("green");
+              //vertical light, lets horz through
+              if(light.width < light.height){
+                light.setColour("green");
+              }else{
+                light.setColour("red");
+              }
             }
-          }else{
-            //vertical light, lets horz through
-            if(light.width < light.height){
-              light.setColour("green");
-            }else{
-              light.setColour("red");
-            }
-          }
-      }
+        }
+    }
   }
 }
 
@@ -1223,9 +1227,11 @@ void render() {
     ellipse(car.objective.getXPos(), car.objective.getYPos(), 10, 10);
     //textSize(10);
     fill(0, 255, 0);
-    //String coordinates = "x: " + (int)car.getXPos() + " y: " + (int)car.getYPos();
+    //String coordinates = "c: " + convertToMatrix(car.getXPos()) + " r: " + convertToMatrix(car.getYPos());
+    //String PathCoordinates = "Pc: " + convertToMatrix(car.path.get(car.path.size() - 1).getXPos()) + " Pr: " + convertToMatrix(car.path.get(car.path.size() - 1).getYPos());
     String id = ("id: " + car.getId());
     //text(coordinates, car.getXPos() + 15, car.getYPos() + 15);
+    //text(PathCoordinates, car.getXPos() + 15, car.getYPos() + 30);
     text(id, car.getXPos() - 30, car.getYPos() + 25);
     //text(id, car.objective.getXPos() - 30, car.objective.getYPos() + 25);
   }
@@ -1245,9 +1251,9 @@ void render() {
       //text(id, light.getXPos() + 30, light.getYPos() + 25);
       //text(coordinates, light.getXPos() + 15, light.getYPos() + 15);
 
-      //Debugging for Issue #8
-      String lightId = ("id: " + light.id);
-      text(lightId, light.getXPos() + 15, light.getYPos() + 25);
+      //Debugging for Issue #8 & #9
+      //String lightId = ("id: " + light.id);
+      //text(lightId, light.getXPos() + 15, light.getYPos() + 25);
     }
   }
 }

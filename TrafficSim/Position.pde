@@ -175,6 +175,27 @@ public class Position{
     return false;
    }
    
+   public Light getIntersectingLight(float xPos, float yPos){
+     for(Light light: TrafficSim.Lights){
+        float carX = xPos;
+        float carY = yPos;
+      
+        float lightX = light.getXPos();
+        float lightY = light.getYPos();
+        float lightWidth = light.width;
+        float lightHeight = light.height;
+        
+        float closestX = Math.max(lightX, Math.min(carX, lightX + lightWidth));
+        float closestY = Math.max(lightY, Math.min(carY, lightY + lightHeight));
+        float dx = carX - closestX;
+        float dy = carY - closestY;
+       if((((dx * dx) + (dy * dy)) < 64)){
+           return light;
+       }
+    }
+    return new Light(-1,TrafficSim.Roads.get(0),"null");
+   }
+   
    public boolean collisionTime(float angleRad, float thrust){
      
      for(Car car : carVectors.keySet()){

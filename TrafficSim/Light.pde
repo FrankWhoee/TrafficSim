@@ -8,6 +8,7 @@ public class Light extends Position{
   public float G;
   public float B;
   public String colour;
+  public int cooldown;
   public Light(int id, Road road, String colour){
     super(0,0);
     this.road = road;
