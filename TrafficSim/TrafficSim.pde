@@ -716,7 +716,7 @@ void runLights() {
           }
           if(verticalLight.id == -1){
             if(turn == 1){  
-            System.out.println("Light " + light.id + " has not found pairing. Trying alternative search.");
+               System.out.println("Light " + light.id + " has not found pairing. Trying alternative search.");
             }
              for(Light compareLight: TrafficSim.Lights){
               if(/*Math.abs(light.getXPos() - compareLight.getXPos()) == 100 &&*/ light.getYPos() == compareLight.getYPos()){
@@ -786,8 +786,8 @@ void runLights() {
         
     }
     if(light.isIntersectingCar(light.getXPos(),light.getYPos())){
-          System.out.println("Light " + light.id + " intersecting with car.");
-          light.setColour("green");
+          //System.out.println("Light " + light.id + " intersecting with car.");
+          //light.setColour("green");
      }
   }
 }
