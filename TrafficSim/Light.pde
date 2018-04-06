@@ -51,7 +51,7 @@ public class Light extends Position{
    public boolean isIntersectingCar(float xPos, float yPos){
      for(Car car: TrafficSim.Cars){
         float carX = car.getXPos();
-        float carY = car.getXPos();
+        float carY = car.getYPos();
       
         float lightX = xPos;
         float lightY = yPos;
@@ -62,7 +62,7 @@ public class Light extends Position{
         float closestY = Math.max(lightY, Math.min(carY, lightY + lightHeight));
         float dx = carX - closestX;
         float dy = carY - closestY;
-       if((((dx * dx) + (dy * dy)) < 64)){
+       if((((dx * dx) + (dy * dy)) < 56.25)){
            return true;
        }
     }

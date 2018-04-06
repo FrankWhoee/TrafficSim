@@ -467,7 +467,7 @@ ArrayList<Car> getCarsInGrid(int col, int row){
 }
 
 void runLights() {
-  int localCooldownDefault = 50;
+  int localCooldownDefault = 0;
   for (Light light : Lights) {
     
     if(light.colour.equals("red")){
@@ -477,7 +477,7 @@ void runLights() {
     if(light.cooldown > 0){
       light.cooldown--;
     }else{
-      ArrayList<Car> sortedCars = getSortedCars(light);
+      //ArrayList<Car> sortedCars = getSortedCars(light);
       Position middle = new Position(-1,-1);
       
       if(light.width > light.height){
@@ -485,15 +485,30 @@ void runLights() {
       }else{
         middle = new Position(light.getXPos(), light.getYPos() + light.height/2);
       }
+      int col = convertToMatrix(light.getXPos());
+      int row = convertToMatrix(light.getYPos());
       
-      if(middle.getDistanceTo(sortedCars.get(0)) < 75){
+      ArrayList<Position> areasToCheck = new ArrayList<Position>();
+      int nearCars = 0;
+      areasToCheck.add(new Position(col,row + 1));
+      areasToCheck.add(new Position(col,row + 1));
+      areasToCheck.add(new Position(col,row + 1));
+      areasToCheck.add(new Position(col,row + 1));
+      
+      for(Position gridSpaces : areasToCheck){
+        if(gridSpaces.getXPos() >= 0 && gridSpaces.getXPos() <= displayWidth/defaultRoadWidth && gridSpaces.getYPos() >= 0 && gridSpaces.getYPos() < displayHeight/defaultRoadWidth){
+          nearCars += costMap[(int)gridSpaces.getXPos()][(int)gridSpaces.getYPos()] - 1;
+        }
+      
+      }
+      
+      if(nearCars > 0 && costMap[col][row] == 1){
         light.cooldown = localCooldownDefault;
-        int col = convertToMatrix(light.getXPos());
-        int row = convertToMatrix(light.getYPos());
         try{
           if(col != 0 && col != displayWidth/defaultRoadWidth && row > 0 && row  != displayHeight/defaultRoadWidth - 1){
             if((costMap[col + 1][row] + costMap[col - 1][row]) > (costMap[col][row + 1] + costMap[col][row - 1])){
-               if (light.width < light.height) {
+              //let horz cars pass, since there are more horz cars 
+              if (light.width < light.height) {
                  light.setColour("green");
                } else {
                   light.setColour("red");
@@ -727,45 +742,45 @@ void runLights() {
       
       }
       
-      int col = convertToMatrix(light.getXPos());
-      int row = convertToMatrix(light.getYPos());
+      float flcol = light.getXPos()/defaultRoadWidth;
+      float flrow = light.getYPos()/defaultRoadWidth;
       
-      if(costMap[col][row] > 1){
-        light.cooldown = localCooldownDefault;
-            ArrayList<Car> gridCars = getCarsInGrid(col,row);
-            int vert = 0;
-            int horz = 0;
+      if(costMap[(int)col][(int)row] > 1){
+        //light.cooldown = localCooldownDefault;
+        //    ArrayList<Car> gridCars = getCarsInGrid((int)col,(int)row);
+        //    int vert = 0;
+        //    int horz = 0;
             
-            for(Car car : gridCars){
-              int pathCol = convertToMatrix(car.path.get(car.path.size() - 1).getXPos());
-              int pathRow = convertToMatrix(car.path.get(car.path.size() - 1).getYPos());
+        //    for(Car car : gridCars){
+        //      int pathCol = convertToMatrix(car.path.get(car.path.size() - 1).getXPos());
+        //      int pathRow = convertToMatrix(car.path.get(car.path.size() - 1).getYPos());
               
-              if(pathRow > row || pathRow < row){
-                vert++;
-              }
+        //      if(pathRow > row || pathRow < flrow){
+        //        vert++;
+        //      }
               
-              if(pathCol > col || pathCol < col){
-                 horz++;
-              }
+        //      if(pathCol > col || pathCol < flcol){
+        //         horz++;
+        //      }
               
               
-            }
+        //    }
             
-            if((vert) > (horz)){
-              //horizontal light, lets vertical through
-              if(light.width < light.height){
-                light.setColour("red");
-              }else{
-                light.setColour("green");
-              }
-            }else{
-              //vertical light, lets horz through
-              if(light.width < light.height){
-                light.setColour("green");
-              }else{
-                light.setColour("red");
-              }
-            }
+        //    if((vert) > (horz)){
+        //      //horizontal light, lets vertical through
+        //      if(light.width < light.height){
+        //        light.setColour("red");
+        //      }else{
+        //        light.setColour("green");
+        //      }
+        //    }else{
+        //      //vertical light, lets horz through
+        //      if(light.width < light.height){
+        //        light.setColour("green");
+        //      }else{
+        //        light.setColour("red");
+        //      }
+        //    }
         }
         
         
