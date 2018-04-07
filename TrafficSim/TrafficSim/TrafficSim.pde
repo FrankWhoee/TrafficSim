@@ -29,6 +29,7 @@ private static int nextCarId = 0;
 private static int nextRoadId = 0;
 private static int nextLightId = 0;
 private static int lightsInterval = 232;
+private static long initTime = 0;
 
 public int displayWidth = 1600;
 public int displayHeight = 900;
@@ -72,6 +73,7 @@ void disp_setup() {
   generateLights();
   pairLights();
   cullLights();
+  initTime = System.currentTimeMillis();
 }
 
 void cullLights(){
@@ -1296,13 +1298,16 @@ void roadUIRender() {
 }
 
 void render() {
-  fill(150);
-  noStroke();
-
-
+  
+  
+  
   for (Road road : Roads) {
+    fill(150);
+     noStroke();
     rect(road.getXPos(), road.getYPos(), road.getWidth(), road.getHeight());
   }
+
+
 
   noFill();
   for (Car car : Cars) {
@@ -1324,7 +1329,7 @@ void render() {
     //text(coordinates, car.getXPos() + 15, car.getYPos() + 15);
     //text(PathCoordinates, car.getXPos() + 15, car.getYPos() + 30);
     text(id, car.getXPos() - 30, car.getYPos() + 25);
-    //text(id, car.objective.getXPos() - 30, car.objective.getYPos() + 25);
+    text(id, car.objective.getXPos() - 30, car.objective.getYPos() + 25);
   }
 
   for (Light light : Lights) {
@@ -1343,10 +1348,31 @@ void render() {
       //text(coordinates, light.getXPos() + 15, light.getYPos() + 15);
 
       //Debugging for Issue #8 & #9
-      String lightId = ("id: " + light.id);
-      text(lightId, light.getXPos() + 15, light.getYPos() + 25);
+      //String lightId = ("id: " + light.id);
+      //text(lightId, light.getXPos() + 15, light.getYPos() + 25);
     }
   }
+  
+  textSize(18);
+  fill(255);
+  int carsRemaining = Cars.size();
+  text("CARS REMAINING: " + carsRemaining, 0, 20);
+  text("TICK: " + turn, 0, 40);
+    float time = ((float)(System.currentTimeMillis() - initTime)/1000)/60;
+    int timeS = (int)(System.currentTimeMillis() - initTime)/1000;
+    String t = "" + time;
+    if(t.length() > 4){
+      t = t.substring(0,4);
+    }else{
+      t = t.substring(0,t.length());
+    }
+    text("TIME ELAPSED: " + t + "min", 0, 60);
+    if(timeS > 2){
+      text((int)(turn/(timeS + 0.001)) + "fps", 2, 80);
+    }else{
+      text("CALCULATING FPS...", 0, 80); 
+    }
+    textSize(14);
 }
 
 public ArrayList<Car> getSortedCars(Position car) {
