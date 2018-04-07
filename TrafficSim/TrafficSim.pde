@@ -29,7 +29,7 @@ public float randomSpawnLocOffsetWidth = 50;
 //"trib_tree"
 
 //Here is the variable declared in all three ways since I know you're lazy:
-public String formationType = "grid";
+//public String formationType = "grid";
 //public String formationType = "orbital";
 //public String formationType = "trib_tree";
 
@@ -688,24 +688,13 @@ void runLights() {
           }
         }else{
           Light verticalLight = new Light(-1, Roads.get(0), "");
-          for(Light compareLight: Lights){
-            if(light.getXPos() == compareLight.getXPos() && light.getYPos() == compareLight.getYPos()){
-              if(light.width != compareLight.width && light.height != compareLight.height){
-                if(turn == 1){  
-                  System.out.println("Light " + light.id + " paired with " + compareLight.id);
-                }
-                //verticalLight = compareLight;
-                break;
-              }
-            }
-          }
           if(verticalLight.id == -1){
             if(turn == 1){  
                //System.out.println("Light " + light.id + " has not found pairing. Trying alternative search.");
             }
              for(Light compareLight: TrafficSim.Lights){
               if(light.getYPos() == compareLight.getYPos() && light.getDistanceTo(compareLight) < 200){
-                  if(light.width != compareLight.width && light.height != compareLight.height /*&& (light.id % 2) != (compareLight.id % 2)*/){
+                  if(light.width != compareLight.width && light.height != compareLight.height && convertToMatrix(light.getXPos()) == convertToMatrix(compareLight.getXPos()) && convertToMatrix(light.getYPos()) == convertToMatrix(compareLight.getYPos())){
                     if(turn == 1){  
                       //System.out.println("Light " + light.id + " paired with " + compareLight.id);
                     }
