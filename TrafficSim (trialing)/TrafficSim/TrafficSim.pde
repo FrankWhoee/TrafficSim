@@ -28,6 +28,9 @@ public String formationType = "grid";
 //TO CHANGE WHICH ONE YOU ARE TESTING, SIMPLY COMMENT THE CURRENT ONE BY ADDING // AT THE BEGINNING OF THE LINE, AND UNCOMMENT THE DESIRED ROAD FORMATION.
 
 //**TRIAL VARIABLES**:
+//Amount of cars that will be spawned:
+public int amountOfCars = 75;
+
 //Total number of trials that will run
 int numTrials = 25;
 
@@ -67,7 +70,7 @@ public int displayHeight = 900;
 public int centerX = displayWidth/2;
 public int centerY = displayHeight/2;
 public int turn = 0;
-public int amountOfCars = 75;
+
 public int defaultRoadWidth = 100;
 public float randomSpawnLocOffsetLength = 50;
 public float randomSpawnLocOffsetWidth = 50;
@@ -335,7 +338,7 @@ void setup() {
   clearGrid();
   //disp_setup();
   
-  int messageTimingInS = 4;
+  int messageTimingInS = 10;
   int messageTiming = messageTimingInS*1000;
   
   System.out.println("SYSTEM WILL PRINT STATUS FROM HERE. AFTER " + numTrials + " TRIALS, ALL RESULTS AND STATISTICS WILL BE PRINTED.");
@@ -367,9 +370,6 @@ void cullLights(){
     
 void trialing_draw(){
   while(currentTrial < numTrials){
-    carsRemaining = Cars.size();
-    print_results();
-    
     clearGrid();
     disp_setup();
     turn = 0;
@@ -379,16 +379,18 @@ void trialing_draw(){
     nextRoadId = 0;
     nextLightId = 0;
     
-    while(turn <= maxTicks){
+    while(turn <= maxTicks || carsRemaining == 0){
       carsRemaining = Cars.size();
       costMap = createCostMap();
       trial_draw();
-      if(turn % 100 == 0 && turn != 0){
+      if(turn % 100 == 0){
         print_status();
       }
     }
+    carsRemaining = Cars.size();
+    print_results();
   }
-
+  print_compiledResults();
 }    
 
 
@@ -401,7 +403,7 @@ void print_compiledResults(){
     System.out.println(" ");
     System.out.println("---------------TRIAL " + result.trialNum + "---------------");
     System.out.println("TIMESTAMP: " + result.timestamp);
-      System.out.println("FORMATION TYPE: " + result.formationType);
+    System.out.println("FORMATION TYPE: " + result.formationType);
     System.out.println("CARS REMAINING: " + result.carsRemaining);
     System.out.println("TICK: " + result.tick);
     System.out.println("TIME ELAPSED: " + result.timeElapsed + "s");
@@ -434,6 +436,7 @@ void print_status(){
   System.out.println(" ");
   System.out.println("---------------STATUS---------------");
   System.out.println("TIMESTAMP: " + currentDate);
+  System.out.println("FORMATION TYPE: " + formationType);
   System.out.println("CURRENTLY RUNNING TRIAL " + currentTrial + "/" + numTrials);
   System.out.println("CARS REMAINING: " + carsRemaining);
   System.out.println("TICK: " + turn + "/" + maxTicks);
@@ -504,78 +507,14 @@ void affixRoadsToMatrix() {
   //printGrid(grid);
 }
 
+
 void generateCars(int amount) {
-  for (Road road : Roads) {
-    for (int i = 0; i < Math.max(amount/Roads.size(), 1); i++) {
-
-      if (road.getWidth() > road.getHeight()) {
-        float newYPos = (road.getYPos() + 17) + (float)((road.getHeight() - 33) * Math.random());
-        //System.out.println("newYPos: " + newYPos);
-        if (nextCarId % 2 == 1) {
-          Car newCar = createNewCar(road.getWidth() - (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
-
-          float randomX = newCar.getXPos();
-          float randomY = newCar.getYPos();
-          Position nextPos = new Position(randomX, randomY);
-          while (!newCar.isIntersectingRoad(randomX, randomY)) {
-            randomX = (float)Math.random() * displayWidth;
-            randomY = (float)Math.random() * displayHeight;
-            nextPos = new Position(randomX, randomY);
-          }
-          newCar.setPosition(nextPos);
-
-          newCar.path = breadthFirstSearch(newCar);
-          //newCar.path = dijksAlgo(newCar);
-          Cars.add(newCar);
-          nextCarId++;
-          //System.out.println(newCar.getId() + " spawned. Type: Car Location: Right Side");
-        } else {
-          Car newCar = createNewCar(road.getXPos() + (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
-
-          float randomX = newCar.getXPos();
-          float randomY = newCar.getYPos();
-          Position nextPos = new Position(randomX, randomY);
-          while (!newCar.isIntersectingRoad(randomX, randomY)) {
-            randomX = (float)Math.random() * displayWidth;
-            randomY = (float)Math.random() * displayHeight;
-            nextPos = new Position(randomX, randomY);
-          }
-          newCar.setPosition(nextPos);
-
-          newCar.path = breadthFirstSearch(newCar);
-          //newCar.path = dijksAlgo(newCar);
-          Cars.add(newCar);
-          nextCarId++;
-          //System.out.println(newCar.getId() + " spawned. Type: Car Location: Left Side");
-        }
-      } else {
-        float newXPos = (road.getXPos() + 17) +  (float)((road.getWidth() - 33) * Math.random());
-        //System.out.println("newXPos: " + newXPos);
-        if (nextCarId % 2 == 1) {
-          Car newCar = createNewCar(newXPos, road.getHeight() - Constants.CAR_RADIUS - (float)(Math.random() * randomSpawnLocOffsetLength));
-          //System.out.println("road height: " + road.getHeight());
-
-          float randomX = newCar.getXPos();
-          float randomY = newCar.getYPos();
-          Position nextPos = new Position(randomX, randomY);
-          while (!newCar.isIntersectingRoad(randomX, randomY)) {
-            randomX = (float)Math.random() * displayWidth;
-            randomY = (float)Math.random() * displayHeight;
-            nextPos = new Position(randomX, randomY);
-          }
-          newCar.setPosition(nextPos);
-
-          newCar.path = breadthFirstSearch(newCar);
-          //newCar.path = dijksAlgo(newCar);
-          Cars.add(newCar);
-          nextCarId++;
-          //System.out.println(newCar.getId() + " spawned. Type: Car Location: Lower Side");
-        } else {
-          Car newCar = createNewCar(newXPos, road.getYPos() + Constants.CAR_RADIUS + (float)(Math.random() * randomSpawnLocOffsetLength));
+    for (int i = 0; i < amount; i++) {
+          float randomX = (float)Math.random() * displayWidth;
+          float randomY = (float)Math.random() * displayHeight;
+          Car newCar = createNewCar(randomX, randomY + (float)(Math.random() * randomSpawnLocOffsetLength));
           //System.out.println("road Y: " + road.getYPos());
-
-          float randomX = newCar.getXPos();
-          float randomY = newCar.getYPos();
+          
           Position nextPos = new Position(randomX, randomY);
           while (!newCar.isIntersectingRoad(randomX, randomY)) {
             randomX = (float)Math.random() * displayWidth;
@@ -583,18 +522,14 @@ void generateCars(int amount) {
             nextPos = new Position(randomX, randomY);
           }
           newCar.setPosition(nextPos);
-
           newCar.path = breadthFirstSearch(newCar);
           //newCar.path = dijksAlgo(newCar);
           Cars.add(newCar);
           nextCarId++;
-          //System.out.println(newCar.getId() + " spawned. Type: Car Location: Upper Side");
-        }
       }
-    }
-  }
-  //System.out.println("Cars generated.");
+    
 }
+
 
 Car createNewCar(float x, float y) {
   float randomX = (float)Math.random() * displayWidth;
