@@ -469,22 +469,7 @@ ArrayList<Car> getCarsInGrid(int col, int row){
 void runLights() {
   int localCooldownDefault = 0;
   for (Light light : Lights) {
-    
-    if(light.colour.equals("red")){
-      light.cooldown = 0;
-    }
-    
-    if(light.cooldown > 0){
-      light.cooldown--;
-    }else{
       //ArrayList<Car> sortedCars = getSortedCars(light);
-      Position middle = new Position(-1,-1);
-      
-      if(light.width > light.height){
-        middle = new Position(light.getXPos() + light.width/2,light.getYPos());
-      }else{
-        middle = new Position(light.getXPos(), light.getYPos() + light.height/2);
-      }
       int col = convertToMatrix(light.getXPos());
       int row = convertToMatrix(light.getYPos());
       
@@ -709,27 +694,31 @@ void runLights() {
                 if(turn == 1){  
                   System.out.println("Light " + light.id + " paired with " + compareLight.id);
                 }
-                verticalLight = compareLight;
+                //verticalLight = compareLight;
                 break;
               }
             }
           }
           if(verticalLight.id == -1){
             if(turn == 1){  
-               System.out.println("Light " + light.id + " has not found pairing. Trying alternative search.");
+               //System.out.println("Light " + light.id + " has not found pairing. Trying alternative search.");
             }
              for(Light compareLight: TrafficSim.Lights){
-              if(/*Math.abs(light.getXPos() - compareLight.getXPos()) == 100 &&*/ light.getYPos() == compareLight.getYPos()){
-                  if(light.width != compareLight.width && light.height != compareLight.height && (light.id % 2) != (compareLight.id % 2)){
+              if(light.getYPos() == compareLight.getYPos() && light.getDistanceTo(compareLight) < 200){
+                  if(light.width != compareLight.width && light.height != compareLight.height /*&& (light.id % 2) != (compareLight.id % 2)*/){
                     if(turn == 1){  
-                      System.out.println("Light " + light.id + " paired with " + compareLight.id);
+                      //System.out.println("Light " + light.id + " paired with " + compareLight.id);
                     }
                       verticalLight = compareLight;
                       break;
                   }
               }
              }
-             light.setColour(verticalLight.colour);
+             if(verticalLight.colour.equals("red")){
+              light.setColour("green");
+            }else{
+              light.setColour("red");
+            }
     
           }else{
             if(verticalLight.colour.equals("red")){
@@ -784,7 +773,7 @@ void runLights() {
         }
         
         
-    }
+    
     if(light.isIntersectingCar(light.getXPos(),light.getYPos())){
           //System.out.println("Light " + light.id + " intersecting with car.");
           //light.setColour("green");
