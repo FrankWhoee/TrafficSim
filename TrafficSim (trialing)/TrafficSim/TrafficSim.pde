@@ -1,5 +1,5 @@
 //***IMPORANT***
-//THIS IS THE TRAILING VERSION
+//THIS IS THE TRIALING VERSION
 //THIS IS FOR CONDUCTING TESTS ON DIFFERENT ROAD FORMATIONS **ONLY**. USE MASTER BRANCH FOR GUI AND DISPLAYS.
 
 import java.util.*;
@@ -12,10 +12,14 @@ import java.text.SimpleDateFormat;
 //"trib_tree"
 
 //Here is the variable declared in all ways since I know you're lazy, uncomment it if you want to use it, comment it if you don't want to use it:
-//public String formationType = "grid";
-public String formationType = "linear_tree";
+public String formationType = "grid";
+//public String formationType = "linear_tree";
 //public String formationType = "orbital";
 //public String formationType = "trib_tree";
+//public String formationType = "trib_grid";
+//public String formationType = "radial_grid";
+//public String formationType = "radial_tree";
+
 
 //***IMPORTANT NOTE ABOUT ROAD FORMATION TYPES***
 //TO CHANGE WHICH ONE YOU ARE TESTING, SIMPLY COMMENT THE CURRENT ONE BY ADDING // AT THE BEGINNING OF THE LINE, AND UNCOMMENT THE DESIRED ROAD FORMATION.
@@ -75,30 +79,33 @@ void setup() {
   clearGrid();
   //disp_setup();
   
+  int messageTimingInS = 4;
+  int messageTiming = messageTimingInS*1000;
+  
   System.out.println("SYSTEM WILL PRINT STATUS FROM HERE. AFTER " + numTrials + " TRIALS, ALL RESULTS AND STATISTICS WILL BE PRINTED.");
   System.out.println("A LINE THAT SAYS \"PRINTING ALL RESULTS. COPY DATA FROM HERE\" WILL BE PRINTED ONTO THE CONSOLE. USE DATA FROM THERE.");
   System.out.println("THE FOLLOWING STATUS UPDATES ARE JUST TO INFORM YOU THAT THE PROGRAM IS RUNNING AND HAS NOT STOPPED. THEY WILL BE PRINTED EVERY 100 TICKS.");
-  System.out.println("PROGRAM RUNS IN 20 SECONDS...");
+  System.out.println("PROGRAM RUNS IN "+ (messageTiming/1000) +" SECONDS...");
   long init = System.currentTimeMillis();
-  //while(System.currentTimeMillis() - init < 17000){
-  //}
-  //String previousMessage = "";
-  //while(System.currentTimeMillis() - init < 20000){
-  //  long deltaTime = System.currentTimeMillis() - init;
-  //  int time = 20 - (int)(deltaTime/1000);
-  //  if(deltaTime % 1000 == 0 && !previousMessage.equals("PROGRAM RUNS IN " + time +  " SECONDS...")){
-  //    System.out.println("PROGRAM RUNS IN " + time +  " SECONDS...");
-  //    previousMessage = "PROGRAM RUNS IN " + time +  " SECONDS...";
-  //  }
-  //}
+  while(System.currentTimeMillis() - init < messageTiming - 3000){
+  }
+  String previousMessage = "";
+  while(System.currentTimeMillis() - init < messageTiming){
+    long deltaTime = System.currentTimeMillis() - init;
+    int time = (messageTiming/1000) - (int)(deltaTime/1000);
+    if(deltaTime % 1000 == 0 && !previousMessage.equals("PROGRAM RUNS IN " + time +  " SECONDS...")){
+      System.out.println("PROGRAM RUNS IN " + time +  " SECONDS...");
+      previousMessage = "PROGRAM RUNS IN " + time +  " SECONDS...";
+    }
+  }
 }
 
 void cullLights(){
   for(int i = Lights.size() - 1; i > 0; i--){
     Light light = Lights.get(i);
-    if(!light.isIntersectingRoad()){
-      Lights.remove(i);
-    }
+      if(!light.isIntersectingRoad() || (light.width < light.height && light.pairedLight == null)){
+        Lights.remove(i);
+      }
   }
 }
     
@@ -128,9 +135,9 @@ void trialing_draw(){
 
 }    
 void draw() {
-  //master_draw();
+  master_draw();
   //disp_draw();
-  trialing_draw();
+  //trialing_draw();
 }
 
 void print_compiledResults(){
@@ -142,6 +149,7 @@ void print_compiledResults(){
     System.out.println(" ");
     System.out.println("---------------TRIAL " + result.trialNum + "---------------");
     System.out.println("TIMESTAMP: " + result.timestamp);
+      System.out.println("FORMATION TYPE: " + result.formationType);
     System.out.println("CARS REMAINING: " + result.carsRemaining);
     System.out.println("TICK: " + result.tick);
     System.out.println("TIME ELAPSED: " + result.timeElapsed + "s");
@@ -156,19 +164,13 @@ void print_results(){
   System.out.println(" ");
   System.out.println("---------------STATISTICS---------------");
   System.out.println("TIMESTAMP: " + currentDate);
+  System.out.println("FORMATION TYPE: " + formationType);
   System.out.println("TRIAL " + currentTrial + "/" + numTrials);
   System.out.println("CARS REMAINING: " + carsRemaining);
   System.out.println("TICK: " + turn);
   System.out.println("TIME ELAPSED: " + ((finalTime - initTime)/1000) + "s");
   
-  //void Result(int trialNum,
-  //            int carsRemaining,
-  //            int tick,
-  //            int maxTick,
-  //            long timeElapsed,
-  //            String timestamp){
-  
-  Result newTrial = new Result(currentTrial,carsRemaining,turn,maxTicks,((finalTime - initTime)/1000),currentDate);
+  Result newTrial = new Result(currentTrial,carsRemaining,turn,maxTicks,((finalTime - initTime)/1000),currentDate, formationType);
   Results.add(newTrial);
 }
 
@@ -192,8 +194,8 @@ void disp_setup() {
   formation(formationType);
   generateCars(amountOfCars);
   generateLights();
-  cullLights();
   pairLights();
+  cullLights();
 }
 
 void master_draw() {
@@ -202,6 +204,7 @@ void master_draw() {
     roadUI();
     roadUIRender();
     pairLights();
+    cullLights();
   } else {
     background(0);
     costMap = createCostMap();
@@ -342,6 +345,107 @@ void formation(String formation) {
     Roads.add(road21);
     Road road22  = new Road(22,1400.0,200.0,200.0, 100.0);
     Roads.add(road22);
+  }else if(formation.equals("trib_grid")){
+    Road road0  = new Road(0,800.0,0.0,100.0, 900.0);
+    Roads.add(road0);
+    Road road1  = new Road(1,0.0,800.0,1600.0, 100.0);
+    Roads.add(road1);
+    Road road2  = new Road(2,100.0,200.0,800.0, 100.0);
+    Roads.add(road2);
+    Road road3  = new Road(3,100.0,0.0,100.0, 700.0);
+    Roads.add(road3);
+    Road road4  = new Road(4,300.0,0.0,100.0, 700.0);
+    Roads.add(road4);
+    Road road5  = new Road(5,500.0,0.0,100.0, 700.0);
+    Roads.add(road5);
+    Road road6  = new Road(6,100.0,0.0,500.0, 100.0);
+    Roads.add(road6);
+    Road road7  = new Road(7,100.0,400.0,500.0, 100.0);
+    Roads.add(road7);
+    Road road8  = new Road(8,100.0,600.0,500.0, 100.0);
+    Roads.add(road8);
+    Road road9  = new Road(9,800.0,400.0,500.0, 100.0);
+    Roads.add(road9);
+    Road road10  = new Road(10,1200.0,200.0,100.0, 500.0);
+    Roads.add(road10);
+    Road road11  = new Road(11,1000.0,200.0,100.0, 500.0);
+    Roads.add(road11);
+    Road road12  = new Road(12,1000.0,200.0,300.0, 100.0);
+    Roads.add(road12);
+    Road road13  = new Road(13,1000.0,600.0,300.0, 100.0);
+    Roads.add(road13);
+  }else if(formation.equals("radial_grid")){
+    Road road0  = new Road(0,700.0,0.0,100.0, 900.0);
+    Roads.add(road0);
+    Road road1  = new Road(1,0.0,400.0,1600.0, 100.0);
+    Roads.add(road1);
+    Road road2  = new Road(2,900.0,600.0,700.0, 100.0);
+    Roads.add(road2);
+    Road road3  = new Road(3,900.0,200.0,700.0, 100.0);
+    Roads.add(road3);
+    Road road4  = new Road(4,900.0,200.0,100.0, 500.0);
+    Roads.add(road4);
+    Road road5  = new Road(5,1100.0,200.0,100.0, 500.0);
+    Roads.add(road5);
+    Road road6  = new Road(6,1300.0,200.0,100.0, 500.0);
+    Roads.add(road6);
+    Road road7  = new Road(7,1500.0,200.0,100.0, 500.0);
+    Roads.add(road7);
+    Road road8  = new Road(8,500.0,200.0,100.0, 500.0);
+    Roads.add(road8);
+    Road road9  = new Road(9,300.0,200.0,100.0, 500.0);
+    Roads.add(road9);
+    Road road10  = new Road(10,100.0,200.0,100.0, 500.0);
+    Roads.add(road10);
+    Road road11  = new Road(11,0.0,200.0,600.0, 100.0);
+    Roads.add(road11);
+    Road road12  = new Road(12,0.0,600.0,600.0, 100.0);
+    Roads.add(road12);
+    Road road13  = new Road(13,0.0,800.0,1600.0, 100.0);
+    Roads.add(road13);
+    Road road14  = new Road(14,0.0,0.0,1600.0, 100.0);
+    Roads.add(road14);
+  }else if(formation.equals("radial_tree")){
+    Road road0  = new Road(0,700.0,0.0,100.0, 900.0);
+    Roads.add(road0);
+    Road road1  = new Road(1,0.0,400.0,1600.0, 100.0);
+    Roads.add(road1);
+    Road road2  = new Road(2,100.0,400.0,100.0, 500.0);
+    Roads.add(road2);
+    Road road3  = new Road(3,100.0,800.0,300.0, 100.0);
+    Roads.add(road3);
+    Road road4  = new Road(4,0.0,600.0,200.0, 100.0);
+    Roads.add(road4);
+    Road road5  = new Road(5,0.0,600.0,200.0, 100.0);
+    Roads.add(road5);
+    Road road6  = new Road(6,500.0,400.0,100.0, 400.0);
+    Roads.add(road6);
+    Road road7  = new Road(7,300.0,600.0,300.0, 100.0);
+    Roads.add(road7);
+    Road road8  = new Road(8,300.0,0.0,100.0, 500.0);
+    Roads.add(road8);
+    Road road9  = new Road(9,0.0,200.0,400.0, 100.0);
+    Roads.add(road9);
+    Road road10  = new Road(10,300.0,0.0,200.0, 100.0);
+    Roads.add(road10);
+    Road road11  = new Road(11,900.0,0.0,100.0, 500.0);
+    Roads.add(road11);
+    Road road12  = new Road(12,1200.0,100.0,100.0, 400.0);
+    Roads.add(road12);
+    Road road13  = new Road(13,1400.0,200.0,100.0, 600.0);
+    Roads.add(road13);
+    Road road14  = new Road(14,1100.0,400.0,100.0, 500.0);
+    Roads.add(road14);
+    Road road15  = new Road(15,900.0,100.0,200.0, 100.0);
+    Roads.add(road15);
+    Road road16  = new Road(16,900.0,600.0,300.0, 100.0);
+    Roads.add(road16);
+    Road road17  = new Road(17,1000.0,800.0,300.0, 100.0);
+    Roads.add(road17);
+    Road road18  = new Road(18,1300.0,600.0,300.0, 100.0);
+    Roads.add(road18);
+    Road road19  = new Road(19,1400.0,200.0,200.0, 100.0);
+    Roads.add(road19);
   }
   affixRoadsToMatrix();
 }
@@ -610,7 +714,6 @@ void roadUI() {
     roadUIFinished = true;
     generateCars(amountOfCars);
     generateLights();
-    cullLights();
   }
 }
 
