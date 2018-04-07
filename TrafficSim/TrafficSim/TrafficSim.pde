@@ -367,77 +367,12 @@ void affixRoadsToMatrix() {
 }
 
 void generateCars(int amount) {
-  for (Road road : Roads) {
-    for (int i = 0; i < Math.max(amount/Roads.size(), 1); i++) {
-
-      if (road.getWidth() > road.getHeight()) {
-        float newYPos = (road.getYPos() + 17) + (float)((road.getHeight() - 33) * Math.random());
-        System.out.println("newYPos: " + newYPos);
-        if (nextCarId % 2 == 1) {
-          Car newCar = createNewCar(road.getWidth() - (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
-
-          float randomX = newCar.getXPos();
-          float randomY = newCar.getYPos();
-          Position nextPos = new Position(randomX, randomY);
-          while (!newCar.isIntersectingRoad(randomX, randomY)) {
-            randomX = (float)Math.random() * displayWidth;
-            randomY = (float)Math.random() * displayHeight;
-            nextPos = new Position(randomX, randomY);
-          }
-          newCar.setPosition(nextPos);
-
-          newCar.path = breadthFirstSearch(newCar);
-          //newCar.path = dijksAlgo(newCar);
-          Cars.add(newCar);
-          nextCarId++;
-          //System.out.println(newCar.getId() + " spawned. Type: Car Location: Right Side");
-        } else {
-          Car newCar = createNewCar(road.getXPos() + (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
-
-          float randomX = newCar.getXPos();
-          float randomY = newCar.getYPos();
-          Position nextPos = new Position(randomX, randomY);
-          while (!newCar.isIntersectingRoad(randomX, randomY)) {
-            randomX = (float)Math.random() * displayWidth;
-            randomY = (float)Math.random() * displayHeight;
-            nextPos = new Position(randomX, randomY);
-          }
-          newCar.setPosition(nextPos);
-
-          newCar.path = breadthFirstSearch(newCar);
-          //newCar.path = dijksAlgo(newCar);
-          Cars.add(newCar);
-          nextCarId++;
-          //System.out.println(newCar.getId() + " spawned. Type: Car Location: Left Side");
-        }
-      } else {
-        float newXPos = (road.getXPos() + 17) +  (float)((road.getWidth() - 33) * Math.random());
-        System.out.println("newXPos: " + newXPos);
-        if (nextCarId % 2 == 1) {
-          Car newCar = createNewCar(newXPos, road.getHeight() - Constants.CAR_RADIUS - (float)(Math.random() * randomSpawnLocOffsetLength));
-          //System.out.println("road height: " + road.getHeight());
-
-          float randomX = newCar.getXPos();
-          float randomY = newCar.getYPos();
-          Position nextPos = new Position(randomX, randomY);
-          while (!newCar.isIntersectingRoad(randomX, randomY)) {
-            randomX = (float)Math.random() * displayWidth;
-            randomY = (float)Math.random() * displayHeight;
-            nextPos = new Position(randomX, randomY);
-          }
-          newCar.setPosition(nextPos);
-
-          newCar.path = breadthFirstSearch(newCar);
-          //newCar.path = dijksAlgo(newCar);
-          Cars.add(newCar);
-          nextCarId++;
-          //System.out.println(newCar.getId() + " spawned. Type: Car Location: Lower Side");
-        } else {
-          Car newCar = createNewCar(newXPos, road.getYPos() + Constants.CAR_RADIUS + (float)(Math.random() * randomSpawnLocOffsetLength));
+    for (int i = 0; i < amount; i++) {
+          float randomX = (float)Math.random() * displayWidth;
+          float randomY = (float)Math.random() * displayHeight;
+          Car newCar = createNewCar(randomX, randomY + (float)(Math.random() * randomSpawnLocOffsetLength));
           //System.out.println("road Y: " + road.getYPos());
-
-          float randomX = newCar.getXPos();
-          float randomY = newCar.getYPos();
+          
           Position nextPos = new Position(randomX, randomY);
           while (!newCar.isIntersectingRoad(randomX, randomY)) {
             randomX = (float)Math.random() * displayWidth;
@@ -445,18 +380,15 @@ void generateCars(int amount) {
             nextPos = new Position(randomX, randomY);
           }
           newCar.setPosition(nextPos);
-
           newCar.path = breadthFirstSearch(newCar);
           //newCar.path = dijksAlgo(newCar);
           Cars.add(newCar);
           nextCarId++;
-          //System.out.println(newCar.getId() + " spawned. Type: Car Location: Upper Side");
-        }
       }
-    }
+    
   }
-  //System.out.println("Cars generated.");
-}
+
+
 
 Car createNewCar(float x, float y) {
   float randomX = (float)Math.random() * displayWidth;
