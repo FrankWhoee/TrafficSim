@@ -2,7 +2,6 @@
 //THIS IS THE TRAILING VERSION
 //THIS IS FOR CONDUCTING TESTS ON DIFFERENT ROAD FORMATIONS **ONLY**. USE MASTER BRANCH FOR GUI AND DISPLAYS.
 
-
 import java.util.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -12,28 +11,37 @@ import java.text.SimpleDateFormat;
 //"orbital"
 //"trib_tree"
 
-//Here is the variable declared in all three ways since I know you're lazy, uncomment it if you want to use it, comment it if you don't want to use it:
-public String formationType = "grid";
+//Here is the variable declared in all ways since I know you're lazy, uncomment it if you want to use it, comment it if you don't want to use it:
+//public String formationType = "grid";
+public String formationType = "linear_tree";
 //public String formationType = "orbital";
 //public String formationType = "trib_tree";
 
 //***IMPORTANT NOTE ABOUT ROAD FORMATION TYPES***
 //TO CHANGE WHICH ONE YOU ARE TESTING, SIMPLY COMMENT THE CURRENT ONE BY ADDING // AT THE BEGINNING OF THE LINE, AND UNCOMMENT THE DESIRED ROAD FORMATION.
 
-//TRIAL VARIABLES:
+//**(TRIAL VARIABLES**:
+//Total number of trials that will run
 int numTrials = 25;
+
+//Trial that program is on currently. Change this to resume from a previous run.
 int currentTrial = 0;
+
+//The total amount of ticks/turns that will run per trial.
 int maxTicks = 30000;
+
+//The amount of cars that remain.
 int carsRemaining = 0;
+
+//Used for keeping time. finalTime - initTime = elapsed time.
 long initTime = 0;
 long finalTime = 0;
 
+//Results will be kept in the ArrayList.
 public static ArrayList<Result> Results = new ArrayList<Result>();
 
 
 public static Map<Car, Velocity> carVectors = new HashMap<Car, Velocity>();
-
-
 public static ArrayList<Car> Cars = new ArrayList<Car>();
 public static ArrayList<Road> Roads = new ArrayList<Road>();
 public static ArrayList<Light> Lights = new ArrayList<Light>();
@@ -55,10 +63,6 @@ public int defaultRoadWidth = 100;
 public float randomSpawnLocOffsetLength = 50;
 public float randomSpawnLocOffsetWidth = 50;
 
-
-
-
-
 public int[][] grid = new int[displayWidth/defaultRoadWidth][displayHeight/defaultRoadWidth];
 public int[][] costMap = new int [displayWidth/defaultRoadWidth][displayHeight/defaultRoadWidth];
 
@@ -76,21 +80,27 @@ void setup() {
   System.out.println("THE FOLLOWING STATUS UPDATES ARE JUST TO INFORM YOU THAT THE PROGRAM IS RUNNING AND HAS NOT STOPPED. THEY WILL BE PRINTED EVERY 100 TICKS.");
   System.out.println("PROGRAM RUNS IN 20 SECONDS...");
   long init = System.currentTimeMillis();
-  while(System.currentTimeMillis() - init < 17000){
-  }
-  String previousMessage = "";
-  while(System.currentTimeMillis() - init < 20000){
-    long deltaTime = System.currentTimeMillis() - init;
-    int time = 20 - (int)(deltaTime/1000);
-    if(deltaTime % 1000 == 0 && !previousMessage.equals("PROGRAM RUNS IN " + time +  " SECONDS...")){
-      System.out.println("PROGRAM RUNS IN " + time +  " SECONDS...");
-      previousMessage = "PROGRAM RUNS IN " + time +  " SECONDS...";
+  //while(System.currentTimeMillis() - init < 17000){
+  //}
+  //String previousMessage = "";
+  //while(System.currentTimeMillis() - init < 20000){
+  //  long deltaTime = System.currentTimeMillis() - init;
+  //  int time = 20 - (int)(deltaTime/1000);
+  //  if(deltaTime % 1000 == 0 && !previousMessage.equals("PROGRAM RUNS IN " + time +  " SECONDS...")){
+  //    System.out.println("PROGRAM RUNS IN " + time +  " SECONDS...");
+  //    previousMessage = "PROGRAM RUNS IN " + time +  " SECONDS...";
+  //  }
+  //}
+}
+
+void cullLights(){
+  for(int i = Lights.size() - 1; i > 0; i--){
+    Light light = Lights.get(i);
+    if(!light.isIntersectingRoad()){
+      Lights.remove(i);
     }
   }
 }
-    //master_draw();
-    //disp_draw();
-    //trialing_draw()
     
 void trialing_draw(){
   while(currentTrial < numTrials){
@@ -118,7 +128,9 @@ void trialing_draw(){
 
 }    
 void draw() {
-  master_draw();
+  //master_draw();
+  //disp_draw();
+  trialing_draw();
 }
 
 void print_compiledResults(){
@@ -178,9 +190,10 @@ void disp_setup() {
   size(displayWidth, displayHeight);
   clearGrid();
   formation(formationType);
-
   generateCars(amountOfCars);
   generateLights();
+  cullLights();
+  pairLights();
 }
 
 void master_draw() {
@@ -188,6 +201,7 @@ void master_draw() {
     background(0);
     roadUI();
     roadUIRender();
+    pairLights();
   } else {
     background(0);
     costMap = createCostMap();
@@ -281,8 +295,53 @@ void formation(String formation) {
     Roads.add(road10);
     Roads.add(road11);
     Roads.add(road12);
-  } else {
-    return;
+  }else if(formation.equals("linear_tree")){
+    Road road0  = new Road(0,0.0,400.0,1600.0, 100.0);
+    Roads.add(road0);
+    Road road1  = new Road(1,100.0,400.0,100.0, 400.0);
+    Roads.add(road1);
+    Road road2  = new Road(2,500.0,400.0,100.0, 500.0);
+    Roads.add(road2);
+    Road road3  = new Road(3,900.0,400.0,100.0, 300.0);
+    Roads.add(road3);
+    Road road4  = new Road(4,1300.0,400.0,100.0, 400.0);
+    Roads.add(road4);
+    Road road5  = new Road(5,1100.0,100.0,100.0, 400.0);
+    Roads.add(road5);
+    Road road6  = new Road(6,700.0,0.0,100.0, 500.0);
+    Roads.add(road6);
+    Road road7  = new Road(7,300.0,0.0,100.0, 500.0);
+    Roads.add(road7);
+    Road road8  = new Road(8,0.0,0.0,100.0, 500.0);
+    Roads.add(road8);
+    Road road9  = new Road(9,1400.0,0.0,100.0, 500.0);
+    Roads.add(road9);
+    Road road10  = new Road(10,1500.0,400.0,100.0, 400.0);
+    Roads.add(road10);
+    Road road11  = new Road(11,0.0,0.0,200.0, 100.0);
+    Roads.add(road11);
+    Road road12  = new Road(12,0.0,200.0,200.0, 100.0);
+    Roads.add(road12);
+    Road road13  = new Road(13,100.0,600.0,200.0, 100.0);
+    Roads.add(road13);
+    Road road14  = new Road(14,0.0,700.0,200.0, 100.0);
+    Roads.add(road14);
+    Road road15  = new Road(15,700.0,600.0,500.0, 100.0);
+    Roads.add(road15);
+    Road road16  = new Road(16,500.0,800.0,600.0, 100.0);
+    Roads.add(road16);
+    Road road17  = new Road(17,400.0,700.0,200.0, 100.0);
+    Roads.add(road17);
+    Road road18  = new Road(18,500.0,200.0,300.0, 100.0);
+    Roads.add(road18);
+    Road road19  = new Road(19,700.0,0.0,300.0, 100.0);
+    Roads.add(road19);
+    Road road20  = new Road(20,900.0,200.0,300.0, 100.0);
+    Roads.add(road20);
+    Road road21  = new Road(21,1300.0,0.0,300.0, 100.0);
+    Roads.add(road21);
+    Road road22  = new Road(22,1400.0,200.0,200.0, 100.0);
+    Roads.add(road22);
   }
   affixRoadsToMatrix();
 }
@@ -551,6 +610,7 @@ void roadUI() {
     roadUIFinished = true;
     generateCars(amountOfCars);
     generateLights();
+    cullLights();
   }
 }
 
@@ -584,6 +644,21 @@ ArrayList<Car> getCarsInGrid(int col, int row){
     }
   }
   return carsInGrid;
+}
+
+void pairLights(){
+  for(Light light : Lights){
+    if(light.width < light.height){
+     for(Light compareLight: Lights){
+      if(light.getYPos() == compareLight.getYPos() && light.getDistanceTo(compareLight) < 200){
+          if(light.width != compareLight.width && light.height != compareLight.height && convertToMatrix(light.getXPos()) == convertToMatrix(compareLight.getXPos()) && convertToMatrix(light.getYPos()) == convertToMatrix(compareLight.getYPos())){
+              light.pairedLight = compareLight;
+              break;
+          }
+      }
+     }
+    }
+  }
 }
 
 void runLights() {
@@ -628,7 +703,6 @@ void runLights() {
             
             
           }else{
-            
             if(col == displayWidth/defaultRoadWidth && row == displayHeight/defaultRoadWidth){
               //System.out.println("col: " + col + ", row: " + row); 
               if(costMap[col - 1][row] > (costMap[col][row - 1])){
@@ -766,7 +840,7 @@ void runLights() {
                  } 
               }
             }
-            
+
             if(col == displayWidth/defaultRoadWidth && row != displayHeight/defaultRoadWidth - 1 && row != 0){
               //System.out.println("col: " + col + ", row: " + row); 
               if((costMap[col - 1][row] + 1) > (costMap[col][row + 1] + costMap[col][row - 1])){
@@ -807,86 +881,19 @@ void runLights() {
             }
           }
         }else{
-          Light verticalLight = new Light(-1, Roads.get(0), "");
-          if(verticalLight.id == -1){
-            if(turn == 1){  
-               //System.out.println("Light " + light.id + " has not found pairing. Trying alternative search.");
-            }
-             for(Light compareLight: TrafficSim.Lights){
-              if(light.getYPos() == compareLight.getYPos() && light.getDistanceTo(compareLight) < 200){
-                  if(light.width != compareLight.width && light.height != compareLight.height && convertToMatrix(light.getXPos()) == convertToMatrix(compareLight.getXPos()) && convertToMatrix(light.getYPos()) == convertToMatrix(compareLight.getYPos())){
-                    if(turn == 1){  
-                      //System.out.println("Light " + light.id + " paired with " + compareLight.id);
-                    }
-                      verticalLight = compareLight;
-                      break;
-                  }
-              }
-             }
-             if(verticalLight.colour.equals("red")){
-              light.setColour("green");
-            }else{
-              light.setColour("red");
-            }
-    
-          }else{
+          Light verticalLight = light.pairedLight;
+          try{
             if(verticalLight.colour.equals("red")){
               light.setColour("green");
             }else{
               light.setColour("red");
             }
+          }catch(Exception e){
+            
           }
         }
       
       }
-      
-      float flcol = light.getXPos()/defaultRoadWidth;
-      float flrow = light.getYPos()/defaultRoadWidth;
-      
-      if(costMap[(int)col][(int)row] > 1){
-        //light.cooldown = localCooldownDefault;
-        //    ArrayList<Car> gridCars = getCarsInGrid((int)col,(int)row);
-        //    int vert = 0;
-        //    int horz = 0;
-            
-        //    for(Car car : gridCars){
-        //      int pathCol = convertToMatrix(car.path.get(car.path.size() - 1).getXPos());
-        //      int pathRow = convertToMatrix(car.path.get(car.path.size() - 1).getYPos());
-              
-        //      if(pathRow > row || pathRow < flrow){
-        //        vert++;
-        //      }
-              
-        //      if(pathCol > col || pathCol < flcol){
-        //         horz++;
-        //      }
-              
-              
-        //    }
-            
-        //    if((vert) > (horz)){
-        //      //horizontal light, lets vertical through
-        //      if(light.width < light.height){
-        //        light.setColour("red");
-        //      }else{
-        //        light.setColour("green");
-        //      }
-        //    }else{
-        //      //vertical light, lets horz through
-        //      if(light.width < light.height){
-        //        light.setColour("green");
-        //      }else{
-        //        light.setColour("red");
-        //      }
-        //    }
-        }
-        
-        
-    
-    if(light.isIntersectingCar(light.getXPos(),light.getYPos())){
-          //System.out.println("Light " + light.id + " intersecting with car.");
-          //light.setColour("green");
-     }
   }
 }
 
@@ -1307,7 +1314,6 @@ void disp_draw() {
   if ((!keyPressed && key != 'l') && !pause) {
     runCars();
   }
-  //renderLine();
   runLights();
   turn++;
 }

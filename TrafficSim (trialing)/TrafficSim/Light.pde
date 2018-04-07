@@ -9,6 +9,8 @@ public class Light extends Position{
   public float B;
   public String colour;
   public int cooldown;
+  public Light pairedLight;
+  
   public Light(int id, Road road, String colour){
     super(0,0);
     this.road = road;
@@ -34,6 +36,29 @@ public class Light extends Position{
         //System.out.println("Light " + id + " removed. noRender activated"); 
       }
     }
+  }
+  
+  boolean overlap(float x1,float y1,float x2, float y2) {
+      return Math.max(x1,x2) < Math.min(y1,y2);
+    }
+  
+  public boolean isIntersectingRoad(){
+    for(Road road : TrafficSim.Roads){
+      float x1 = road.getXPos();
+      float y1 = road.getYPos();
+      float width1 = road.width;
+      float height1 = road.height;
+      
+      float x2 = this.getXPos();
+      float y2 = this.getYPos();
+      float width2 = this.width;
+      float height2 = this.height;
+      
+      if(overlap(x1,(x1 + width1),x2,(x2 + width2)) && overlap(y1,(y1 + height1),y2,(y2 + height2))){
+        return true;
+      }
+    }
+    return false;
   }
   
   public boolean checkEmpty(double x, double y){
