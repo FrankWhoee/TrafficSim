@@ -10,6 +10,9 @@ import java.text.SimpleDateFormat;
 //"grid"
 //"orbital"
 //"trib_tree"
+//"linear_tree"
+//"radial_grid"
+//"radial_tree"
 
 //Here is the variable declared in all ways since I know you're lazy, uncomment it if you want to use it, comment it if you don't want to use it:
 public String formationType = "grid";
@@ -24,7 +27,7 @@ public String formationType = "grid";
 //***IMPORTANT NOTE ABOUT ROAD FORMATION TYPES***
 //TO CHANGE WHICH ONE YOU ARE TESTING, SIMPLY COMMENT THE CURRENT ONE BY ADDING // AT THE BEGINNING OF THE LINE, AND UNCOMMENT THE DESIRED ROAD FORMATION.
 
-//**(TRIAL VARIABLES**:
+//**TRIAL VARIABLES**:
 //Total number of trials that will run
 int numTrials = 25;
 
@@ -41,6 +44,8 @@ int carsRemaining = 0;
 long initTime = 0;
 long finalTime = 0;
 
+
+// \/ \/ DO NOT MODIFY THESE VARIABLES UNLESS OTHERWISE MARKED \/ \/
 //Results will be kept in the ArrayList.
 public static ArrayList<Result> Results = new ArrayList<Result>();
 
@@ -52,10 +57,10 @@ public static ArrayList<Light> Lights = new ArrayList<Light>();
 
 public static boolean pause = false;
 
-private static int nextCarId = 0;
-private static int nextRoadId = 0;
+private static int nextCarId = 0; //VALUE IS MODIFIABLE
+private static int nextRoadId = 0; //VALUE IS MODIFIABLE
 private static int nextLightId = 0;
-private static int lightsInterval = 232;
+private static int lightsInterval = 232; //VALUE IS MODIFIABLE
 
 public int displayWidth = 1600;
 public int displayHeight = 900;
@@ -74,152 +79,24 @@ char mode = 'v';
 Road road = new Road(0, 0, 0, defaultRoadWidth, displayHeight);
 boolean roadUIFinished = false;
 
-void setup() {
-  size(displayWidth, displayHeight);
-  clearGrid();
-  //disp_setup();
-  
-  int messageTimingInS = 4;
-  int messageTiming = messageTimingInS*1000;
-  
-  System.out.println("SYSTEM WILL PRINT STATUS FROM HERE. AFTER " + numTrials + " TRIALS, ALL RESULTS AND STATISTICS WILL BE PRINTED.");
-  System.out.println("A LINE THAT SAYS \"PRINTING ALL RESULTS. COPY DATA FROM HERE\" WILL BE PRINTED ONTO THE CONSOLE. USE DATA FROM THERE.");
-  System.out.println("THE FOLLOWING STATUS UPDATES ARE JUST TO INFORM YOU THAT THE PROGRAM IS RUNNING AND HAS NOT STOPPED. THEY WILL BE PRINTED EVERY 100 TICKS.");
-  System.out.println("PROGRAM RUNS IN "+ (messageTiming/1000) +" SECONDS...");
-  long init = System.currentTimeMillis();
-  while(System.currentTimeMillis() - init < messageTiming - 3000){
-  }
-  String previousMessage = "";
-  while(System.currentTimeMillis() - init < messageTiming){
-    long deltaTime = System.currentTimeMillis() - init;
-    int time = (messageTiming/1000) - (int)(deltaTime/1000);
-    if(deltaTime % 1000 == 0 && !previousMessage.equals("PROGRAM RUNS IN " + time +  " SECONDS...")){
-      System.out.println("PROGRAM RUNS IN " + time +  " SECONDS...");
-      previousMessage = "PROGRAM RUNS IN " + time +  " SECONDS...";
-    }
-  }
-}
+// /\ /\ DO NOT MODIFY THESE VARIABLES UNLESS OTHERWISE MARKED /\ /\
 
-void cullLights(){
-  for(int i = Lights.size() - 1; i > 0; i--){
-    Light light = Lights.get(i);
-      if(!light.isIntersectingRoad() || (light.width < light.height && light.pairedLight == null)){
-        Lights.remove(i);
-      }
-  }
-}
-    
-void trialing_draw(){
-  while(currentTrial < numTrials){
-    carsRemaining = Cars.size();
-    print_results();
-    
-    clearGrid();
-    disp_setup();
-    turn = 0;
-    initTime = System.currentTimeMillis();
-    currentTrial++;
-    nextCarId = 0;
-    nextRoadId = 0;
-    nextLightId = 0;
-    
-    while(turn <= maxTicks){
-      carsRemaining = Cars.size();
-      costMap = createCostMap();
-      trial_draw();
-      if(turn % 100 == 0 && turn != 0){
-        print_status();
-      }
-    }
-  }
-
-}    
 void draw() {
-  master_draw();
-  //disp_draw();
-  //trialing_draw();
-}
-
-void print_compiledResults(){
-  System.out.println(" ");
-  System.out.println("---------------PRINTING ALL RESULTS. COPY DATA FROM HERE---------------");
-  System.out.println(" ");
-  System.out.println(" ");
-  for(Result result : Results){
-    System.out.println(" ");
-    System.out.println("---------------TRIAL " + result.trialNum + "---------------");
-    System.out.println("TIMESTAMP: " + result.timestamp);
-      System.out.println("FORMATION TYPE: " + result.formationType);
-    System.out.println("CARS REMAINING: " + result.carsRemaining);
-    System.out.println("TICK: " + result.tick);
-    System.out.println("TIME ELAPSED: " + result.timeElapsed + "s");
-  }
-}
-
-void print_results(){
-  DateFormat dateFormat = new SimpleDateFormat("yyy/MM/dd HH:mm:ss");
-  Date currDate = new Date();
-  String currentDate = dateFormat.format(currDate);
-  finalTime = System.currentTimeMillis();
-  System.out.println(" ");
-  System.out.println("---------------STATISTICS---------------");
-  System.out.println("TIMESTAMP: " + currentDate);
-  System.out.println("FORMATION TYPE: " + formationType);
-  System.out.println("TRIAL " + currentTrial + "/" + numTrials);
-  System.out.println("CARS REMAINING: " + carsRemaining);
-  System.out.println("TICK: " + turn);
-  System.out.println("TIME ELAPSED: " + ((finalTime - initTime)/1000) + "s");
+  //TO CREATE NEW ROAD FORMATIONS AND TEST THEM, COMMENT trialing_draw(); AND UNCOMMENT //master_draw();
+  //ONE MUST BE COMMENTED, THE OTHER UNCOMMENTED FOR PROGRAM TO WORK.
+  //AFTER UNCOMMENTING master_draw(); THE PROGRAM WILL GIVE A GUI WHERE YOU CAN MANIPULATE THE ROADS. AFTER YOU FINISH PLACING DOWN THE ROADS, THE CONSOLE PRINTS CODE THAT YOU CAN COPY AND PASTE INTO THE METHOD BELOW.
+  //AFTER COPYING AND PASTING CODE, COMMENT master_draw(); AND UNCOMMENT trialing_draw();
+  //WRITE public String formationType = "YOUR_FORMATION"; AND COMMENT THE CURRENT FORMATION TYPE.
+  //RUN THE PROGRAM AND YOU WILL BE ABLE TO TEST YOUR CUSTOM FORMATION.
   
-  Result newTrial = new Result(currentTrial,carsRemaining,turn,maxTicks,((finalTime - initTime)/1000),currentDate, formationType);
-  Results.add(newTrial);
-}
-
-void print_status(){
-  DateFormat dateFormat = new SimpleDateFormat("yyy/MM/dd HH:mm:ss");
-  Date currDate = new Date();
-  String currentDate = dateFormat.format(currDate);
-  finalTime = System.currentTimeMillis();
-  System.out.println(" ");
-  System.out.println("---------------STATUS---------------");
-  System.out.println("TIMESTAMP: " + currentDate);
-  System.out.println("CURRENTLY RUNNING TRIAL " + currentTrial + "/" + numTrials);
-  System.out.println("CARS REMAINING: " + carsRemaining);
-  System.out.println("TICK: " + turn + "/" + maxTicks);
-  System.out.println("TIME ELAPSED: " + ((finalTime - initTime)/1000) + "s");
-}
-
-void disp_setup() {
-  size(displayWidth, displayHeight);
-  clearGrid();
-  formation(formationType);
-  generateCars(amountOfCars);
-  generateLights();
-  pairLights();
-  cullLights();
-}
-
-void master_draw() {
-  if (roadUIFinished == false) {
-    background(0);
-    roadUI();
-    roadUIRender();
-    pairLights();
-    cullLights();
-  } else {
-    background(0);
-    costMap = createCostMap();
-    carVectors.clear();
-    render();
-    if ((!keyPressed && key != 'l') && !pause) {
-      runCars();
-    }
-    //renderLine();
-    runLights();
-    turn++;
-  }
+  //master_draw();
+  trialing_draw();
 }
 
 void formation(String formation) {
+  //FOLLOW THESE INSTRUCTIONS TO ADD YOUR OWN CUSTOM FORMATIONS:
+  //SCROLL DOWN TO THE BOTTOM OF THIS METHOD AND THERE WILL BE MORE INSTRUCTIONS.
+  
   if (formation.equals("grid")) {
     Road road0  = new Road(0, 0.0, 0.0, 100.0, 900.0);
     Road road1  = new Road(1, 200.0, 0.0, 100.0, 900.0);
@@ -446,9 +323,155 @@ void formation(String formation) {
     Roads.add(road18);
     Road road19  = new Road(19,1400.0,200.0,200.0, 100.0);
     Roads.add(road19);
+  }else if(formation.equals("YOUR_FORMATION")){
+    //PASTE CODE HERE. TO RENAME  THIS FORMATION CHANGE THE STRING ABOVE THIS LINE.
+    //TO CREATE EVEN MORE FORMATIONS, ADD THIS TO THE END OF THE BRACKET BELOW AND PASTE CODE IN THERE: else if(formation.equals("YOUR_FORMATION")){}
   }
   affixRoadsToMatrix();
 }
+
+void setup() {
+  size(displayWidth, displayHeight);
+  clearGrid();
+  //disp_setup();
+  
+  int messageTimingInS = 4;
+  int messageTiming = messageTimingInS*1000;
+  
+  System.out.println("SYSTEM WILL PRINT STATUS FROM HERE. AFTER " + numTrials + " TRIALS, ALL RESULTS AND STATISTICS WILL BE PRINTED.");
+  System.out.println("A LINE THAT SAYS \"PRINTING ALL RESULTS. COPY DATA FROM HERE\" WILL BE PRINTED ONTO THE CONSOLE. USE DATA FROM THERE.");
+  System.out.println("THE FOLLOWING STATUS UPDATES ARE JUST TO INFORM YOU THAT THE PROGRAM IS RUNNING AND HAS NOT STOPPED. THEY WILL BE PRINTED EVERY 100 TICKS.");
+  System.out.println("PROGRAM RUNS IN "+ (messageTiming/1000) +" SECONDS...");
+  long init = System.currentTimeMillis();
+  while(System.currentTimeMillis() - init < messageTiming - 3000){
+  }
+  String previousMessage = "";
+  while(System.currentTimeMillis() - init < messageTiming){
+    long deltaTime = System.currentTimeMillis() - init;
+    int time = (messageTiming/1000) - (int)(deltaTime/1000);
+    if(deltaTime % 1000 == 0 && !previousMessage.equals("PROGRAM RUNS IN " + time +  " SECONDS...")){
+      System.out.println("PROGRAM RUNS IN " + time +  " SECONDS...");
+      previousMessage = "PROGRAM RUNS IN " + time +  " SECONDS...";
+    }
+  }
+}
+
+void cullLights(){
+  for(int i = Lights.size() - 1; i > 0; i--){
+    Light light = Lights.get(i);
+      if(!light.isIntersectingRoad() || (light.width < light.height && light.pairedLight == null)){
+        Lights.remove(i);
+      }
+  }
+}
+    
+void trialing_draw(){
+  while(currentTrial < numTrials){
+    carsRemaining = Cars.size();
+    print_results();
+    
+    clearGrid();
+    disp_setup();
+    turn = 0;
+    initTime = System.currentTimeMillis();
+    currentTrial++;
+    nextCarId = 0;
+    nextRoadId = 0;
+    nextLightId = 0;
+    
+    while(turn <= maxTicks){
+      carsRemaining = Cars.size();
+      costMap = createCostMap();
+      trial_draw();
+      if(turn % 100 == 0 && turn != 0){
+        print_status();
+      }
+    }
+  }
+
+}    
+
+
+void print_compiledResults(){
+  System.out.println(" ");
+  System.out.println("---------------PRINTING ALL RESULTS. COPY DATA FROM HERE---------------");
+  System.out.println(" ");
+  System.out.println(" ");
+  for(Result result : Results){
+    System.out.println(" ");
+    System.out.println("---------------TRIAL " + result.trialNum + "---------------");
+    System.out.println("TIMESTAMP: " + result.timestamp);
+      System.out.println("FORMATION TYPE: " + result.formationType);
+    System.out.println("CARS REMAINING: " + result.carsRemaining);
+    System.out.println("TICK: " + result.tick);
+    System.out.println("TIME ELAPSED: " + result.timeElapsed + "s");
+  }
+}
+
+void print_results(){
+  DateFormat dateFormat = new SimpleDateFormat("yyy/MM/dd HH:mm:ss");
+  Date currDate = new Date();
+  String currentDate = dateFormat.format(currDate);
+  finalTime = System.currentTimeMillis();
+  System.out.println(" ");
+  System.out.println("---------------STATISTICS---------------");
+  System.out.println("TIMESTAMP: " + currentDate);
+  System.out.println("FORMATION TYPE: " + formationType);
+  System.out.println("TRIAL " + currentTrial + "/" + numTrials);
+  System.out.println("CARS REMAINING: " + carsRemaining);
+  System.out.println("TICK: " + turn);
+  System.out.println("TIME ELAPSED: " + ((finalTime - initTime)/1000) + "s");
+  
+  Result newTrial = new Result(currentTrial,carsRemaining,turn,maxTicks,((finalTime - initTime)/1000),currentDate, formationType);
+  Results.add(newTrial);
+}
+
+void print_status(){
+  DateFormat dateFormat = new SimpleDateFormat("yyy/MM/dd HH:mm:ss");
+  Date currDate = new Date();
+  String currentDate = dateFormat.format(currDate);
+  finalTime = System.currentTimeMillis();
+  System.out.println(" ");
+  System.out.println("---------------STATUS---------------");
+  System.out.println("TIMESTAMP: " + currentDate);
+  System.out.println("CURRENTLY RUNNING TRIAL " + currentTrial + "/" + numTrials);
+  System.out.println("CARS REMAINING: " + carsRemaining);
+  System.out.println("TICK: " + turn + "/" + maxTicks);
+  System.out.println("TIME ELAPSED: " + ((finalTime - initTime)/1000) + "s");
+}
+
+void disp_setup() {
+  size(displayWidth, displayHeight);
+  clearGrid();
+  formation(formationType);
+  generateCars(amountOfCars);
+  generateLights();
+  pairLights();
+  cullLights();
+}
+
+void master_draw() {
+  if (roadUIFinished == false) {
+    background(0);
+    roadUI();
+    roadUIRender();
+    pairLights();
+    cullLights();
+  } else {
+    background(0);
+    costMap = createCostMap();
+    carVectors.clear();
+    render();
+    if ((!keyPressed && key != 'l') && !pause) {
+      runCars();
+    }
+    //renderLine();
+    runLights();
+    turn++;
+  }
+}
+
+
 
 void translateRoadToMatrix(Road newRoad) {
   if (newRoad.width > newRoad.height) {
