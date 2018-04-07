@@ -6,6 +6,20 @@
 import java.util.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
+//formationType can be:
+//"grid"
+//"orbital"
+//"trib_tree"
+
+//Here is the variable declared in all three ways since I know you're lazy, uncomment it if you want to use it, comment it if you don't want to use it:
+public String formationType = "grid";
+//public String formationType = "orbital";
+//public String formationType = "trib_tree";
+
+//***IMPORTANT NOTE ABOUT ROAD FORMATION TYPES***
+//TO CHANGE WHICH ONE YOU ARE TESTING, SIMPLY COMMENT THE CURRENT ONE BY ADDING // AT THE BEGINNING OF THE LINE, AND UNCOMMENT THE DESIRED ROAD FORMATION.
+
 //TRIAL VARIABLES:
 int numTrials = 25;
 int currentTrial = 0;
@@ -41,15 +55,9 @@ public int defaultRoadWidth = 100;
 public float randomSpawnLocOffsetLength = 50;
 public float randomSpawnLocOffsetWidth = 50;
 
-//formationType can be:
-//"grid"
-//"orbital"
-//"trib_tree"
 
-//Here is the variable declared in all three ways since I know you're lazy:
-public String formationType = "grid";
-//public String formationType = "orbital";
-//public String formationType = "trib_tree";
+
+
 
 public int[][] grid = new int[displayWidth/defaultRoadWidth][displayHeight/defaultRoadWidth];
 public int[][] costMap = new int [displayWidth/defaultRoadWidth][displayHeight/defaultRoadWidth];
@@ -61,7 +69,8 @@ boolean roadUIFinished = false;
 void setup() {
   size(displayWidth, displayHeight);
   clearGrid();
-  disp_setup();
+  //disp_setup();
+  
   System.out.println("SYSTEM WILL PRINT STATUS FROM HERE. AFTER " + numTrials + " TRIALS, ALL RESULTS AND STATISTICS WILL BE PRINTED.");
   System.out.println("A LINE THAT SAYS \"PRINTING ALL RESULTS. COPY DATA FROM HERE\" WILL BE PRINTED ONTO THE CONSOLE. USE DATA FROM THERE.");
   System.out.println("THE FOLLOWING STATUS UPDATES ARE JUST TO INFORM YOU THAT THE PROGRAM IS RUNNING AND HAS NOT STOPPED. THEY WILL BE PRINTED EVERY 100 TICKS.");
@@ -81,7 +90,9 @@ void setup() {
 }
     //master_draw();
     //disp_draw();
-void draw() {
+    //trialing_draw()
+    
+void trialing_draw(){
   while(currentTrial < numTrials){
     carsRemaining = Cars.size();
     print_results();
@@ -104,6 +115,10 @@ void draw() {
       }
     }
   }
+
+}    
+void draw() {
+  master_draw();
 }
 
 void print_compiledResults(){
@@ -175,6 +190,7 @@ void master_draw() {
     roadUIRender();
   } else {
     background(0);
+    costMap = createCostMap();
     carVectors.clear();
     render();
     if ((!keyPressed && key != 'l') && !pause) {
@@ -492,6 +508,8 @@ void roadUI() {
   if (keyPressed && key == ' ') {
     Road newRoad = new Road(nextRoadId, road.getXPos(), road.getYPos(), road.width, road.height);
     Roads.add(newRoad);
+    System.out.println("Road road" + nextRoadId + "  = new Road(" + nextRoadId + ","+newRoad.getXPos()+","+newRoad.getYPos()+","+ newRoad.width + ", "+newRoad.height+");");
+    System.out.println("Roads.add(road" + nextRoadId + ");");
     nextRoadId++;
     road.id = nextRoadId;
     if (newRoad.width > newRoad.height) {
@@ -507,8 +525,8 @@ void roadUI() {
 
       fillCol(col, row, l);
     }
-    //System.out.println("road added (total roads: " + nextRoadId + ")");
-    printGrid(grid);
+    
+    //printGrid(grid);
     keyPressed = false;
   }
 
@@ -1285,6 +1303,7 @@ void disp_draw() {
   background(0);
   carVectors.clear();
   render();
+  costMap = createCostMap();
   if ((!keyPressed && key != 'l') && !pause) {
     runCars();
   }
@@ -1299,7 +1318,7 @@ void trial_draw() {
   runCars();
   runLights();
   turn++;
-  
+  costMap = createCostMap();
   if(keyPressed && key == 'p') {
         print_status();
         keyPressed = false;
