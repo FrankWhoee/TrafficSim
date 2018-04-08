@@ -15,19 +15,20 @@ import java.text.SimpleDateFormat;
 //"radial_tree"
 
 //Here is the variable declared in all ways since I know you're lazy, uncomment it if you want to use it, comment it if you don't want to use it:
-public String formationType = "grid";
-//public String formationType = "linear_tree";
+//public String formationType = "grid";
 //public String formationType = "orbital";
+public String formationType = "radial_grid";
+//public String formationType = "linear_tree";
 //public String formationType = "trib_tree";
 //public String formationType = "trib_grid";
-//public String formationType = "radial_grid";
+
 //public String formationType = "radial_tree";
 
 
 //***IMPORTANT NOTE ABOUT ROAD FORMATION TYPES***
 //TO CHANGE WHICH ONE YOU ARE TESTING, SIMPLY COMMENT THE CURRENT ONE BY ADDING // AT THE BEGINNING OF THE LINE, AND UNCOMMENT THE DESIRED ROAD FORMATION.
 
-//**TRIAL VARIABLES**:
+//**TRIAL VARIABLES** (VARIABLES ARE ADJUSTABLE):
 //Amount of cars that will be spawned:
 public int amountOfCars = 75;
 
@@ -370,6 +371,9 @@ void cullLights(){
     
 void trialing_draw(){
   while(currentTrial < numTrials){
+    Roads.clear();
+    Cars.clear();
+    Lights.clear();
     clearGrid();
     disp_setup();
     turn = 0;
@@ -378,13 +382,15 @@ void trialing_draw(){
     nextCarId = 0;
     nextRoadId = 0;
     nextLightId = 0;
+
     
-    while(turn <= maxTicks || carsRemaining == 0){
+    
+    while(turn <= maxTicks && carsRemaining > 0){
       carsRemaining = Cars.size();
       costMap = createCostMap();
       trial_draw();
       if(turn % 100 == 0){
-        print_status();
+        //print_status();
       }
     }
     carsRemaining = Cars.size();
@@ -408,6 +414,9 @@ void print_compiledResults(){
     System.out.println("TICK: " + result.tick);
     System.out.println("TIME ELAPSED: " + result.timeElapsed + "s");
   }
+  System.out.println(" ");
+  System.out.println("---------------END PROGRAM. CLOSE OUT OF WINDOW.---------------");
+  for(;;){}
 }
 
 void print_results(){
