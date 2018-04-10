@@ -3,6 +3,9 @@
 //THIS IS FOR CONDUCTING TESTS ON DIFFERENT ROAD FORMATIONS **ONLY**. USE MASTER BRANCH FOR GUI AND DISPLAYS.
 
 import java.util.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -17,12 +20,11 @@ import java.text.SimpleDateFormat;
 //Here is the variable declared in all ways since I know you're lazy, uncomment it if you want to use it, comment it if you don't want to use it:
 //public String formationType = "grid";
 //public String formationType = "orbital";
-public String formationType = "radial_grid";
-//public String formationType = "linear_tree";
+//public String formationType = "radial_grid";
 //public String formationType = "trib_tree";
+//public String formationType = "linear_tree";
 //public String formationType = "trib_grid";
-
-//public String formationType = "radial_tree";
+public String formationType = "radial_tree";
 
 
 //***IMPORTANT NOTE ABOUT ROAD FORMATION TYPES***
@@ -36,7 +38,7 @@ public int amountOfCars = 75;
 int numTrials = 25;
 
 //Trial that program is on currently. Change this to resume from a previous run.
-int currentTrial = 0;
+int currentTrial = 17;
 
 //The total amount of ticks/turns that will run per trial.
 int maxTicks = 30000;
@@ -48,6 +50,8 @@ int carsRemaining = 0;
 long initTime = 0;
 long finalTime = 0;
 
+//
+String resultsFilePath = "/home/frank/Documents/TrafficSim_Data/" + formationType + ".txt";
 
 // \/ \/ DO NOT MODIFY THESE VARIABLES UNLESS OTHERWISE MARKED \/ \/
 //Results will be kept in the ArrayList.
@@ -334,6 +338,33 @@ void formation(String formation) {
   affixRoadsToMatrix();
 }
 
+void writeResultsToFile(){
+  try{
+   String content = "This is the content to write into file\n";
+    content +=("---------------PRINTING ALL RESULTS. COPY DATA FROM HERE---------------\n");
+    content +=("\n");
+    for(Result result : Results){
+      content += ("---------------TRIAL " + result.trialNum + "---------------\n");
+      content += ("TIMESTAMP: " + result.timestamp + "\n");
+      content += ("FORMATION TYPE: " + result.formationType + "\n");
+      content += ("CARS REMAINING: " + result.carsRemaining + "\n");
+      content += ("TICK: " + result.tick + "\n");
+      content += ("TIME ELAPSED: " + result.timeElapsed + "s" + "\n");
+    }
+    content +=(" " + "\n");
+    content +=("---------------END PROGRAM. CLOSE OUT OF WINDOW.---------------" + "\n");
+    
+    FileWriter fw = new FileWriter(resultsFilePath );
+    BufferedWriter bw = new BufferedWriter(fw);
+    bw.write(content);
+    
+    bw.close();
+    fw.close();
+  }catch(Exception e){
+    System.out.println(e);
+  }
+}
+
 void setup() {
   size(displayWidth, displayHeight);
   clearGrid();
@@ -390,13 +421,14 @@ void trialing_draw(){
       costMap = createCostMap();
       trial_draw();
       if(turn % 100 == 0){
-        //print_status();
+        
       }
     }
     carsRemaining = Cars.size();
     print_results();
   }
   print_compiledResults();
+  writeResultsToFile();
 }    
 
 
