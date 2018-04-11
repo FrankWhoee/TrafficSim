@@ -1,7 +1,24 @@
+//THIS BRANCH IS FOR DISPLAYS AND CREATING NEW ROAD FORMATIONS. USE TRIALING BRANCH FOR TESTING.
+
+//formationType can be:
+//"grid"
+//"orbital"
+//"trib_tree"
+//"linear_tree"
+//"radial_grid"
+//"radial_tree"
+
+//Here is the variable declared in all ways since I know you're lazy, uncomment it if you want to use it, comment it if you don't want to use it:
+public String formationType = "grid";
+//public String formationType = "linear_tree";
+//public String formationType = "orbital";
+//public String formationType = "trib_tree";
+//public String formationType = "trib_grid";
+//public String formationType = "radial_grid";
+//public String formationType = "radial_tree";
+
 import java.util.*;
 public static Map<Car, Velocity> carVectors = new HashMap<Car, Velocity>();
-
-
 public static ArrayList<Car> Cars = new ArrayList<Car>();
 public static ArrayList<Road> Roads = new ArrayList<Road>();
 public static ArrayList<Light> Lights = new ArrayList<Light>();
@@ -12,6 +29,7 @@ private static int nextCarId = 0;
 private static int nextRoadId = 0;
 private static int nextLightId = 0;
 private static int lightsInterval = 232;
+private static long initTime = 0;
 
 public int displayWidth = 1600;
 public int displayHeight = 900;
@@ -22,16 +40,6 @@ public int amountOfCars = 75;
 public int defaultRoadWidth = 100;
 public float randomSpawnLocOffsetLength = 50;
 public float randomSpawnLocOffsetWidth = 50;
-
-//formationType can be:
-//"grid"
-//"orbital"
-//"trib_tree"
-
-//Here is the variable declared in all three ways since I know you're lazy:
-//public String formationType = "grid";
-//public String formationType = "orbital";
-//public String formationType = "trib_tree";
 
 public int[][] grid = new int[displayWidth/defaultRoadWidth][displayHeight/defaultRoadWidth];
 public int[][] costMap = new int [displayWidth/defaultRoadWidth][displayHeight/defaultRoadWidth];
@@ -61,9 +69,21 @@ void disp_setup() {
   size(displayWidth, displayHeight);
   clearGrid();
   formation(formationType);
-
   generateCars(amountOfCars);
   generateLights();
+  pairLights();
+  cullLights();
+  initTime = System.currentTimeMillis();
+}
+
+void cullLights(){
+  for(int i = Lights.size() - 1; i > 0; i--){
+    Light light = Lights.get(i);
+    
+      if(!light.isIntersectingRoad() || (light.width < light.height && light.pairedLight == null)){
+        Lights.remove(i);
+      }
+  }
 }
 
 void master_draw() {
@@ -71,6 +91,8 @@ void master_draw() {
     background(0);
     roadUI();
     roadUIRender();
+    pairLights();
+    cullLights();
   } else {
     background(0);
     carVectors.clear();
@@ -163,8 +185,154 @@ void formation(String formation) {
     Roads.add(road10);
     Roads.add(road11);
     Roads.add(road12);
-  } else {
-    return;
+  }else if(formation.equals("linear_tree")){
+    Road road0  = new Road(0,0.0,400.0,1600.0, 100.0);
+    Roads.add(road0);
+    Road road1  = new Road(1,100.0,400.0,100.0, 400.0);
+    Roads.add(road1);
+    Road road2  = new Road(2,500.0,400.0,100.0, 500.0);
+    Roads.add(road2);
+    Road road3  = new Road(3,900.0,400.0,100.0, 300.0);
+    Roads.add(road3);
+    Road road4  = new Road(4,1300.0,400.0,100.0, 400.0);
+    Roads.add(road4);
+    Road road5  = new Road(5,1100.0,100.0,100.0, 400.0);
+    Roads.add(road5);
+    Road road6  = new Road(6,700.0,0.0,100.0, 500.0);
+    Roads.add(road6);
+    Road road7  = new Road(7,300.0,0.0,100.0, 500.0);
+    Roads.add(road7);
+    Road road8  = new Road(8,0.0,0.0,100.0, 500.0);
+    Roads.add(road8);
+    Road road9  = new Road(9,1400.0,0.0,100.0, 500.0);
+    Roads.add(road9);
+    Road road10  = new Road(10,1500.0,400.0,100.0, 400.0);
+    Roads.add(road10);
+    Road road11  = new Road(11,0.0,0.0,200.0, 100.0);
+    Roads.add(road11);
+    Road road12  = new Road(12,0.0,200.0,200.0, 100.0);
+    Roads.add(road12);
+    Road road13  = new Road(13,100.0,600.0,200.0, 100.0);
+    Roads.add(road13);
+    Road road14  = new Road(14,0.0,700.0,200.0, 100.0);
+    Roads.add(road14);
+    Road road15  = new Road(15,700.0,600.0,500.0, 100.0);
+    Roads.add(road15);
+    Road road16  = new Road(16,500.0,800.0,600.0, 100.0);
+    Roads.add(road16);
+    Road road17  = new Road(17,400.0,700.0,200.0, 100.0);
+    Roads.add(road17);
+    Road road18  = new Road(18,500.0,200.0,300.0, 100.0);
+    Roads.add(road18);
+    Road road19  = new Road(19,700.0,0.0,300.0, 100.0);
+    Roads.add(road19);
+    Road road20  = new Road(20,900.0,200.0,300.0, 100.0);
+    Roads.add(road20);
+    Road road21  = new Road(21,1300.0,0.0,300.0, 100.0);
+    Roads.add(road21);
+    Road road22  = new Road(22,1400.0,200.0,200.0, 100.0);
+    Roads.add(road22);
+  }else if(formation.equals("trib_grid")){
+    Road road0  = new Road(0,800.0,0.0,100.0, 900.0);
+    Roads.add(road0);
+    Road road1  = new Road(1,0.0,800.0,1600.0, 100.0);
+    Roads.add(road1);
+    Road road2  = new Road(2,100.0,200.0,800.0, 100.0);
+    Roads.add(road2);
+    Road road3  = new Road(3,100.0,0.0,100.0, 700.0);
+    Roads.add(road3);
+    Road road4  = new Road(4,300.0,0.0,100.0, 700.0);
+    Roads.add(road4);
+    Road road5  = new Road(5,500.0,0.0,100.0, 700.0);
+    Roads.add(road5);
+    Road road6  = new Road(6,100.0,0.0,500.0, 100.0);
+    Roads.add(road6);
+    Road road7  = new Road(7,100.0,400.0,500.0, 100.0);
+    Roads.add(road7);
+    Road road8  = new Road(8,100.0,600.0,500.0, 100.0);
+    Roads.add(road8);
+    Road road9  = new Road(9,800.0,400.0,500.0, 100.0);
+    Roads.add(road9);
+    Road road10  = new Road(10,1200.0,200.0,100.0, 500.0);
+    Roads.add(road10);
+    Road road11  = new Road(11,1000.0,200.0,100.0, 500.0);
+    Roads.add(road11);
+    Road road12  = new Road(12,1000.0,200.0,300.0, 100.0);
+    Roads.add(road12);
+    Road road13  = new Road(13,1000.0,600.0,300.0, 100.0);
+    Roads.add(road13);
+  }else if(formation.equals("radial_grid")){
+    Road road0  = new Road(0,700.0,0.0,100.0, 900.0);
+    Roads.add(road0);
+    Road road1  = new Road(1,0.0,400.0,1600.0, 100.0);
+    Roads.add(road1);
+    Road road2  = new Road(2,900.0,600.0,700.0, 100.0);
+    Roads.add(road2);
+    Road road3  = new Road(3,900.0,200.0,700.0, 100.0);
+    Roads.add(road3);
+    Road road4  = new Road(4,900.0,200.0,100.0, 500.0);
+    Roads.add(road4);
+    Road road5  = new Road(5,1100.0,200.0,100.0, 500.0);
+    Roads.add(road5);
+    Road road6  = new Road(6,1300.0,200.0,100.0, 500.0);
+    Roads.add(road6);
+    Road road7  = new Road(7,1500.0,200.0,100.0, 500.0);
+    Roads.add(road7);
+    Road road8  = new Road(8,500.0,200.0,100.0, 500.0);
+    Roads.add(road8);
+    Road road9  = new Road(9,300.0,200.0,100.0, 500.0);
+    Roads.add(road9);
+    Road road10  = new Road(10,100.0,200.0,100.0, 500.0);
+    Roads.add(road10);
+    Road road11  = new Road(11,0.0,200.0,600.0, 100.0);
+    Roads.add(road11);
+    Road road12  = new Road(12,0.0,600.0,600.0, 100.0);
+    Roads.add(road12);
+    Road road13  = new Road(13,0.0,800.0,1600.0, 100.0);
+    Roads.add(road13);
+    Road road14  = new Road(14,0.0,0.0,1600.0, 100.0);
+    Roads.add(road14);
+  }else if(formation.equals("radial_tree")){
+    Road road0  = new Road(0,700.0,0.0,100.0, 900.0);
+    Roads.add(road0);
+    Road road1  = new Road(1,0.0,400.0,1600.0, 100.0);
+    Roads.add(road1);
+    Road road2  = new Road(2,100.0,400.0,100.0, 500.0);
+    Roads.add(road2);
+    Road road3  = new Road(3,100.0,800.0,300.0, 100.0);
+    Roads.add(road3);
+    Road road4  = new Road(4,0.0,600.0,200.0, 100.0);
+    Roads.add(road4);
+    Road road5  = new Road(5,0.0,600.0,200.0, 100.0);
+    Roads.add(road5);
+    Road road6  = new Road(6,500.0,400.0,100.0, 400.0);
+    Roads.add(road6);
+    Road road7  = new Road(7,300.0,600.0,300.0, 100.0);
+    Roads.add(road7);
+    Road road8  = new Road(8,300.0,0.0,100.0, 500.0);
+    Roads.add(road8);
+    Road road9  = new Road(9,0.0,200.0,400.0, 100.0);
+    Roads.add(road9);
+    Road road10  = new Road(10,300.0,0.0,200.0, 100.0);
+    Roads.add(road10);
+    Road road11  = new Road(11,900.0,0.0,100.0, 500.0);
+    Roads.add(road11);
+    Road road12  = new Road(12,1200.0,100.0,100.0, 400.0);
+    Roads.add(road12);
+    Road road13  = new Road(13,1400.0,200.0,100.0, 600.0);
+    Roads.add(road13);
+    Road road14  = new Road(14,1100.0,400.0,100.0, 500.0);
+    Roads.add(road14);
+    Road road15  = new Road(15,900.0,100.0,200.0, 100.0);
+    Roads.add(road15);
+    Road road16  = new Road(16,900.0,600.0,300.0, 100.0);
+    Roads.add(road16);
+    Road road17  = new Road(17,1000.0,800.0,300.0, 100.0);
+    Roads.add(road17);
+    Road road18  = new Road(18,1300.0,600.0,300.0, 100.0);
+    Roads.add(road18);
+    Road road19  = new Road(19,1400.0,200.0,200.0, 100.0);
+    Roads.add(road19);
   }
   affixRoadsToMatrix();
 }
@@ -201,77 +369,12 @@ void affixRoadsToMatrix() {
 }
 
 void generateCars(int amount) {
-  for (Road road : Roads) {
-    for (int i = 0; i < Math.max(amount/Roads.size(), 1); i++) {
-
-      if (road.getWidth() > road.getHeight()) {
-        float newYPos = (road.getYPos() + 17) + (float)((road.getHeight() - 33) * Math.random());
-        System.out.println("newYPos: " + newYPos);
-        if (nextCarId % 2 == 1) {
-          Car newCar = createNewCar(road.getWidth() - (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
-
-          float randomX = newCar.getXPos();
-          float randomY = newCar.getYPos();
-          Position nextPos = new Position(randomX, randomY);
-          while (!newCar.isIntersectingRoad(randomX, randomY)) {
-            randomX = (float)Math.random() * displayWidth;
-            randomY = (float)Math.random() * displayHeight;
-            nextPos = new Position(randomX, randomY);
-          }
-          newCar.setPosition(nextPos);
-
-          newCar.path = breadthFirstSearch(newCar);
-          //newCar.path = dijksAlgo(newCar);
-          Cars.add(newCar);
-          nextCarId++;
-          //System.out.println(newCar.getId() + " spawned. Type: Car Location: Right Side");
-        } else {
-          Car newCar = createNewCar(road.getXPos() + (float)(Math.random() * randomSpawnLocOffsetLength), newYPos);
-
-          float randomX = newCar.getXPos();
-          float randomY = newCar.getYPos();
-          Position nextPos = new Position(randomX, randomY);
-          while (!newCar.isIntersectingRoad(randomX, randomY)) {
-            randomX = (float)Math.random() * displayWidth;
-            randomY = (float)Math.random() * displayHeight;
-            nextPos = new Position(randomX, randomY);
-          }
-          newCar.setPosition(nextPos);
-
-          newCar.path = breadthFirstSearch(newCar);
-          //newCar.path = dijksAlgo(newCar);
-          Cars.add(newCar);
-          nextCarId++;
-          //System.out.println(newCar.getId() + " spawned. Type: Car Location: Left Side");
-        }
-      } else {
-        float newXPos = (road.getXPos() + 17) +  (float)((road.getWidth() - 33) * Math.random());
-        System.out.println("newXPos: " + newXPos);
-        if (nextCarId % 2 == 1) {
-          Car newCar = createNewCar(newXPos, road.getHeight() - Constants.CAR_RADIUS - (float)(Math.random() * randomSpawnLocOffsetLength));
-          //System.out.println("road height: " + road.getHeight());
-
-          float randomX = newCar.getXPos();
-          float randomY = newCar.getYPos();
-          Position nextPos = new Position(randomX, randomY);
-          while (!newCar.isIntersectingRoad(randomX, randomY)) {
-            randomX = (float)Math.random() * displayWidth;
-            randomY = (float)Math.random() * displayHeight;
-            nextPos = new Position(randomX, randomY);
-          }
-          newCar.setPosition(nextPos);
-
-          newCar.path = breadthFirstSearch(newCar);
-          //newCar.path = dijksAlgo(newCar);
-          Cars.add(newCar);
-          nextCarId++;
-          //System.out.println(newCar.getId() + " spawned. Type: Car Location: Lower Side");
-        } else {
-          Car newCar = createNewCar(newXPos, road.getYPos() + Constants.CAR_RADIUS + (float)(Math.random() * randomSpawnLocOffsetLength));
+    for (int i = 0; i < amount; i++) {
+          float randomX = (float)Math.random() * displayWidth;
+          float randomY = (float)Math.random() * displayHeight;
+          Car newCar = createNewCar(randomX, randomY + (float)(Math.random() * randomSpawnLocOffsetLength));
           //System.out.println("road Y: " + road.getYPos());
-
-          float randomX = newCar.getXPos();
-          float randomY = newCar.getYPos();
+          
           Position nextPos = new Position(randomX, randomY);
           while (!newCar.isIntersectingRoad(randomX, randomY)) {
             randomX = (float)Math.random() * displayWidth;
@@ -279,18 +382,15 @@ void generateCars(int amount) {
             nextPos = new Position(randomX, randomY);
           }
           newCar.setPosition(nextPos);
-
           newCar.path = breadthFirstSearch(newCar);
           //newCar.path = dijksAlgo(newCar);
           Cars.add(newCar);
           nextCarId++;
-          //System.out.println(newCar.getId() + " spawned. Type: Car Location: Upper Side");
-        }
       }
-    }
+    
   }
-  //System.out.println("Cars generated.");
-}
+
+
 
 Car createNewCar(float x, float y) {
   float randomX = (float)Math.random() * displayWidth;
@@ -303,6 +403,21 @@ Car createNewCar(float x, float y) {
   objective = new Position(randomX, randomY);
   Car newCar = new Car(nextCarId, x, y, Constants.MAX_HEALTH, objective);
   return newCar;
+}
+
+void pairLights(){
+  for(Light light: Lights){
+    if(light.width < light.height){
+      for(Light compareLight: Lights){
+         if(light.getYPos() == compareLight.getYPos() && light.getDistanceTo(compareLight) < 200){
+            if(light.width != compareLight.width && light.height != compareLight.height && convertToMatrix(light.getXPos()) == convertToMatrix(compareLight.getXPos()) && convertToMatrix(light.getYPos()) == convertToMatrix(compareLight.getYPos())){
+                light.pairedLight = compareLight;
+                break;
+             }
+           }
+         }
+    }
+  }
 }
 
 void runCars() {
@@ -476,9 +591,9 @@ void runLights() {
       ArrayList<Position> areasToCheck = new ArrayList<Position>();
       int nearCars = 0;
       areasToCheck.add(new Position(col,row + 1));
-      areasToCheck.add(new Position(col,row + 1));
-      areasToCheck.add(new Position(col,row + 1));
-      areasToCheck.add(new Position(col,row + 1));
+      areasToCheck.add(new Position(col,row - 1));
+      areasToCheck.add(new Position(col + 1,row));
+      areasToCheck.add(new Position(col - 1, row));
       
       for(Position gridSpaces : areasToCheck){
         if(gridSpaces.getXPos() >= 0 && gridSpaces.getXPos() <= displayWidth/defaultRoadWidth && gridSpaces.getYPos() >= 0 && gridSpaces.getYPos() < displayHeight/defaultRoadWidth){
@@ -687,35 +802,14 @@ void runLights() {
             }
           }
         }else{
-          Light verticalLight = new Light(-1, Roads.get(0), "");
-          if(verticalLight.id == -1){
-            if(turn == 1){  
-               //System.out.println("Light " + light.id + " has not found pairing. Trying alternative search.");
-            }
-             for(Light compareLight: TrafficSim.Lights){
-              if(light.getYPos() == compareLight.getYPos() && light.getDistanceTo(compareLight) < 200){
-                  if(light.width != compareLight.width && light.height != compareLight.height && convertToMatrix(light.getXPos()) == convertToMatrix(compareLight.getXPos()) && convertToMatrix(light.getYPos()) == convertToMatrix(compareLight.getYPos())){
-                    if(turn == 1){  
-                      //System.out.println("Light " + light.id + " paired with " + compareLight.id);
-                    }
-                      verticalLight = compareLight;
-                      break;
-                  }
-              }
-             }
+          try{
+          Light verticalLight = light.pairedLight;
              if(verticalLight.colour.equals("red")){
               light.setColour("green");
             }else{
               light.setColour("red");
             }
-    
-          }else{
-            if(verticalLight.colour.equals("red")){
-              light.setColour("green");
-            }else{
-              light.setColour("red");
-            }
-          }
+          }catch(Exception e){}
         }
       
       }
@@ -1204,13 +1298,16 @@ void roadUIRender() {
 }
 
 void render() {
-  fill(150);
-  noStroke();
-
-
+  
+  
+  
   for (Road road : Roads) {
+    fill(150);
+     noStroke();
     rect(road.getXPos(), road.getYPos(), road.getWidth(), road.getHeight());
   }
+
+
 
   noFill();
   for (Car car : Cars) {
@@ -1232,7 +1329,7 @@ void render() {
     //text(coordinates, car.getXPos() + 15, car.getYPos() + 15);
     //text(PathCoordinates, car.getXPos() + 15, car.getYPos() + 30);
     text(id, car.getXPos() - 30, car.getYPos() + 25);
-    //text(id, car.objective.getXPos() - 30, car.objective.getYPos() + 25);
+    text(id, car.objective.getXPos() - 30, car.objective.getYPos() + 25);
   }
 
   for (Light light : Lights) {
@@ -1251,10 +1348,31 @@ void render() {
       //text(coordinates, light.getXPos() + 15, light.getYPos() + 15);
 
       //Debugging for Issue #8 & #9
-      String lightId = ("id: " + light.id);
-      text(lightId, light.getXPos() + 15, light.getYPos() + 25);
+      //String lightId = ("id: " + light.id);
+      //text(lightId, light.getXPos() + 15, light.getYPos() + 25);
     }
   }
+  
+  textSize(18);
+  fill(255);
+  int carsRemaining = Cars.size();
+  text("CARS REMAINING: " + carsRemaining, 0, 20);
+  text("TICK: " + turn, 0, 40);
+    float time = ((float)(System.currentTimeMillis() - initTime)/1000)/60;
+    int timeS = (int)(System.currentTimeMillis() - initTime)/1000;
+    String t = "" + time;
+    if(t.length() > 4){
+      t = t.substring(0,4);
+    }else{
+      t = t.substring(0,t.length());
+    }
+    text("TIME ELAPSED: " + t + "min", 0, 60);
+    if(timeS > 2){
+      text((int)(turn/(timeS + 0.001)) + "fps", 2, 80);
+    }else{
+      text("CALCULATING FPS...", 0, 80); 
+    }
+    textSize(14);
 }
 
 public ArrayList<Car> getSortedCars(Position car) {
