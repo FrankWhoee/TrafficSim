@@ -773,9 +773,9 @@ void runLights() {
       ArrayList<Position> areasToCheck = new ArrayList<Position>();
       int nearCars = 0;
       areasToCheck.add(new Position(col,row + 1));
-      areasToCheck.add(new Position(col,row + 1));
-      areasToCheck.add(new Position(col,row + 1));
-      areasToCheck.add(new Position(col,row + 1));
+      areasToCheck.add(new Position(col,row - 1));
+      areasToCheck.add(new Position(col + 1,row));
+      areasToCheck.add(new Position(col - 1, row));
       
       for(Position gridSpaces : areasToCheck){
         if(gridSpaces.getXPos() >= 0 && gridSpaces.getXPos() <= displayWidth/defaultRoadWidth && gridSpaces.getYPos() >= 0 && gridSpaces.getYPos() < displayHeight/defaultRoadWidth){
