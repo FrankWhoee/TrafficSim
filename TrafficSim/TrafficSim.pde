@@ -10,7 +10,6 @@
 
 //Here is the variable declared in all ways since I know you're lazy, uncomment it if you want to use it, comment it if you don't want to use it:
 public String formationType = "grid";
-//public String formationType = "linear_tree";
 //public String formationType = "orbital";
 //public String formationType = "trib_tree";
 //public String formationType = "trib_grid";
@@ -36,7 +35,7 @@ public int displayHeight = 900;
 public int centerX = displayWidth/2;
 public int centerY = displayHeight/2;
 public int turn = 0;
-public int amountOfCars = 75;
+public int amountOfCars = 100;
 public int defaultRoadWidth = 100;
 public float randomSpawnLocOffsetLength = 50;
 public float randomSpawnLocOffsetWidth = 50;
@@ -48,22 +47,27 @@ char mode = 'v';
 Road road = new Road(0, 0, 0, defaultRoadWidth, displayHeight);
 boolean roadUIFinished = false;
 
+void draw() {
+  disp_draw();
+  //master_draw();
+  costMap = createCostMap();
+  if (keyPressed && key == ' ') {
+      generateCars(1);
+      keyPressed = false;
+  }
+  if(turn % 100 == 0){
+    generateCars(1);
+  }
+  
+}
+
 void setup() {
   size(displayWidth, displayHeight);
   clearGrid();
   disp_setup();
 }
 
-void draw() {
-  disp_draw();
-  //master_draw();
-  costMap = createCostMap();
-  if (keyPressed && key == ' ') {
-      printGrid(costMap);
-      System.out.println(" ");
-    keyPressed = false;
-  }
-}
+
 
 void disp_setup() {
   size(displayWidth, displayHeight);
@@ -496,7 +500,7 @@ void roadUI() {
       keyPressed = false;
     }
   } else if (keyPressed && keyCode == DOWN) {
-    if (road.getYPos() + defaultRoadWidth < displayHeight) {
+    if(road.getYPos() + road.height < displayHeight) {
       road.setPosition(new Position(road.getXPos(), road.getYPos() + defaultRoadWidth));
       keyPressed = false;
     }
@@ -595,12 +599,14 @@ void runLights() {
       areasToCheck.add(new Position(col + 1,row));
       areasToCheck.add(new Position(col - 1, row));
       
-      for(Position gridSpaces : areasToCheck){
-        if(gridSpaces.getXPos() >= 0 && gridSpaces.getXPos() <= displayWidth/defaultRoadWidth && gridSpaces.getYPos() >= 0 && gridSpaces.getYPos() < displayHeight/defaultRoadWidth){
-          nearCars += costMap[(int)gridSpaces.getXPos()][(int)gridSpaces.getYPos()] - 1;
+      try{
+        for(Position gridSpaces : areasToCheck){
+          if(gridSpaces.getXPos() >= 0 && gridSpaces.getXPos() <= displayWidth/defaultRoadWidth && gridSpaces.getYPos() >= 0 && gridSpaces.getYPos() < displayHeight/defaultRoadWidth){
+            nearCars += costMap[(int)gridSpaces.getXPos()][(int)gridSpaces.getYPos()] - 1;
+          }
+        
         }
-      
-      }
+      }catch(Exception e){}
       
       if(nearCars > 0 && costMap[col][row] == 1){
         light.cooldown = localCooldownDefault;
